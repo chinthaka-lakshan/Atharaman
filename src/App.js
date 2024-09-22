@@ -1,32 +1,45 @@
+import React from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import HomePage from './Pages/HomePage/HomePage'
+import LocationsPage from './Pages/LocationsPage/LocationsPage'
+import GuidesPage from './Pages/GuidesPage/GuidesPage'
+import ShopsPage from './Pages/ShopsPage/ShopsPage'
+import LoginPage from './Pages/LoginPage/LoginPage'
+import AddReviewPage from './Pages/AddReviewPage/AddReviewPage'
 
-import './App.css';
-import AboutUs from './Components/AboutUs/AboutUs';
-import Guides from './Components/Guides/Guides';
-import Hero from './Components/Hero/Hero';
-import Navbar from './Components/Navbar/Navbar';
-import Places from './Components/Places/Places';
-import Shops from './Components/Shops/Shops';
-import Title from './Components/Title/Title';
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <HomePage/>,
+  },
+  {
+    path: "/login",
+    element: <LoginPage/>,
+  },
+  {
+    path: "/locations",
+    element: <LocationsPage/>,
+  },
+  {
+    path: "/guides",
+    element: <GuidesPage/>,
+  },
+  {
+    path: "/shops",
+    element: <ShopsPage/>,
+  },
+  {
+    path: "/addReview",
+    element: <AddReviewPage/>,
+  },
+])
 
 function App() {
   return (
     <div>
-      <Navbar/>
-      <Hero/>
-      <div className='container'>
-        <Title subTitle='Explore' title='Camping Locations'/>
-        <Places/>
-        <Title subTitle='Meet With' title='Expert Guides'/>
-        <Guides/>
-        <Title subTitle='Browse Through' title='Camping Gear Shops'/>
-        <Shops/>
-        <AboutUs/>
-        
-      </div>
-      
-
+      <RouterProvider router={router}/>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
