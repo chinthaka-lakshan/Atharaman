@@ -1,6 +1,7 @@
 import React from 'react'
 import './LocationsPage.css'
 import Navbar from '../../Components/Navbar/Navbar'
+import Places  from '../../Pages/Places/places'
 
 const LocationsPage = () => {
   return (
@@ -13,6 +14,7 @@ const LocationsPage = () => {
           <button className='btn'>Explore More</button>
         </div>
       </div>
+      <Places/>
     </div>
   )
 }
