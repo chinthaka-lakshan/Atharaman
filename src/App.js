@@ -11,6 +11,10 @@ import ViewLocation from './Pages/ViewLocation/ViewLocation';
 import PlaceView from './Pages/PlaceView/PlaceView';
 import ManageGuides from './Pages/ManageGuides/ManageGuides';
 import AddNewGuides from './Pages/AddNewGuide/AddNewGuide';
+import AddReview from './Pages/AddReviewpage/AddReview';
+import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage';
+import ReviewForm from './Pages/SiteReviewPage/ReviewForm';
+
 
 // Create router with dynamic path for SingleLocationPage
 const router = createBrowserRouter([
@@ -57,6 +61,18 @@ const router = createBrowserRouter([
   {
     path: "/placeView",
     element: <PlaceView />,
+  },
+  {
+    path: "/SiteReviewPage",
+    element: <SiteReviewPage />,
+  },
+  {
+    path:"/addReview",
+    element:<AddReview/>,
+  },
+  {
+    path:"/reviewForm",
+    element:<ReviewForm/>,
   },
 ]);
 
