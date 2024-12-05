@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './AllReview.css';
+import Navbar from '../../Components/Navbar/Navbar';
 
 const AllReview = () => {
     const [reviews, setReviews] = useState([
@@ -9,6 +10,9 @@ const AllReview = () => {
         { id: 4, name: "Emma Wilson", rating: 3, comment: "Decent, but not as expected." },
         { id: 5, name: "Michael Clark", rating: 4, comment: "Nice and cozy environment." },
         { id: 6, name: "Sophia Turner", rating: 5, comment: "Perfect for a weekend getaway!" },
+        { id: 7, name: " Wilson", rating: 3, comment: "Decent, but not as expected." },
+        { id: 8, name: " Clark", rating: 4, comment: "Nice and cozy environment." },
+        { id: 9, name: "Sophia ", rating: 5, comment: "Perfect for a weekend getaway!" },
     ]);
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,39 +37,42 @@ const AllReview = () => {
     };
 
     return (
-        <div className="all-review-container">
-            <h1>All Reviews</h1>
-            <div className="reviews-list">
-                {currentReviews.map((review) => (
-                    <div className="review-card" key={review.id}>
-                        <h3>{review.name}</h3>
-                        <div className="rating">
-                            {Array.from({ length: review.rating }, (_, i) => (
-                                <span key={i} className="star">★</span>
-                            ))}
+        <div className="all-review-page">
+            <Navbar />
+            <div className="all-review-container">
+                <h1>All Reviews</h1>
+                <div className="reviews-list">
+                    {currentReviews.map((review) => (
+                        <div className="review-card" key={review.id}>
+                            <h3>{review.name}</h3>
+                            <div className="rating">
+                                {Array.from({ length: review.rating }, (_, i) => (
+                                    <span key={i} className="star">★</span>
+                                ))}
+                            </div>
+                            <p>{review.comment}</p>
                         </div>
-                        <p>{review.comment}</p>
-                    </div>
-                ))}
-            </div>
-            <div className="pagination">
-                <button
-                    className="pagination-btn"
-                    onClick={handlePrevPage}
-                    disabled={currentPage === 1}
-                >
-                    Previous
-                </button>
-                <span className="page-info">
-                    Page {currentPage} of {totalPages}
-                </span>
-                <button
-                    className="pagination-btn"
-                    onClick={handleNextPage}
-                    disabled={currentPage === totalPages}
-                >
-                    Next
-                </button>
+                    ))}
+                </div>
+                <div className="pagination">
+                    <button
+                        className="pagination-btn"
+                        onClick={handlePrevPage}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </button>
+                    <span className="page-info">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                        className="pagination-btn"
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     );
