@@ -7,6 +7,7 @@ import ShopsPage from './Pages/ShopsPage/ShopsPage'
 import LoginPage from './Pages/LoginPage/LoginPage'
 import AddReview from './Pages/AddReviewpage/AddReview'
 import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage'
+import AllReview from './Pages/AllReviewPage/AllReview'
 
 
 
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage/>,
+  },
+  {
+    path: "/AllReview",
+    element: <AllReview/>,
   },
   {
     path: "/login",

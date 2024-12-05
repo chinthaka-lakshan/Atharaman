@@ -3,7 +3,11 @@ import './SiteReviewPage.css';
 import Navbar from '../../Components/Navbar/Navbar';
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
+
+
+ 
 
 
 const BASE_API = "http://localhost:9000/api/products";
@@ -12,14 +16,14 @@ function SiteReviewPage(){
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState('');
   const[ isSubmiting] = useState(false);
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     rating: '',
     review: ''
   });
-  
-    
-  
 
+  
 
   const scrollHandler = (eleRef) => {
     if (eleRef && eleRef.current) {
@@ -28,9 +32,14 @@ function SiteReviewPage(){
     
   };
 
+  const handleSeeAllReviews = () => {
+    navigate("/AllReview"); // Navigate to the AllReview page
+  };
+
  
 
   const section1 = useRef();
+  
 
   const handleRatingClick = (value) => {
     setRating(value);
@@ -82,6 +91,7 @@ function SiteReviewPage(){
           <h1>What Is Your Review ? </h1>
           <p>Welcome To Review Page! You Can See All The Review In Here</p>
           <button className='btn' onClick={() => scrollHandler(section1)}>Add Review</button>
+          <button className='btn3'onClick={handleSeeAllReviews} >See All Review</button>
         </div>
         <div />
       </div>
@@ -177,7 +187,10 @@ function SiteReviewPage(){
           </span>
         </div>
       </div>
+
     </div>
+    
+           
   );
 }
 export default SiteReviewPage;
