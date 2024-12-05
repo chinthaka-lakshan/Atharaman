@@ -5,7 +5,10 @@ import LocationsPage from './Pages/LocationsPage/LocationsPage'
 import GuidesPage from './Pages/GuidesPage/GuidesPage'
 import ShopsPage from './Pages/ShopsPage/ShopsPage'
 import LoginPage from './Pages/LoginPage/LoginPage'
-import AddReviewPage from './Pages/AddReviewPage/AddReviewPage'
+import AddReview from './Pages/AddReviewpage/AddReview'
+import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage'
+
+
 
 const router = createBrowserRouter([
   {
@@ -29,8 +32,12 @@ const router = createBrowserRouter([
     element: <ShopsPage/>,
   },
   {
+    path:"/SiteReviewPage",
+    element:<SiteReviewPage/>
+  },
+  {
     path: "/addReview",
-    element: <AddReviewPage/>,
+    element: <AddReview/>,
   },
 ])
 
