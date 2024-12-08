@@ -54,7 +54,7 @@ const AddNewLocation = () => {
           <h1>ADD NEW LOCATION</h1>
         </div>
         <div className="bottom">
-          <div className="left">
+          <div className="images">
             <div className="imageGrid">
               {[image1, image2, image3, image4, image5].map((src, index) => (
                 <div key={index} className="imageContainer">
@@ -97,115 +97,113 @@ const AddNewLocation = () => {
               ))}
             </div>
           </div>
-          <div className="right">
-            <form onSubmit={handleSubmit}>
-              <div className="uploadButtons">
-                <div className="formInput">
-                  <label htmlFor="fileInput1" className="fileUploadLabel">
-                    <DriveFolderUploadOutlined className="uploadIcon" />
-                    <span>Main Image</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="fileInput1"
-                    onChange={(e) => handleImageChange(setImage1, e)}
-                    style={{ display: "none" }}
-                  />
-                </div>
-                <div className="formInput">
-                  <label htmlFor="fileInput2" className="fileUploadLabel">
-                    <DriveFolderUploadOutlined className="uploadIcon" />
-                    <span>Image 2</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="fileInput2"
-                    onChange={(e) => handleImageChange(setImage2, e)}
-                    style={{ display: "none" }}
-                  />
-                </div>
-                <div className="formInput">
-                  <label htmlFor="fileInput3" className="fileUploadLabel">
-                    <DriveFolderUploadOutlined className="uploadIcon" />
-                    <span>Image 3</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="fileInput3"
-                    onChange={(e) => handleImageChange(setImage3, e)}
-                    style={{ display: "none" }}
-                  />
-                </div>
-                <div className="formInput">
-                  <label htmlFor="fileInput4" className="fileUploadLabel">
-                    <DriveFolderUploadOutlined className="uploadIcon" />
-                    <span>Image 4</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="fileInput4"
-                    onChange={(e) => handleImageChange(setImage4, e)}
-                    style={{ display: "none" }}
-                  />
-                </div>
-                <div className="formInput">
-                  <label htmlFor="fileInput5" className="fileUploadLabel">
-                    <DriveFolderUploadOutlined className="uploadIcon" />
-                    <span>Image 5</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="fileInput5"
-                    onChange={(e) => handleImageChange(setImage5, e)}
-                    style={{ display: "none" }}
-                  />
-                </div>
+          <form onSubmit={handleSubmit}>
+            <div className="uploadButtons">
+              <div className="formInput">
+                <label htmlFor="fileInput1" className="fileUploadLabel">
+                  <DriveFolderUploadOutlined className="uploadIcon" />
+                  <span>Main Image</span>
+                </label>
+                <input
+                  type="file"
+                  id="fileInput1"
+                  onChange={(e) => handleImageChange(setImage1, e)}
+                  style={{ display: "none" }}
+                />
               </div>
-              <div className="inputFields">
-                <div className="formInput">
-                  <label>Location Name</label>
-                  <input
-                    type="text"
-                    id="LOCATION_NAME"
-                    name="locationName"
-                    placeholder="Enter Location Name"
-                    required
-                  />
-                </div>
-                <div className="formInput">
-                  <label>Short Description</label>
-                  <input
-                    type="text"
-                    id="LOCATION_SHORT_DESCRIPTION"
-                    name="locationShortDescription"
-                    placeholder="Enter Short Description"
-                    required
-                  />
-                </div>
-                <div className="formInput">
-                  <label>Long Description</label>
-                  <input
-                    type="text"
-                    id="LOCATION_LONG_DESCRIPTION"
-                    name="locationLongDescription"
-                    placeholder="Enter Long Description"
-                    required
-                  />
-                </div>
-                <div className="formInput">
-                  <label>Province</label>
-                  <select id="LOCATION_PROVINCE" name="province" required>
-                    {provinces.map((province, index) => (
-                      <option key={index} value={province}>
-                        {province}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button type="submit">Save</button>
+              <div className="formInput">
+                <label htmlFor="fileInput2" className="fileUploadLabel">
+                  <DriveFolderUploadOutlined className="uploadIcon" />
+                  <span>Image 2</span>
+                </label>
+                <input
+                  type="file"
+                  id="fileInput2"
+                  onChange={(e) => handleImageChange(setImage2, e)}
+                  style={{ display: "none" }}
+                />
               </div>
-            </form>
-          </div>
+              <div className="formInput">
+                <label htmlFor="fileInput3" className="fileUploadLabel">
+                  <DriveFolderUploadOutlined className="uploadIcon" />
+                  <span>Image 3</span>
+                </label>
+                <input
+                  type="file"
+                  id="fileInput3"
+                  onChange={(e) => handleImageChange(setImage3, e)}
+                  style={{ display: "none" }}
+                />
+              </div>
+              <div className="formInput">
+                <label htmlFor="fileInput4" className="fileUploadLabel">
+                  <DriveFolderUploadOutlined className="uploadIcon" />
+                  <span>Image 4</span>
+                </label>
+                <input
+                  type="file"
+                  id="fileInput4"
+                  onChange={(e) => handleImageChange(setImage4, e)}
+                  style={{ display: "none" }}
+                />
+              </div>
+              <div className="formInput">
+                <label htmlFor="fileInput5" className="fileUploadLabel">
+                  <DriveFolderUploadOutlined className="uploadIcon" />
+                  <span>Image 5</span>
+                </label>
+                <input
+                  type="file"
+                  id="fileInput5"
+                  onChange={(e) => handleImageChange(setImage5, e)}
+                  style={{ display: "none" }}
+                />
+              </div>
+            </div>
+            <div className="inputFields">
+              <div className="formInput">
+                <label>Location Name</label>
+                <input
+                  type="text"
+                  id="LOCATION_NAME"
+                  name="locationName"
+                  placeholder="Enter Location Name"
+                  required
+                />
+              </div>
+              <div className="formInput">
+                <label>Province</label>
+                <select id="LOCATION_PROVINCE" name="province" required>
+                  {provinces.map((province, index) => (
+                    <option key={index} value={province}>
+                      {province}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="formInput">
+                <label>Short Description</label>
+                <input
+                  type="text"
+                  id="LOCATION_SHORT_DESCRIPTION"
+                  name="locationShortDescription"
+                  placeholder="Enter Short Description"
+                  required
+                />
+              </div>
+              <div className="formInput">
+                <label>Long Description</label>
+                <input
+                  type="text"
+                  id="LOCATION_LONG_DESCRIPTION"
+                  name="locationLongDescription"
+                  placeholder="Enter Long Description"
+                  required
+                />
+              </div>
+              <button type="submit">Save</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
