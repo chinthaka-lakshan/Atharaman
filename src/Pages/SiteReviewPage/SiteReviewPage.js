@@ -142,53 +142,11 @@ function SiteReviewPage(){
       
           </div>
         </div>
-        <div className='heading'>
-          <h2>Your Reviews</h2>
         </div>
-        <div className='addedreview'>
-        </div>
-
-
-
-        <div className="user-inf">
-              <img src="https://via.placeholder.com/100" alt="User" className="user-image" />
-              <h3 >User Name</h3>
-        </div>
-        <div className='stars2'>
-          <h3>Rating</h3>
-          {[1, 2, 3, 4, 5].map((value) => (
-                  <span
-                    key={value}
-                    className={value <= rating ? "star filled" : "star"}
-                    onClick={() => handleRatingClick(value)}
-                  >
-                    ★
-                  </span>
-                )
-              )
-            }
-        </div>
-        <div className='text'>
-        </div>
-        <div className='seemore1'>
-            <button className='btn seemore' onClick={() => scrollHandler(section1)}>See More</button>
-        </div>
-        <div className='btn1'>
-            <button className='submit-btn' onClick={handleReviewChange}>
-              Edit Review
-            </button>
-            
-         <span> 
-            <div className='btn2'>
-              <button className='submit-btn' onClick={handleDelete} >
-                Delete Review
-              </button>
-            </div>
-          </span>
-        </div>
+        
       </div>
 
-    </div>
+    
     
            
   );
