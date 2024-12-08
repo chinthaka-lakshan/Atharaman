@@ -1,0 +1,92 @@
+.locationPlatter{
+    width: 100%;
+    min-height: 100vh;
+    background: #2A363B;
+    background-size: cover;
+    background-position: center;
+    color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.locationPlatter-text{
+    text-align: center;
+    max-width: 800px;
+    margin-top: 70px;
+}
+
+.locationPlatter-text h1{
+    font-size: 50px;
+    font-weight: 600;
+}
+
+.locationPlatter-text p{
+    max-width: 700px;
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.photoGrid{
+    display: flex;
+    flex-direction: row;
+    height: auto;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+    align-items: center;
+
+    img {
+        width: 50%;
+        height: 100%;
+        border-radius: 5px;
+        object-fit: cover;
+    }
+
+    .side-images{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        width: 50%;
+        height: 100%;
+
+        img {
+            width: 100%;
+            object-fit: cover;
+        }
+    }
+}
+
+.locationDescription {
+    display: flex;
+    width: 96%;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+
+/* ----- media query ----- */
+
+@media (max-width: 850px){
+    .locationPlatter-text h1{
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 650px){
+    .locationPlatter-text h1{
+        font-size: 30px;
+        max-width: 400px;
+        margin: auto;
+    }
+
+    .locationPlatter-text p{
+        font-size: 14px;
+        margin: 15px auto 30px;
+    }
+}
