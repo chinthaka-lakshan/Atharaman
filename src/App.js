@@ -5,9 +5,9 @@ import LocationsPage from './Pages/LocationsPage/LocationsPage'
 import GuidesPage from './Pages/GuidesPage/GuidesPage'
 import ShopsPage from './Pages/ShopsPage/ShopsPage'
 import LoginPage from './Pages/LoginPage/LoginPage'
-import AddReview from './Pages/AddReviewpage/AddReview'
 import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage'
 import AllReview from './Pages/AllReviewPage/AllReview'
+import ReviewForm from './Pages/ReviewFormPage/ReviewForm'
 
 
 
@@ -19,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: "/AllReview",
     element: <AllReview/>,
+  },
+  {
+    path: "/ReviewForm",
+    element: <ReviewForm/>,
   },
   {
     path: "/login",
@@ -40,10 +44,7 @@ const router = createBrowserRouter([
     path:"/SiteReviewPage",
     element:<SiteReviewPage/>
   },
-  {
-    path: "/addReview",
-    element: <AddReview/>,
-  },
+  
 ])
 
 function App() {
