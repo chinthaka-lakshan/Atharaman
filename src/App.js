@@ -20,7 +20,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/viewLocation/:id",
-    element: <ViewLocation />,
+    element: <ViewLocation/>,
   },
   {
     path: "/manageLocations",
@@ -55,7 +55,7 @@ const router = createBrowserRouter([
     element: <ShopsPage />,
   },
   {
-    path: "/placeView",
+    path: "/locationView/:id",
     element: <PlaceView />,
   },
 ]);

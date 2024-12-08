@@ -25,7 +25,7 @@ const LocationsList = () => {
     useEffect(() => {
         const fetchLocations = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/atharaman");
+                const response = await axios.get("http://localhost:8080/locations");
                 setLocations(response.data);
             } catch (error) {
                 console.error("Error Fetching Locations:", error);
