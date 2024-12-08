@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import './AddNewLocation.css';
+import axios from 'axios';
 import AdminSidebar from '../../Components/AdminSidebar/AdminSidebar';
 import AdminNavbar from '../../Components/AdminNavbar/AdminNavbar';
+import { DriveFolderUploadOutlined, Close } from '@mui/icons-material';
 import LocationOnSharpIcon from '@mui/icons-material/LocationOnSharp';
-import { DriveFolderUploadOutlined, Close } from "@mui/icons-material";
 
 const AddNewLocation = () => {
   const [image1, setImage1] = useState(null);
@@ -12,38 +13,51 @@ const AddNewLocation = () => {
   const [image4, setImage4] = useState(null);
   const [image5, setImage5] = useState(null);
 
+  const provinces = ['Central', 'Western', 'Uva', 'North', 'Southern', 'Eastern'];
+
   const handleImageChange = (setImage, e) => {
     const file = e.target.files[0];
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     if (file && !allowedTypes.includes(file.type)) {
       alert(`Invalid file type: ${file.name}. Please upload JPEG or PNG images only.`);
       return;
     }
-
-    setImage(file ? URL.createObjectURL(file) : null);
+    setImage(file ? file : null); // Store the file object for uploading
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted with data:", {
-      image1,
-      image2,
-      image3,
-      image4,
-      image5,
+
+    const formData = new FormData();
+    formData.append('location', e.target.locationName.value);
+    formData.append('shortDescription', e.target.locationShortDescription.value);
+    formData.append('longDescription', e.target.locationLongDescription.value);
+    formData.append('province', e.target.province.value);
+
+    if (image1) formData.append('mainImage', image1);
+    [image2, image3, image4, image5].forEach((img, idx) => {
+      if (img) formData.append('extraImage', img);
     });
 
-    // Reset all images
-    setImage1(null);
-    setImage2(null);
-    setImage3(null);
-    setImage4(null);
-    setImage5(null);
-    e.target.reset();
-  };
+    try {
+      const response = await axios.post('http://localhost:8080/atharaman', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      console.log('Location added:', response.data);
+      alert('Location added successfully!');
 
-  const provinces = ["Central", "Western", "Uva", "North", "Southern", "Eastern"];
+      // Reset form and images
+      e.target.reset();
+      setImage1(null);
+      setImage2(null);
+      setImage3(null);
+      setImage4(null);
+      setImage5(null);
+    } catch (error) {
+      console.error('Error submitting the form:', error);
+      alert('Failed to add location. Please try again.');
+    }
+  };
 
   return (
     <div className="addNewLocation">
@@ -61,8 +75,8 @@ const AddNewLocation = () => {
                   {src ? (
                     <div className="imageWrapper">
                       <img
-                        src={src}
-                        alt={`Uploaded Preview ${index + 1}`}
+                        src={URL.createObjectURL(src)}
+                        alt={`Preview ${index + 1}`}
                         className="imagePreview"
                       />
                       <Close
@@ -100,73 +114,31 @@ const AddNewLocation = () => {
           <div className="right">
             <form onSubmit={handleSubmit}>
               <div className="uploadButtons">
-                <div className="formInput">
-                  <label htmlFor="fileInput1" className="fileUploadLabel">
-                    <DriveFolderUploadOutlined className="uploadIcon" />
-                    <span>Main Image</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="fileInput1"
-                    onChange={(e) => handleImageChange(setImage1, e)}
-                    style={{ display: "none" }}
-                  />
-                </div>
-                <div className="formInput">
-                  <label htmlFor="fileInput2" className="fileUploadLabel">
-                    <DriveFolderUploadOutlined className="uploadIcon" />
-                    <span>Image 2</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="fileInput2"
-                    onChange={(e) => handleImageChange(setImage2, e)}
-                    style={{ display: "none" }}
-                  />
-                </div>
-                <div className="formInput">
-                  <label htmlFor="fileInput3" className="fileUploadLabel">
-                    <DriveFolderUploadOutlined className="uploadIcon" />
-                    <span>Image 3</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="fileInput3"
-                    onChange={(e) => handleImageChange(setImage3, e)}
-                    style={{ display: "none" }}
-                  />
-                </div>
-                <div className="formInput">
-                  <label htmlFor="fileInput4" className="fileUploadLabel">
-                    <DriveFolderUploadOutlined className="uploadIcon" />
-                    <span>Image 4</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="fileInput4"
-                    onChange={(e) => handleImageChange(setImage4, e)}
-                    style={{ display: "none" }}
-                  />
-                </div>
-                <div className="formInput">
-                  <label htmlFor="fileInput5" className="fileUploadLabel">
-                    <DriveFolderUploadOutlined className="uploadIcon" />
-                    <span>Image 5</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="fileInput5"
-                    onChange={(e) => handleImageChange(setImage5, e)}
-                    style={{ display: "none" }}
-                  />
-                </div>
+                {['Main Image', 'Image 2', 'Image 3', 'Image 4', 'Image 5'].map((label, index) => (
+                  <div key={index} className="formInput">
+                    <label htmlFor={`fileInput${index}`} className="fileUploadLabel">
+                      <DriveFolderUploadOutlined className="uploadIcon" />
+                      <span>{label}</span>
+                    </label>
+                    <input
+                      type="file"
+                      id={`fileInput${index}`}
+                      onChange={(e) =>
+                        handleImageChange(
+                          [setImage1, setImage2, setImage3, setImage4, setImage5][index],
+                          e
+                        )
+                      }
+                      style={{ display: 'none' }}
+                    />
+                  </div>
+                ))}
               </div>
               <div className="inputFields">
                 <div className="formInput">
                   <label>Location Name</label>
                   <input
                     type="text"
-                    id="LOCATION_NAME"
                     name="locationName"
                     placeholder="Enter Location Name"
                     required
@@ -176,7 +148,6 @@ const AddNewLocation = () => {
                   <label>Short Description</label>
                   <input
                     type="text"
-                    id="LOCATION_SHORT_DESCRIPTION"
                     name="locationShortDescription"
                     placeholder="Enter Short Description"
                     required
@@ -184,9 +155,7 @@ const AddNewLocation = () => {
                 </div>
                 <div className="formInput">
                   <label>Long Description</label>
-                  <input
-                    type="text"
-                    id="LOCATION_LONG_DESCRIPTION"
+                  <textarea
                     name="locationLongDescription"
                     placeholder="Enter Long Description"
                     required
@@ -194,7 +163,7 @@ const AddNewLocation = () => {
                 </div>
                 <div className="formInput">
                   <label>Province</label>
-                  <select id="LOCATION_PROVINCE" name="province" required>
+                  <select name="province" required>
                     {provinces.map((province, index) => (
                       <option key={index} value={province}>
                         {province}
