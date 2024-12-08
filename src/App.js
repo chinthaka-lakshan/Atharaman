@@ -59,10 +59,6 @@ const router = createBrowserRouter([
     path: "/locationView/:1",
     element: <LocationView />,
   },
-  {
-    path: "/placeView/:1",
-    element: <PlaceView />,
-  },
 ]);
 
 function App() {
