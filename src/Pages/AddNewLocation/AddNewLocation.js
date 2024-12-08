@@ -22,7 +22,7 @@ const AddNewLocation = () => {
       alert(`Invalid file type: ${file.name}. Please upload JPEG or PNG images only.`);
       return;
     }
-    setImage(file ? file : null); // Store the file object for uploading
+    setImage(file ? file : null); 
   };
 
   const handleSubmit = async (e) => {
