@@ -133,16 +133,6 @@ const AddNewLocation = () => {
                   />
                 </div>
                 <div className="formInput">
-                  <label>Province</label>
-                  <select name="province" required>
-                    {provinces.map((province, index) => (
-                      <option key={index} value={province}>
-                        {province}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="formInput">
                   <label>Short Description</label>
                   <input
                     type="text"
@@ -158,6 +148,16 @@ const AddNewLocation = () => {
                     placeholder="Enter Long Description"
                     required
                   />
+                </div>
+                <div className="formInput">
+                  <label>Province</label>
+                  <select name="province" required>
+                    {provinces.map((province, index) => (
+                      <option key={index} value={province}>
+                        {province}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <button type="submit">Save</button>
               </div>
