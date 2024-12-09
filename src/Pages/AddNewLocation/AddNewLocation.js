@@ -44,7 +44,7 @@ const AddNewLocation = () => {
     });
 
     try {
-      const response = await axios.post('http://localhost:8080/atharaman', formData, {
+      const response = await axios.post('http://localhost:8080/locations', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       console.log('Location added:', response.data);

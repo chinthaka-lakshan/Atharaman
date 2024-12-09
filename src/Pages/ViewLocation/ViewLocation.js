@@ -24,7 +24,7 @@ const ViewLocation = () => {
 
     const fetchLocation = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/atharaman/${id}`);
+            const response = await axios.get(`http://localhost:8080/locations/${id}`);
             const data = response.data;
             setLocation(data.location);
             setShortDescription(data.shortDescription);
@@ -78,7 +78,7 @@ const ViewLocation = () => {
         });
     
         try {
-            const response = await axios.put(`http://localhost:8080/atharaman/${id}`, formData, {
+            const response = await axios.put(`http://localhost:8080/locations/${id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             alert("Location updated successfully!");
