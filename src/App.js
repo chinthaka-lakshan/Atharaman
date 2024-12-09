@@ -35,7 +35,7 @@ const router = createBrowserRouter([
     element: <ManageGuides/>,
   },
   {
-    path: "/admin/manageLocations/addNew",
+    path: "/manageLocations/addNew",
     element: <AddNewLocation/>,
   },
   {
