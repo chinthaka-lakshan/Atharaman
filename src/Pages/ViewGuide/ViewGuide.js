@@ -7,17 +7,18 @@ import AdminNavbar from '../../Components/AdminNavbar/AdminNavbar';
 import ElderlySharpIcon from '@mui/icons-material/ElderlySharp';
 import { DriveFolderUploadOutlined, Close } from "@mui/icons-material";
 
-const ViewLocation = () => {
+const ViewGuide = () => {
     const [image1, setImage1] = useState(null);
     const [image2, setImage2] = useState(null);
     const [image3, setImage3] = useState(null);
     const [image4, setImage4] = useState(null);
     const [image5, setImage5] = useState(null);
-    const { id } = useParams(); // Get the location ID from the URL parameters
-    const [guide, setLocation] = useState('');
-    const [shortDescription, setShortDes] = useState('');
-    const [longDescription, setLongDes] = useState('');
-    const [province, setProvince] = useState('');
+    const { id } = useParams(); // Get the guide ID from the URL parameters
+    const [guideName, setGuideName] = useState('');
+    const [description, setDescription] = useState('');
+    const [phoneNo, setPhoneNo] = useState('');
+    const [email, setEmail] = useState('');
+    const [nic, setNic] = useState('');
 
     const handleImageChange = (setImage, e) => {
         const file = e.target.files[0];
@@ -31,46 +32,47 @@ const ViewLocation = () => {
         setImage(file ? URL.createObjectURL(file) : null);
     };
 
-    // Fetch location data based on the location ID
-    const fetchLocation = async () => {
+    // Fetch guide data based on the guide ID
+    const fetchGuide = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/atharaman/${id}`);
-            const { location, shortDescription, longDescription, province } = response.data;
-            setLocation(location);
-            setShortDes(shortDescription);
-            setLongDes(longDescription);
-            setProvince(province);
+            const response = await axios.get(`http://localhost:8080/guides/${id}`);
+            const { guideName, description, phoneNo, email, nic } = response.data;
+            setGuideName(guideName);
+            setDescription(description);
+            setPhoneNo(phoneNo);
+            setEmail(email);
+            setNic(nic);
         } catch (error) {
-            console.error("Error fetching location data", error);
+            console.error("Error fetching guide data", error);
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const updatedLocation = { location, shortDescription, longDescription, province };
+        const updatedGuide = { guideName, description, phoneNo, email, nic };
 
         try {
-            await axios.put(`http://localhost:8080/atharaman/${id}`, updatedLocation); // Update with your API URL
-            alert("Location updated successfully!");
+            await axios.put(`http://localhost:8080/guides/${id}`, updatedGuide); // Update with your API URL
+            alert("Guide updated successfully!");
         } catch (error) {
-            console.error("Error updating location", error);
+            console.error("Error updating guide", error);
         }
     };
 
-    const provinces = ["Central", "Western", "Uva", "North", "Southern", "Eastern"];
+    const locations = ["Central", "Western", "Uva", "North", "Southern", "Eastern"];
 
     useEffect(() => {
-        fetchLocation();
+        fetchGuide();
     }, [id]);
 
     return (
-        <div className='viewLocation'>
+        <div className='viewGuide'>
             <AdminSidebar/>
-            <div className='viewLocationContainer'>
+            <div className='viewGuideContainer'>
                 <AdminNavbar/>
                 <div className='top'>
                     <div className='titleImg'>
-                        <h1 className='title'>Location Details</h1>
+                        <h1 className='title'>Guide Details</h1>
                         <div className='itemImages'>
                             <img src='/assets/Locations/Narangala_1.jpg' alt='' className='itemImg'/>
                             <img src='/assets/Locations/Narangala_1.jpg' alt='' className='itemImg'/>
@@ -81,24 +83,28 @@ const ViewLocation = () => {
                     </div>
                     <div className='details'>
                         <div className='detailItem'>
-                            <span className='itemKey'>Location ID: </span>
+                            <span className='itemKey'>Guide ID: </span>
                             <span className='itemValue'>{id}</span>
                         </div>
                         <div className='detailItem'>
-                            <span className='itemKey'>Location: </span>
-                            <span className='itemValue'>{location}</span>
+                            <span className='itemKey'>Guide: </span>
+                            <span className='itemValue'>{guideName}</span>
                         </div>
                         <div className='detailItem'>
-                            <span className='itemKey'>Province: </span>
-                            <span className='itemValue'>{province}</span>
+                            <span className='itemKey'>Phone No: </span>
+                            <span className='itemValue'>{phoneNo}</span>
                         </div>
                         <div className='detailItem'>
-                            <span className='itemKey'>Short Description: </span>
-                            <span className='itemValue'>{shortDescription}</span>
+                            <span className='itemKey'>E-Mail: </span>
+                            <span className='itemValue'>{email}</span>
                         </div>
                         <div className='detailItem'>
-                            <span className='itemKey'>Long Description: </span>
-                            <span className='itemValue'>{longDescription}</span>
+                            <span className='itemKey'>NIC: </span>
+                            <span className='itemValue'>{nic}</span>
+                        </div>
+                        <div className='detailItem'>
+                            <span className='itemKey'>Description: </span>
+                            <span className='itemValue'>{description}</span>
                         </div>
                     </div>
                 </div>
@@ -142,7 +148,7 @@ const ViewLocation = () => {
                                             />
                                         </div>
                                         ) : (
-                                        <LocationOnSharpIcon className="placeholder"/>
+                                        <ElderlySharpIcon className="placeholder"/>
                                     )}
                                 </div>
                             ))}
@@ -213,42 +219,52 @@ const ViewLocation = () => {
                         </div>
                         <div className="inputFields">
                             <div className="formInput">
-                                <label>Location Name</label>
+                                <label>Guide Name</label>
                                 <input
                                 type="text"
-                                id="LOCATION_NAME"
-                                name="locationName"
-                                placeholder="Enter Location Name"
+                                id="GUIDE_NAME"
+                                name="guideName"
+                                placeholder="Enter Guide Name"
                                 required
                                 />
                             </div>
                             <div className="formInput">
-                                <label>Province</label>
-                                <select id="LOCATION_PROVINCE" name="province" required>
-                                {provinces.map((province, index) => (
-                                    <option key={index} value={province}>
-                                    {province}
-                                    </option>
-                                ))}
-                                </select>
-                            </div>
-                            <div className="formInput">
-                                <label>Short Description</label>
+                                <label>Phone No</label>
                                 <input
                                 type="text"
-                                id="LOCATION_SHORT_DESCRIPTION"
-                                name="locationShortDescription"
-                                placeholder="Enter Short Description"
+                                id="GUIDE_PHONE"
+                                name="guidePhone"
+                                placeholder="Enter Phone No"
                                 required
                                 />
                             </div>
                             <div className="formInput">
-                                <label>Long Description</label>
+                                <label>E-Mail</label>
                                 <input
                                 type="text"
-                                id="LOCATION_LONG_DESCRIPTION"
-                                name="locationLongDescription"
-                                placeholder="Enter Long Description"
+                                id="GUIDE_EMAIL"
+                                name="guideEmail"
+                                placeholder="Enter E-Mail"
+                                required
+                                />
+                            </div>
+                            <div className="formInput">
+                                <label>NIC</label>
+                                <input
+                                type="text"
+                                id="GUIDE_NIC"
+                                name="guideNic"
+                                placeholder="Enter NIC"
+                                required
+                                />
+                            </div>
+                            <div className="formInput">
+                                <label>Description</label>
+                                <input
+                                type="text"
+                                id="GUIDE_DESCRIPTION"
+                                name="guideDescription"
+                                placeholder="Enter Description"
                                 required
                                 />
                             </div>
@@ -261,4 +277,4 @@ const ViewLocation = () => {
     );
 };
 
-export default ViewLocation;
+export default ViewGuide;

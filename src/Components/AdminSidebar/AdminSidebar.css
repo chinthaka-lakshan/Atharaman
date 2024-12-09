@@ -8,7 +8,7 @@
         height: 100px;
         align-items: center;
         justify-content: center;
-        background-color: #a0afc1;
+        background-color: #000;
 
         .logo{
             height: 75px;
@@ -17,7 +17,7 @@
 
     .bottom{
         padding-left: 5px;
-        background-color: #425060;
+        background-color: #1a1f24;
 
         ul{
             list-style: none;
@@ -31,7 +31,7 @@
                 cursor: pointer;
 
                 &:hover{
-                    background-color: #1a1f24;
+                    background-color: #616161;
                 }
 
                 .icon{
