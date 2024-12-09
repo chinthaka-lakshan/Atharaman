@@ -18,11 +18,11 @@ const Navbar = () => {
     }
     return (
         <nav className={`container ${sticky? 'dark-nav' : ''}`}>
-          <img src={Logo} alt='' className='logo'/>
+          <Link to='/adminPanel'><img src={Logo} alt='' className='logo'/></Link>
           <ul className={mobileMenu?'':'hide-mobile-menu'}>
             <li><Link to='/'>Home</Link></li>
             <li><Link to='/locations'>Locations</Link></li>
-            <li><Link to='/guides'>Guides</Link></li>
+            <li><Link to='/guides'>Guide</Link></li>
             <li><Link to='/shops'>Shops</Link></li>
             <li><Link to='aboutUs' smooth={true} offset={-150} duration={500}>About Us</Link></li>
             <li><Link to='contactUs' smooth={true} offset={0} duration={500}>Contact Us</Link></li>

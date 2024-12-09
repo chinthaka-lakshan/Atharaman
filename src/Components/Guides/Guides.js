@@ -11,7 +11,7 @@ const Guides = () => {
         <img src={SachinthaRashen} alt=""/>
         <div className='caption'>
             <img src="" alt="" />
-            <p>Sachintha Rashen</p>a
+            <p>Sachintha Rashen</p>
         </div>
       </div>
       <div className='guide'>
