@@ -8,11 +8,12 @@ import LocationOnSharpIcon from '@mui/icons-material/LocationOnSharp';
 import { DriveFolderUploadOutlined, Close } from "@mui/icons-material";
 
 const ViewLocation = () => {
+    const [mainImage, setMainImage] = useState(null);
     const [image1, setImage1] = useState(null);
     const [image2, setImage2] = useState(null);
     const [image3, setImage3] = useState(null);
     const [image4, setImage4] = useState(null);
-    const [image5, setImage5] = useState(null);
+   
     const { id } = useParams(); // Get the location ID from the URL parameters
     const [location, setLocation] = useState('');
     const [shortDescription, setShortDes] = useState('');
@@ -35,11 +36,18 @@ const ViewLocation = () => {
     const fetchLocation = async () => {
         try {
             const response = await axios.get(`http://localhost:8080/atharaman/${id}`);
-            const { location, shortDescription, longDescription, province } = response.data;
+            const { location, shortDescription, longDescription, province,mainImage,extraImage1,extraImage2,extraImage3,extraImage4 } = response.data;
             setLocation(location);
             setShortDes(shortDescription);
             setLongDes(longDescription);
             setProvince(province);
+            console.log(response);
+            console.log(shortDescription);
+            console.log(longDescription);
+            console.log(province);
+            console.log(response.data.mainImagePath);
+            setMainImage("./"+response.data.mainImagePath);
+            console.log(mainImage+"ki");
         } catch (error) {
             console.error("Error fetching location data", error);
         }
@@ -72,7 +80,7 @@ const ViewLocation = () => {
                     <div className='titleImg'>
                         <h1 className='title'>Location Details</h1>
                         <div className='itemImages'>
-                            <img src='/assets/Locations/Narangala_1.jpg' alt='' className='itemImg'/>
+                            <img src={mainImage} alt='' className='itemImg'/>
                             <img src='/assets/Locations/Narangala_1.jpg' alt='' className='itemImg'/>
                             <img src='/assets/Locations/Narangala_1.jpg' alt='' className='itemImg'/>
                             <img src='/assets/Locations/Narangala_1.jpg' alt='' className='itemImg'/>
@@ -107,7 +115,7 @@ const ViewLocation = () => {
                     <h1 className='title'>Edit Details</h1>
                     <div className="images">
                         <div className="imageGrid">
-                            {[image1, image2, image3, image4, image5].map((src, index) => (
+                            {[mainImage, image1, image2, image3, image4].map((src, index) => (
                                 <div key={index} className="imageContainer">
                                     {src ? (
                                         <div className="imageWrapper">
@@ -121,19 +129,19 @@ const ViewLocation = () => {
                                             onClick={() => {
                                                 switch (index) {
                                                     case 0:
-                                                        setImage1(null);
+                                                        setMainImage(null);
                                                         break;
                                                     case 1:
-                                                        setImage2(null);
+                                                        setImage1(null);
                                                         break;
                                                     case 2:
-                                                        setImage3(null);
+                                                        setImage2(null);
                                                         break;
                                                     case 3:
-                                                        setImage4(null);
+                                                        setImage3(null);
                                                         break;
                                                     case 4:
-                                                        setImage5(null);
+                                                        setImage4(null);
                                                         break;
                                                     default:
                                                         break;
@@ -158,7 +166,7 @@ const ViewLocation = () => {
                                 <input
                                 type="file"
                                 id="fileInput1"
-                                onChange={(e) => handleImageChange(setImage1, e)}
+                                onChange={(e) => handleImageChange(setMainImage, e)}
                                 style={{ display: "none" }}
                                 />
                             </div>
@@ -170,7 +178,7 @@ const ViewLocation = () => {
                                 <input
                                 type="file"
                                 id="fileInput2"
-                                onChange={(e) => handleImageChange(setImage2, e)}
+                                onChange={(e) => handleImageChange(setImage1, e)}
                                 style={{ display: "none" }}
                                 />
                             </div>
@@ -182,7 +190,7 @@ const ViewLocation = () => {
                                 <input
                                 type="file"
                                 id="fileInput3"
-                                onChange={(e) => handleImageChange(setImage3, e)}
+                                onChange={(e) => handleImageChange(setImage2, e)}
                                 style={{ display: "none" }}
                                 />
                             </div>
@@ -194,7 +202,7 @@ const ViewLocation = () => {
                                 <input
                                 type="file"
                                 id="fileInput4"
-                                onChange={(e) => handleImageChange(setImage4, e)}
+                                onChange={(e) => handleImageChange(setImage3, e)}
                                 style={{ display: "none" }}
                                 />
                             </div>
@@ -206,7 +214,7 @@ const ViewLocation = () => {
                                 <input
                                 type="file"
                                 id="fileInput5"
-                                onChange={(e) => handleImageChange(setImage5, e)}
+                                onChange={(e) => handleImageChange(setImage4, e)}
                                 style={{ display: "none" }}
                                 />
                             </div>

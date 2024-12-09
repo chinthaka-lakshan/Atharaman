@@ -28,7 +28,7 @@ const LocationsTable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link to={`/viewLocation/${params.row.id}`}>
+            <Link to={`/admin/viewLocation/${params.row.id}`}>
               <span className="viewButton">View</span>
             </Link>
             <div className="deleteButton" onClick={() => handleDelete(params.row.id)}>Delete</div>
