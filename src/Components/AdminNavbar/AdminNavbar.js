@@ -1,14 +1,14 @@
+import React from "react";
 import "./AdminNavbar.css";
-import SachinthaRashen_1 from '../../Assets/SachinthaRashen_1.jpg';
+import SachinthaRashen from "../../Assets/SachinthaRashen_1.jpg";
 
 const AdminNavbar = () => {
   return (
     <div className="adminNavbar">
       <div className="adminNavbarContainer">
-        <div className="items">
-          <div className="item">
-            <img src={SachinthaRashen_1} alt="" className="profileImg"/>
-          </div>
+        <span>ADMIN DASHBOARD</span>
+        <div className="item">
+          <img src={SachinthaRashen} alt="" className="profileImg"/>
         </div>
       </div>
     </div>

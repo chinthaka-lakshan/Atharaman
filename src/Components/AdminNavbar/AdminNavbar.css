@@ -1,37 +1,36 @@
 .adminNavbar{
-    height: 75px;
+    height: 100px;
     display: flex;
     align-items: center;
-    font-size: 15px;
-    color: black;
-    background-color: whitesmoke;
-    border-bottom: 1px solid rgb(145, 145, 145);
+    background-color: #a0afc1;
+    border-bottom: 1px solid #425060;
 
     .adminNavbarContainer{
         display: flex;
         width: 100%;
         align-items: center;
         justify-content: end;
-        padding: 50px;
+        padding: 20px;
 
-        .items{
+        span{
+            font-size: 40px;
+            font-weight: bold;
+            color: #425060;
+        }
+
+        .item{
+            position: relative;
             display: flex;
             align-items: center;
-            gap: 20px;
+            margin: 0 20px;
 
-            .item{
-                display: flex;
-                align-items: center;
-                gap: 5px;
-
-                .profileImg{
-                    width: 30px;
-                    height: 30px;
-                    border-radius: 50%;
-                    object-fit: cover;
-                    border: 1px solid red;
-                    cursor: pointer;
-                }
+            .profileImg{
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 1px solid #425060;
+                cursor: pointer;
             }
         }
     }
