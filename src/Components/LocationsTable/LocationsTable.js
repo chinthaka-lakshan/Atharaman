@@ -66,7 +66,7 @@ const LocationsTable = () => {
     <div className="locationsTable">
       <div className="locationsTableTitle">
         <span>Locations List</span>
-        <Link to="/admin/manageLocations/addNew">
+        <Link to="/manageLocations/addNew">
           <span className="link">Add New</span>
         </Link>
       </div>

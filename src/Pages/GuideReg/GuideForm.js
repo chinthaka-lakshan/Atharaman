@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './GuideForm.css';
 
 const GuideForm = () => {
   const [guide, setGuide] = useState({
