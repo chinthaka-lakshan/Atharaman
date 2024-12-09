@@ -1,7 +1,6 @@
 import React from 'react'
 import './SiteReviewPage.css';
 import Navbar from '../../Components/Navbar/Navbar';
-import {Link} from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
 

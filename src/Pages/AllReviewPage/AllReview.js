@@ -35,6 +35,14 @@ const AllReview = () => {
             setCurrentPage(currentPage - 1);
         }
     };
+  
+
+    const handleDelete = (id) => {
+        const confirmed = window.confirm("Are you sure you want to delete this review?");
+        if (confirmed) {
+            setReviews(reviews.filter(review => review.id !== id));
+        }
+    };
 
     const handleUpdate = (id) => {
         const updatedComment = prompt("Update the comment:");
@@ -48,13 +56,7 @@ const AllReview = () => {
 
     
 
-    const handleDelete = (id) => {
-        const confirmed = window.confirm("Are you sure you want to delete this review?");
-        if (confirmed) {
-            setReviews(reviews.filter(review => review.id !== id));
-        }
-    };
-
+    
     return (
         <div className="all-review-page">
             <Navbar />
