@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import AdminPanel from './Pages/AdminPanel/AdminPanel';
+import AdminDashboard from './Pages/AdminDashboard/AdminDashboard';
 import ManageLocations from './Pages/ManageLocations/ManageLocations';
 import AddNewLocation from './Pages/AddNewLocation/AddNewLocation';
 import ViewLocation from './Pages/ViewLocation/ViewLocation';
@@ -8,21 +8,21 @@ import HomePage from './Pages/HomePage/HomePage';
 import LocationsPage from './Pages/LocationsPage/LocationsPage';
 import GuideForm from './Pages/GuideReg/GuideForm';
 import GuidesPage from './Pages/GuidesPage/GuidesPage';
-import ViewGuide from './Pages/ViewGuide/ViewGuide';
 import ShopsPage from './Pages/ShopsPage/ShopsPage';
-import PlaceView from './Pages/PlaceView/PlaceView';
 import ManageGuides from './Pages/ManageGuides/ManageGuides';
-import AddNewGuides from './Pages/AddNewGuide/AddNewGuide';
+import AddNewGuide from './Pages/AddNewGuide/AddNewGuide';
+import ViewGuide from './Pages/ViewGuide/ViewGuide';
+import ManageShops from './Pages/ManageShops/ManageShops';
+import AddNewShop from './Pages/AddNewShop/AddNewShop';
+import ViewShop from './Pages/ViewShop/ViewShop';
 import AddReview from './Pages/AddReviewpage/AddReview';
 import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage';
 import ReviewForm from './Pages/SiteReviewPage/ReviewForm';
 
-
-// Create router with dynamic path for SingleLocationPage
 const router = createBrowserRouter([
   {
     path: "/adminPanel",
-    element: <AdminPanel />,
+    element: <AdminDashboard/>,
   },
   {
     path: "/manageLocations",
@@ -42,8 +42,25 @@ const router = createBrowserRouter([
   },
   {
     path: "/manageGuides/addNew",
-    element: <AddNewGuides/>,
+    element: <AddNewGuide/>,
   },
+  {
+    path: "/viewGuide/:id",
+    element: <ViewGuide/>,
+  },
+  {
+    path: "/manageShops",
+    element: <ManageShops/>,
+  },
+  {
+    path: "/manageShops/addNew",
+    element: <AddNewShop/>,
+  },
+  {
+    path: "/viewShop/:id",
+    element: <ViewShop/>,
+  },
+  
   {
     path: "/",
     element: <HomePage />,
@@ -59,10 +76,6 @@ const router = createBrowserRouter([
   {
     path: "/shops",
     element: <ShopsPage />,
-  },
-  {
-    path: "/placeView",
-    element: <PlaceView />,
   },
   {
     path: "/SiteReviewPage",
