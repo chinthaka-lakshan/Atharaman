@@ -67,7 +67,7 @@ const AddNewLocation = () => {
           <h1>ADD NEW LOCATION</h1>
         </div>
         <div className="bottom">
-          <div className="left">
+          <div className="images">
             <div className="imageGrid">
               {[image1, ...extraImages].map((src, index) => (
                 <div key={index} className="imageContainer">
@@ -98,7 +98,7 @@ const AddNewLocation = () => {
               ))}
             </div>
           </div>
-          <div className="right">
+          <div className="form">
             <form onSubmit={handleSubmit}>
               <div className="uploadButtons">
                 {['Main Image', 'Image 2', 'Image 3', 'Image 4', 'Image 5'].map((label, index) => (
