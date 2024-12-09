@@ -44,7 +44,7 @@ const GuidesTable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link to={`/viewGuide/${params.row.id}`}>
+            <Link to={`/manageGuides/${params.row.id}`}>
               <span className="viewButton">View</span>
             </Link>
             <div
