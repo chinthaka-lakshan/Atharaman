@@ -7,7 +7,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
     margin-top: 100px;
-    height: 580px;
+    height: 550px;
     margin-top: 120px;
   }
 
@@ -27,7 +27,7 @@
     text-align: center;
     color: #333;
     font-size: 36px;
-    margin-top: 80px;
+    margin-top: 40px;
   }
   
   .review-form label {
@@ -38,9 +38,18 @@
     
   }
   
-  .review-form input,
+  
+  .review-form input{
+    width: 100%;
+    height: 30px;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
   .review-form textarea {
     width: 100%;
+    height: 75px;
     padding: 8px;
     margin: 5px 0;
     border: 1px solid #ccc;
@@ -57,7 +66,7 @@
   }
   
   .review-form .star {
-    font-size: 64px;
+    font-size: 54px;
     cursor: pointer;
     color: #ddd;
   }
@@ -89,7 +98,7 @@
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin-top: 20px;
+    margin-top: 40px;
     
   }
   
