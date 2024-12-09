@@ -1,4 +1,4 @@
-<<<<<<< Updated upstream
+
 import React from 'react'
 import './SiteReviewPage.css';
 import Navbar from '../../Components/Navbar/Navbar';
@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 function SiteReviewPage  ()  {
   const navigate = useNavigate();
 
-=======
 import React, { useRef, useState } from 'react';
 import './SiteReviewPage.css';
 import Navbar from '../../Components/Navbar/Navbar';
