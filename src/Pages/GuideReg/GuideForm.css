@@ -1,0 +1,34 @@
+.guide-form {
+    max-width: 500px;
+    margin: auto;
+    padding: 25px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .guide-form input,
+  .guide-form textarea,
+  .guide-form select,
+  .guide-form button {
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 6px;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+  }
+  
+  .guide-form textarea {
+    resize: vertical; /* Allows vertical resizing but prevents horizontal resizing */
+  }
+  
+  .guide-form button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .guide-form button:hover {
+    background-color: #218838;
+  }
+  
