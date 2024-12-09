@@ -11,6 +11,9 @@ import ViewLocation from './Pages/ViewLocation/ViewLocation';
 import PlaceView from './Pages/PlaceView/PlaceView';
 import ManageGuides from './Pages/ManageGuides/ManageGuides';
 import AddNewGuides from './Pages/AddNewGuide/AddNewGuide';
+import ViewGuide from './Pages/ViewGuide/ViewGuide';
+import GuideForm from './Pages/GuideReg/GuideForm';
+import ProfilePage from './Pages/GuideProfilepage/ProfilePage';
 
 // Create router with dynamic path for SingleLocationPage
 const router = createBrowserRouter([
@@ -21,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: "/viewLocation/:id",
     element: <ViewLocation />,
+  },
+  {
+    path: "/viewGuide/:id",
+    element: <ViewGuide />,
   },
   {
     path: "/manageLocations",
@@ -57,6 +64,15 @@ const router = createBrowserRouter([
   {
     path: "/placeView",
     element: <PlaceView />,
+  },
+  {
+    path: "/GuideReg",
+    element: <GuideForm/>,
+  },
+
+  {
+    path: "/ProfilePage",
+    element: <ProfilePage/>,
   },
 ]);
 
