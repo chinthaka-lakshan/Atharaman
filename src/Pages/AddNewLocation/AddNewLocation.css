@@ -1,5 +1,4 @@
 .addNewLocation{
-    width: 100%;
     display: flex;
 
     .addNewLocationContainer{
@@ -7,6 +6,7 @@
 
         .top{
             display: flex;
+            flex: 1;
             height: 75px;
             align-items: center;
             justify-content: center;
@@ -23,30 +23,30 @@
 
         .bottom{
             display: flex;
-            height: 450px;
+            flex: 2;
+            flex-direction: column;
+            height: auto;
             -webkit-box-shadow: 2px 2px 5px 1px #425060;
             box-shadow: 2px 2px 5px 1px #a0afc1;
             border-radius: 5px;
             padding: 20px;
             margin: 20px;
 
-            .left{
-                flex: 1;
+            .images{
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
 
                 .imageGrid{
-                    display: grid;
-                    grid-template-columns: repeat(2, 1fr);
-                    gap: 20px;
+                    display: flex;
+                    flex-direction: row;
+                    gap: 40px;
 
                     .imageContainer{
                         position: relative;
-                        margin: 5px;
 
                         .imageWrapper{
-                            position: relative;
 
                             .imagePreview{
                                 width: 120px;
@@ -83,36 +83,40 @@
                 }
             }
 
-            .right{
-                flex: 2;
+            .form{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
 
                 form{
-                    display: flex;
-                    flex-wrap: wrap;
+                    width: 90%;
                     align-items: center;
-                    justify-content: space-around;
+                    justify-content: center;
+                    gap: 30px;
 
                     .uploadButtons{
                         display: flex;
-                        width: 22%;
-                        flex-direction: column;
-                        gap: 30px;
+                        flex-direction: row;
+                        gap: 40px;
 
                         .fileUploadLabel{
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            gap: 10px;
+                            gap: 5px;
                             cursor: pointer;
                             background-color: white;
                             padding: 5px 5px;
                             border: 1px dotted #616161;
                             border-radius: 5px;
+                            width: 120px;
+                            font-size: 13px;
                             transition: background-color 0.3s;
 
                             .uploadIcon{
-                                font-size: 18px;
                                 color: #616161;
+                                font-size: 18px;
                             }
                         }
 
@@ -121,29 +125,28 @@
                             box-shadow: 2px 2px 5px 1px #a0afc1;
                             background-color: #f0f0f0;
                             border: none;
+                            width: 120px;
+                            font-size: 13px;
                         }
                     }
 
                     .inputFields{
                         display: flex;
                         flex-direction: column;
-                        width: 60%;
+                        width: 100%;
                         gap: 30px;
+                        color: #616161;
 
                         .formInput{
     
                             label{
                                 display: flex;
-                                align-items: center;
                                 gap: 10px;
                                 font-size: 18px;
                                 font-weight: bold;
-                                color: #616161;
                             }
     
                             input, select{
-                                width: 100%;
-                                padding: 5px;
                                 border: none;
                                 border-bottom: 1px solid #616161;
                                 font-size: 18px;
@@ -165,14 +168,15 @@
                         }
     
                         button{
-                            position: relative;
                             width: 150px;
                             padding: 10px;
                             margin: 10px 0;
+                            align-self: center;
                             border: none;
                             border-radius: 5px;
                             background-color: #425060;
                             color: white;
+                            font-size: 18px;
                             font-weight: bold;
                             cursor: pointer;
                         }
