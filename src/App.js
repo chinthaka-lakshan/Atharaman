@@ -6,11 +6,15 @@ import AddNewLocation from './Pages/AddNewLocation/AddNewLocation';
 import HomePage from './Pages/HomePage/HomePage';
 import LocationsPage from './Pages/LocationsPage/LocationsPage';
 import GuidesPage from './Pages/GuidesPage/GuidesPage';
+import ViewGuide from './Pages/ViewGuide/ViewGuide';
+
 import ShopsPage from './Pages/ShopsPage/ShopsPage';
 import ViewLocation from './Pages/ViewLocation/ViewLocation';
 import LocationView from './Pages/LocationView/LocationView';
 import ManageGuides from './Pages/ManageGuides/ManageGuides';
 import AddNewGuides from './Pages/AddNewGuide/AddNewGuide';
+import GuideForm from './Pages/GuideReg/GuideForm';
+import ProfilePage from './Pages/GuideProfilepage/ProfilePage';
 
 const router = createBrowserRouter([
   {
@@ -19,7 +23,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/viewGuide/:id",
-    element: <ViewGuide />,
+    element: <ViewGuide/>,
   },
   {
     path: "/manageLocations",
