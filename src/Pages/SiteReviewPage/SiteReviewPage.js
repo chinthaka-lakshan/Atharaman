@@ -24,7 +24,7 @@ const SiteReviewPage =() => {
       <Navbar />
       <div className='review container'>
         <div className='review-text'>
-          <h1>What Is Your Review ? </h1>
+          <h1>What Is Your Review? </h1>
           <p>Welcome To Review Page! You Can See All The Review In Here</p>
           <button className='btn' onClick={handleAddReviews}>Add Review</button>
           
