@@ -60,6 +60,7 @@ const router = createBrowserRouter([
     path: "/viewShop/:id",
     element: <ViewShop/>,
   },
+  
   {
     path: "/",
     element: <HomePage />,
