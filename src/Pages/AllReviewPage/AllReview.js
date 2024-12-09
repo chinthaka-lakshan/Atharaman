@@ -37,7 +37,7 @@ const AllReview = () => {
     };
 
     const handleUpdate = (id) => {
-        const updatedComment = ("Update the comment:");
+        const updatedComment = prompt("Update the comment:");
         const updatedrating = prompt("update the rating")
         if (updatedComment && updatedrating) {
             setReviews(reviews.map(review => (
