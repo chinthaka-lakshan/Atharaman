@@ -36,6 +36,25 @@ const AllReview = () => {
         }
     };
 
+    const handleUpdate = (id) => {
+        const updatedComment = ("Update the comment:");
+        const updatedrating = prompt("update the rating")
+        if (updatedComment && updatedrating) {
+            setReviews(reviews.map(review => (
+                review.id === id ? { ...review, comment: updatedComment ,rating : updatedrating} : review
+            )));
+        }
+    };
+
+    
+
+    const handleDelete = (id) => {
+        const confirmed = window.confirm("Are you sure you want to delete this review?");
+        if (confirmed) {
+            setReviews(reviews.filter(review => review.id !== id));
+        }
+    };
+
     return (
         <div className="all-review-page">
             <Navbar />
@@ -51,6 +70,20 @@ const AllReview = () => {
                                 ))}
                             </div>
                             <p>{review.comment}</p>
+                            <div className="review-actions">
+                                <button
+                                    className="update-btn"
+                                    onClick={() => handleUpdate(review.id)}
+                                >
+                                    Update
+                                </button>
+                                <button
+                                    className="delete-btn"
+                                    onClick={() => handleDelete(review.id)}
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
