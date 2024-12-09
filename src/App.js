@@ -6,6 +6,7 @@ import AddNewLocation from './Pages/AddNewLocation/AddNewLocation';
 import ViewLocation from './Pages/ViewLocation/ViewLocation';
 import HomePage from './Pages/HomePage/HomePage';
 import LocationsPage from './Pages/LocationsPage/LocationsPage';
+import LocationView from './Pages/LocationView/LocationView';
 import GuideForm from './Pages/GuideReg/GuideForm';
 import GuidesPage from './Pages/GuidesPage/GuidesPage';
 import ShopsPage from './Pages/ShopsPage/ShopsPage';
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
   {
     path: "/locations",
     element: <LocationsPage />,
+  },
+  {
+    path: "/locationView/:id",
+    element: <LocationView/>,
   },
   {
     path: "/guides",
