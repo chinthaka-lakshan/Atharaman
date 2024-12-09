@@ -8,22 +8,14 @@ import LocationsPage from './Pages/LocationsPage/LocationsPage';
 import GuidesPage from './Pages/GuidesPage/GuidesPage';
 import ShopsPage from './Pages/ShopsPage/ShopsPage';
 import ViewLocation from './Pages/ViewLocation/ViewLocation';
-import PlaceView from './Pages/PlaceView/PlaceView';
+import LocationView from './Pages/LocationView/LocationView';
 import ManageGuides from './Pages/ManageGuides/ManageGuides';
 import AddNewGuides from './Pages/AddNewGuide/AddNewGuide';
-import ViewGuide from './Pages/ViewGuide/ViewGuide';
-import GuideForm from './Pages/GuideReg/GuideForm';
-import ProfilePage from './Pages/GuideProfilepage/ProfilePage';
 
-// Create router with dynamic path for SingleLocationPage
 const router = createBrowserRouter([
   {
     path: "/adminPanel",
-    element: <AdminPanel />,
-  },
-  {
-    path: "/viewLocation/:id",
-    element: <ViewLocation />,
+    element: <AdminPanel/>,
   },
   {
     path: "/viewGuide/:id",
@@ -34,17 +26,22 @@ const router = createBrowserRouter([
     element: <ManageLocations/>,
   },
   {
-    path: "/manageGuides",
-    element: <ManageGuides/>,
-  },
-  {
     path: "/admin/manageLocations/addNew",
     element: <AddNewLocation/>,
+  },
+  {
+    path: "/admin/viewLocation/:id",
+    element: <ViewLocation/>,
+  },
+  {
+    path: "/manageGuides",
+    element: <ManageGuides/>,
   },
   {
     path: "/manageGuides/addNew",
     element: <AddNewGuides/>,
   },
+
   {
     path: "/",
     element: <HomePage />,
@@ -62,8 +59,8 @@ const router = createBrowserRouter([
     element: <ShopsPage />,
   },
   {
-    path: "/placeView",
-    element: <PlaceView />,
+    path: "/locationView/:1",
+    element: <LocationView />,
   },
   {
     path: "/GuideReg",
