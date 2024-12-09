@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useParams } from 'react';
 import './ViewGuide.css';
 import AdminSidebar from '../../Components/AdminSidebar/AdminSidebar';
 import AdminNavbar from '../../Components/AdminNavbar/AdminNavbar';
