@@ -29,7 +29,6 @@ const GuideForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Guide Info Submitted:', guide);
-    // Reset form
     setGuide({
       name: '',
       email: '',
