@@ -3,13 +3,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import AdminPanel from './Pages/AdminPanel/AdminPanel';
 import ManageLocations from './Pages/ManageLocations/ManageLocations';
 import AddNewLocation from './Pages/AddNewLocation/AddNewLocation';
+import ViewLocation from './Pages/ViewLocation/ViewLocation';
 import HomePage from './Pages/HomePage/HomePage';
 import LocationsPage from './Pages/LocationsPage/LocationsPage';
 import GuideForm from './Pages/GuideReg/GuideForm';
 import GuidesPage from './Pages/GuidesPage/GuidesPage';
 import ViewGuide from './Pages/ViewGuide/ViewGuide';
 import ShopsPage from './Pages/ShopsPage/ShopsPage';
-import ViewLocation from './Pages/ViewLocation/ViewLocation';
 import PlaceView from './Pages/PlaceView/PlaceView';
 import ManageGuides from './Pages/ManageGuides/ManageGuides';
 import AddNewGuides from './Pages/AddNewGuide/AddNewGuide';
@@ -25,18 +25,20 @@ const router = createBrowserRouter([
     element: <AdminPanel />,
   },
   {
-  },
-  {
     path: "/manageLocations",
     element: <ManageLocations/>,
   },
   {
-    path: "/manageGuides",
-    element: <ManageGuides/>,
-  },
-  {
     path: "/manageLocations/addNew",
     element: <AddNewLocation/>,
+  },
+  {
+    path: "/viewLocation/:id",
+    element: <ViewLocation/>,
+  },
+  {
+    path: "/manageGuides",
+    element: <ManageGuides/>,
   },
   {
     path: "/manageGuides/addNew",
