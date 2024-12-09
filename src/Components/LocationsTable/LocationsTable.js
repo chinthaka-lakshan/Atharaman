@@ -76,7 +76,7 @@ const LocationsTable = () => {
         columns={locationColumns.concat(actionColumn)}
         pageSize={8}
         rowsPerPageOptions={[5]}
-        getRowId={(row) => row.id} // Ensures unique row IDs
+        getRowId={(row) => row.id}
       />
     </div>
   );
