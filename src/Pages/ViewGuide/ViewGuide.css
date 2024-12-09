@@ -1,135 +1,239 @@
-.viewGuide{
+.viewLocation{
     display: flex;
     width: 100%;
     background-color: whitesmoke;
     color: #616161;
 
-    .viewGuideContainer{
+    .viewLocationContainer{
         flex: 6;
 
         .top{
             display: flex;
+            flex-direction: column;
             padding: 20px;
-            gap: 20px;
-            -webkit-box-shadow: 2px 4px 10px 1px rgba(0,0,0,0.47);
-            box-shadow: 2px 4px 10px 1px rgba(201,201,201,0.47);
-            position: relative;
+            gap: 30px;
+            height: auto;
+            -webkit-box-shadow: 2px 2px 5px 1px #425060;
+            box-shadow: 2px 2px 5px 1px #a0afc1;
+            border-radius: 5px;
+            margin: 20px;
 
-            .editButton{
-                position: absolute;
-                top: 15px;
-                right: 20px;
-                padding: 7px 20px;
-                font-size: 16px;
-                font-weight: 600;
-                color: #7451f8;
-                background-color: #7551f818;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-
-            .item{
+            .titleImg{
                 display: flex;
-                gap: 20px;
+                flex-direction: row;
+                gap: 50px;
+                margin-left: 30px;
 
-                .itemImg{
-                    width: 120px;
-                    height: 120px;
-                    border-radius: 50%;
-                    object-fit: cover;
+                .title{
+                    font-size: 25px;
+                    margin-bottom: 20px;
+                    color: gray;
                 }
 
-                .details{
-                    .itemTitle{
-                        margin-bottom: 10px;
-                        color: #616161;
-                    }
+                .itemImages{
+                    display: flex;
+                    flex-direction: row;
+                    gap: 30px;
 
-                    .detailItem{
-                        margin-bottom: 10px;
-                        font-size: 14px;
-
-                        .itemKey{
-                            font-weight: bold;
-                            color: #616161;
-                            margin-right: 5px;
-                        }
-                        
-                        .itemValue{
-                            font-weight: 400;
-                        }
+                    .itemImg{
+                        width: 120px;
+                        height: 120px;
+                        border-radius: 50%;
+                        object-fit: cover;
                     }
                 }
+            }
 
+            .details{
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-left: 30px;
+
+                .detailItem{
+                    margin-bottom: 10px;
+                    font-size: 18px;
+                    color: #616161;
+
+                    .itemKey{
+                        font-weight: bold;
+                        margin-right: 5px;
+                    }
+                    
+                    .itemValue{
+                        font-weight: 400;
+                    }
+                }
             }
         }
 
-        .title{
-            font-size: 20px;
-            margin-bottom: 20px;
-            color: gray;
-        }
-
-        .bottom {
-            padding: 20px;
-            -webkit-box-shadow: 2px 4px 10px 1px rgba(0,0,0,0.47);
-            box-shadow: 2px 4px 10px 1px rgba(201,201,201,0.47);
-            height: 100%;
-        }
-        
-        .right {
-            flex: 2;
-        }
-        
-        form {
+        .bottom{
             display: flex;
-            flex-wrap: wrap;
-            margin-top: 40px;
-            gap: 10px;
-            justify-content: space-between;
-        }
-        
-        .formInput {
-            width: 45%; /* Adjusted to take more width and fit in two columns */
-        
-            label {
+            flex-direction: column;
+            height: auto;
+            -webkit-box-shadow: 2px 2px 5px 1px #425060;
+            box-shadow: 2px 2px 5px 1px #a0afc1;
+            border-radius: 5px;
+            margin: 20px;
+            padding: 20px;
+
+            .title{
+                font-size: 25px;
+                color: gray;
+                margin-top: 5px;
+            }
+
+            .images{
                 display: flex;
                 align-items: center;
-                gap: 3px;
-            }
-        
-            input {
-                width: 100%;
-                padding: 5px;
-                border: none;
-                border-bottom: 1px solid grey;
-                font-size: 18px;
-                outline: none;
-                background-color: transparent;
-        
-                &::placeholder {
-                    font-size: 12px;
+                justify-content: center;
+
+                .imageGrid{
+                    display: flex;
+                    flex-direction: row;
+                    gap: 40px;
+
+                    .imageContainer{
+                        position: relative;
+                        margin: 5px;
+
+                        .imageWrapper{
+                            position: relative;
+
+                            .imagePreview{
+                                width: 120px;
+                                height: 120px;
+                                object-fit: cover;
+                                border-radius: 10px;
+                                color: #a0afc1;
+                            }
+
+                            .removeIcon {
+                                position: absolute;
+                                top: 5px;
+                                right: 5px;
+                                cursor: pointer;
+                                color: red;
+                                background-color: #f0f0f0;
+                                border: 2px solid red;
+                                border-radius: 5px;
+                                font-size: 20px;
+                            }
+                        }
+
+                        .placeholder{
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 120px;
+                            height: 120px;
+                            border-radius: 10px;
+                            color: #a0afc1;
+                            background-color: #e6f3f3;
+                        }
+                    }
                 }
             }
-        }
-        
-        .button-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        
-        button {
-            width: 150px;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            background-color: #210876;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
+
+            form{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+
+                .uploadButtons{
+                    display: flex;
+                    flex-direction: row;
+                    gap: 50px;
+
+                    .formInput{
+                        width: 120px;
+
+                        .fileUploadLabel{
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                            cursor: pointer;
+                            background-color: white;
+                            padding: 5px 5px;
+                            border: 1px dotted #616161;
+                            border-radius: 5px;
+                            transition: background-color 0.3s;
+    
+                            .uploadIcon{
+                                font-size: 15px;
+                                color: #616161;
+                            }
+                        }
+    
+                        .fileUploadLabel:hover{
+                            -webkit-box-shadow: 2px 2px 5px 1px #425060;
+                            box-shadow: 2px 2px 5px 1px #a0afc1;
+                            background-color: #f0f0f0;
+                            border: none;
+                        }
+                    }
+                }
+
+                .inputFields{
+                    display: flex;
+                    flex-direction: column;
+                    width: 80%;
+                    margin: 20px 0;
+                    gap: 30px;
+
+                    .formInput{
+                        color: #616161;
+    
+                        label{
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            font-size: 18px;
+                            font-weight: bold;
+                        }
+    
+                        input, select{
+                            width: 100%;
+                            padding: 5px;
+                            border: none;
+                            border-bottom: 1px solid #616161;
+                            font-size: 18px;
+                            outline: none;
+                            background-color: transparent;
+    
+                            &::placeholder{
+                                font-size: 15px;
+                            }
+                        }
+    
+                        select{
+                            cursor: pointer;
+    
+                            option{
+                                font-size: 15px;
+                            }
+                        }
+                    }
+                }
+
+                button{
+                    display: flex;
+                    align-self: center;
+                    justify-content: center;
+                    width: 150px;
+                    padding: 10px;
+                    margin: 10px 0;
+                    border: none;
+                    border-radius: 5px;
+                    background-color: #425060;
+                    color: white;
+                    font-size: 18px;
+                    font-weight: bold;
+                    cursor: pointer;
+                }
+            }
         }
     }
 }

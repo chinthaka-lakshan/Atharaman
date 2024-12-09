@@ -16,46 +16,38 @@ const AdminSidebar = () => {
                 <img src={Logo} alt='' className='logo'/>
             </Link>
         </div>
-        <hr/>
         <div className='bottom'>
             <ul>
-                <p className='title'></p>
-
                 <Link to="/adminPanel" style={{textDecoration:"none"}}>
                     <li>
                         <DashboardIcon className='icon'/>
                         <span>Dashboard</span>
                     </li>
                 </Link>
-                
                 <Link to="/manageLocations" style={{textDecoration:"none"}}>
                     <li>
                         <LocationOnSharpIcon className='icon'/>
-                        <span>Locations</span>
+                        <span>Manage Locations</span>
                     </li>
                 </Link>
-
                 <Link to="/manageGuides" style={{textDecoration:"none"}}>
                     <li>
                         <ElderlySharpIcon className='icon'/>
-                        <span>Guides</span>
+                        <span>Manage Guides</span>
                     </li>
                 </Link>
-
                 <Link to="/manageShops" style={{textDecoration:"none"}}>
                     <li>
                         <ShoppingCartSharpIcon className='icon'/>
-                        <span>Shops</span>
+                        <span>Manage Shops</span>
                     </li>
                 </Link>
-
                 <Link to="/manageReviews" style={{textDecoration:"none"}}>
                     <li>
                         <ReviewsSharpIcon className='icon'/>
-                        <span>Reviews</span>
+                        <span>Manage Reviews</span>
                     </li>
                 </Link>
-
             </ul>
         </div>
     </div>
