@@ -11,12 +11,15 @@ import ViewLocation from './Pages/ViewLocation/ViewLocation';
 import LocationView from './Pages/LocationView/LocationView';
 import ManageGuides from './Pages/ManageGuides/ManageGuides';
 import AddNewGuides from './Pages/AddNewGuide/AddNewGuide';
-import PlaceView from './Pages/PlaceView/PlaceView';
 
 const router = createBrowserRouter([
   {
     path: "/adminPanel",
     element: <AdminPanel/>,
+  },
+  {
+    path: "/viewGuide/:id",
+    element: <ViewGuide />,
   },
   {
     path: "/manageLocations",
@@ -58,6 +61,15 @@ const router = createBrowserRouter([
   {
     path: "/locationView/:1",
     element: <LocationView />,
+  },
+  {
+    path: "/GuideReg",
+    element: <GuideForm/>,
+  },
+
+  {
+    path: "/ProfilePage",
+    element: <ProfilePage/>,
   },
 ]);
 
