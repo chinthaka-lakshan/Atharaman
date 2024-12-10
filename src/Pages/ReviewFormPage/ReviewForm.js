@@ -1,20 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ReviewForm.css';
 import Navbar from '../../Components/Navbar/Navbar';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import the useNavigate hook
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ReviewForm = () => {
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
-  const [showPopup, setShowPopup] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { review, isUpdate } = location.state || {};
+
+  const [rating, setRating] = useState(review?.rating || 0);
+  const [comment, setComment] = useState(review?.comment || '');
   const [error, setError] = useState('');
 
-  const navigate = useNavigate(); // Initialize the navigate function
+  useEffect(() => {
+    if (review) {
+      setRating(review.rating);
+      setComment(review.comment);
+    }
+  }, [review]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
 
     if (rating === 0) {
       setError('Please provide a rating.');
@@ -27,26 +34,26 @@ const ReviewForm = () => {
     }
 
     setError('');
-    const data = {
-      username: "Login User", // Replace with the actual username if available
-      rating,
-      comment,
-    };
-
     try {
-      // Send the review data to the backend
-      await axios.post(`http://localhost:8080/review`, data);
-      setShowPopup(true);
+      if (isUpdate) {
+        // Update existing review
+        await axios.put(`http://localhost:8080/review/${review.id}`, {
+          rating,
+          comment,
+        });
+        alert('Review updated successfully!');
+      } else {
+        // Create new review
+        await axios.post('http://localhost:8080/review', {
+          username: "Login User", 
+          rating,
+          comment,
+        });
+        alert('Review submitted successfully!');
+      }
 
-      // Reset form fields after successful submission
-      setTimeout(() => {
-        setShowPopup(false);
-        setRating(0);
-        setComment('');
-        
-        // Navigate to the AllReview page after 2 seconds
-        navigate('/AllReview'); // Change this path based on your actual route
-      }, 2000); // Popup disappears after 2 seconds
+      // Navigate back to AllReview
+      navigate('/AllReview');
     } catch (err) {
       console.error(err.response?.data || "Error submitting review");
       setError('Failed to submit the review. Please try again.');
@@ -57,10 +64,15 @@ const ReviewForm = () => {
     <div className="Fullpage">
       <div className="review-form">
         <Navbar />
-        <h2>Site Review</h2>
+        <h2>{isUpdate ? 'Update Review' : 'Site Review'}</h2>
         <form onSubmit={handleSubmit}>
           <label>Username: </label>
-          <input type="text" placeholder="Username" disabled value="Login User" />
+          <input
+            type="text"
+            placeholder="Username"
+            disabled
+            value={review?.username || "Login User"}
+          />
 
           <div className="rating">
             <label>Rating:</label>
@@ -84,14 +96,11 @@ const ReviewForm = () => {
 
           {error && <p className="error">{error}</p>}
 
-          <button type="submit">Submit</button>
+          <button type="submit">{isUpdate ? 'Update' : 'Submit'}</button>
         </form>
-
-        {showPopup && <div className="popup">Successfully Submitted!</div>}
       </div>
     </div>
   );
 };
 
 export default ReviewForm;
-

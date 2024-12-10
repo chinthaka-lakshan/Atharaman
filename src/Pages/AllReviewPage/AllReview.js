@@ -24,7 +24,7 @@ const AllReview = () => {
     }
   }
 
-  // Pagination calculations
+  
   const totalPages = Math.ceil(reviews.length / reviewsPerPage);
   const startIndex = (currentPage - 1) * reviewsPerPage;
   const currentReviews = reviews.slice(startIndex, startIndex + reviewsPerPage);
@@ -42,13 +42,9 @@ const AllReview = () => {
   };
 
   // Navigate to ReviewForm with data for updating
-//   const handleUpdate = (review) => {
-//     navigate('/ReviewForm', { state: { review } });
-//   };
-const handleUpdate = (review) => {
+  const handleUpdate = (review) => {
     navigate('/ReviewForm', { state: { review, isUpdate: true } });
   };
-  
 
   const handleDelete = async (id) => {
     const confirmed = window.confirm('Are you sure you want to delete this review?');

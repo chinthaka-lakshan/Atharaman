@@ -7,14 +7,14 @@ import { useNavigate } from "react-router-dom";
 
 
 const SiteReviewPage =() => {
-  const navigate = useNavigate(); // Initialize navigate here
+  const navigate = useNavigate(); 
 
   const handleSeeAllReviews = () => {
-    navigate("/AllReview"); // This will now work without errors
+    navigate("/AllReview"); 
   }
 
   const handleAddReviews = () => {
-    navigate("/ReviewForm"); // This will now work without errors
+    navigate("/ReviewForm"); 
   }
   
   
