@@ -23,13 +23,7 @@ const GuidesTable = () => {
 
   const guideColumns = [
     { field: "id", headerName: "Guide ID", width: 70 },
-    {
-      field: "guideName",
-      headerName: "Guide",
-      width: 180,
-      renderCell: (params) => {
-      },
-    },
+    { field: "guideName", headerName: "Guide", width: 180 },
     { field: "description", headerName: "Description", width: 180 },
     { field: "phoneNo", headerName: "Phone Number", width: 100 },
     { field: "email", headerName: "E-Mail", width: 100 },
@@ -59,11 +53,23 @@ const GuidesTable = () => {
     },
   ];
 
-  // Handle delete guide
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/guides");
+      setData(response.data);
+    } catch (error) {
+      console.error("Error fetching guide data", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:8080/guides/${id}`);
-      setData(data.filter((item) => item.id !== id)); // Remove the deleted guide from the table
+      setData(data.filter((item) => item.id !== id));
     } catch (error) {
       console.error("Error deleting guide", error);
     }

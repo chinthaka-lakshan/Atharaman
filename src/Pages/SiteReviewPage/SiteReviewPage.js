@@ -1,21 +1,20 @@
 import React from 'react'
 import './SiteReviewPage.css';
 import Navbar from '../../Components/Navbar/Navbar';
-import {Link} from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
 
 
 
 const SiteReviewPage =() => {
-  const navigate = useNavigate(); // Initialize navigate here
+  const navigate = useNavigate(); 
 
   const handleSeeAllReviews = () => {
-    navigate("/AllReview"); // This will now work without errors
+    navigate("/AllReview"); 
   }
 
   const handleAddReviews = () => {
-    navigate("/ReviewForm"); // This will now work without errors
+    navigate("/ReviewForm"); 
   }
   
   
@@ -36,5 +35,3 @@ const SiteReviewPage =() => {
   );
 }
 export default SiteReviewPage;
-
-
