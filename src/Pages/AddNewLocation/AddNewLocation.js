@@ -144,8 +144,7 @@ const AddNewLocation = () => {
                 </div>
                 <div className="formInput">
                   <label>Short Description</label>
-                  <input
-                    type="text"
+                  <textarea
                     name="locationShortDescription"
                     placeholder="Enter Short Description"
                     required
