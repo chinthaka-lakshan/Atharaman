@@ -8,6 +8,7 @@ import LoginPage from './Pages/LoginPage/LoginPage'
 import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage'
 import AllReview from './Pages/AllReviewPage/AllReview'
 import ReviewForm from './Pages/ReviewFormPage/ReviewForm'
+import PlaceReviewForm from './Pages/PlaceReviewPage/PlaceReviewForm'
 
 
 
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
     path:"/SiteReviewPage",
     element:<SiteReviewPage/>
   },
+  {path:"/PlaceReviewForm",
+    element:<PlaceReviewForm/>,
+  },
+
   
 ])
 
