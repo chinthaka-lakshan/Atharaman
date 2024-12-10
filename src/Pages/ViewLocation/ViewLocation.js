@@ -22,7 +22,7 @@ const ViewLocation = () => {
         fetchLocation();
     }, [id]);
 
-    const fetchLocation = async () => {
+    async function fetchLocation() {
         try {
             const response = await axios.get(`http://localhost:8080/locations/${id}`);
             const data = response.data;
@@ -36,7 +36,7 @@ const ViewLocation = () => {
             console.error("Error fetching location details:", error.message);
             alert("Failed to fetch location details.");
         }
-    };
+    }
 
     const handleImageChange = (index, file) => {
         if (file && !["image/jpeg", "image/png"].includes(file.type)) {
