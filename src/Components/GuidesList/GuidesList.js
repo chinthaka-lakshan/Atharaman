@@ -20,12 +20,15 @@ const GuidesList = () => {
     const itemsPerPage = 15;
     const [guides, setGuides] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredGuides, setFilteredGuides] = useState([]);
 
     useEffect(() => {
         const fetchGuides = async () => {
             try {
                 const response = await axios.get("http://localhost:8080/guides");
                 setGuides(response.data);
+                setFilteredGuides(response.data); // Initially set all guides as filtered
             } catch (error) {
                 console.error("Error Fetching Guides:", error);
             }
@@ -34,42 +37,66 @@ const GuidesList = () => {
         fetchGuides();
     }, []);
 
+    // Handle search query changes
+    const handleSearch = (event) => {
+        const query = event.target.value.toLowerCase();
+        setSearchQuery(query);
+        const filtered = guides.filter(guide =>
+            guide.guideName && guide.guideName.toLowerCase().includes(query) // Ensure guideName is defined
+        );
+        setFilteredGuides(filtered);
+        setCurrentPage(1); // Reset to the first page after search
+    };
+    
+
     const indexOfLastGuide = currentPage * itemsPerPage;
     const indexOfFirstGuide = indexOfLastGuide - itemsPerPage;
-    const currentGuides = guides.slice(indexOfFirstGuide, indexOfLastGuide);
+    const currentGuides = filteredGuides.slice(indexOfFirstGuide, indexOfLastGuide);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
-    const totalPages = Math.ceil(guides.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredGuides.length / itemsPerPage);
 
     const shouldMovePaginationToBottom = currentGuides.length < itemsPerPage;
 
     return (
-        <div className="guidesList">
-            {currentGuides.length > 0 ? (
-                currentGuides.map((guide, index) => (
-                    <Link key={index} to={`/guideView/${guide.id}`}>
-                        <div className="guideTile">
-                            <img src={guide.image || SachinthaJayaweera} alt={guide.name} className="tile-img"/>
-                            <div className="tile-content">
-                                <h3>{guide.guide}</h3>
-                                <p>{guide.shortDescription}</p>
-                                {/* Render star rating */}
-                                <div className="star-rating">
-                                    {renderStars(guide.rating || 3)} {/* Assuming rating is a number between 1-5 */}
+        <div className="guidesListContainer">
+            <div className="search-bar-container">
+                <input
+                    type="text"
+                    placeholder="Search for a guide..."
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    className="search-bar"
+                />
+            </div>
+
+            <div className="guidesList">
+                {currentGuides.length > 0 ? (
+                    currentGuides.map((guide, index) => (
+                        <Link key={index} to={`/guideView/${guide.id}`}>
+                            <div className="guideTile">
+                                <img src={guide.image || SachinthaJayaweera} alt={guide.guideName} className="tile-img"/>
+                                <div className="tile-content">
+                                    <h3>{guide.guideName}</h3>
+                                    <p>{guide.description}</p>
+                                    {/* Render star rating */}
+                                    <div className="star-rating">
+                                        {renderStars(guide.rating || 3)} {/* Assuming rating is a number between 1-5 */}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </Link>
-                ))
-            ) : (
-                <p>No Guides Found</p>
-            )}
+                        </Link>
+                    ))
+                ) : (
+                    <p>No Guides Found</p>
+                )}
+            </div>
 
             {/* Pagination Controls */}
-            {guides.length > itemsPerPage && (
+            {filteredGuides.length > itemsPerPage && (
                 <div className={`pagination-wrapper ${shouldMovePaginationToBottom ? 'move-pagination' : ''}`}>
                     <div className="pagination">
                         <button
