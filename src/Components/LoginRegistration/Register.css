@@ -127,12 +127,12 @@
     text-decoration: underline;
   }
   
-  /* Error state styling */
+  
   .form-control.error {
     border-color: #e74c3c;
   }
   
-  /* Responsive adjustments */
+  
   @media (max-width: 480px) {
     .register-container {
       padding: 2rem;
