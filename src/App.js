@@ -44,6 +44,14 @@ const router = createBrowserRouter([
     path:"/SiteReviewPage",
     element:<SiteReviewPage/>
   },
+  {
+    path: "/ViewItem/:id",
+    element: <ViewItem/>,
+  },
+  {
+    path: "/ViewItemShop/:id",
+    element: <ViewItemShop />,
+  },
   
 ])
 
