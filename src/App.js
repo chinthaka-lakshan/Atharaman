@@ -16,14 +16,29 @@ import ViewGuide from './Pages/ViewGuide/ViewGuide';
 import ManageShops from './Pages/ManageShops/ManageShops';
 import AddNewShop from './Pages/AddNewShop/AddNewShop';
 import ViewShop from './Pages/ViewShop/ViewShop';
-import AddReview from './Pages/AddReviewpage/AddReview';
+import ReviewForm from './Pages/ReviewFormPage/ReviewForm';
+import AllReview from './Pages/AllReviewPage/AllReview';
 import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage';
-import ReviewForm from './Pages/SiteReviewPage/ReviewForm';
+import Login from './Components/LoginRegistration/Login';
+import Register from './Components/LoginRegistration/Register';
+import UserProfile from './Pages/UserProfile/UserProfile';
 
 const router = createBrowserRouter([
   {
     path: "/adminPanel",
     element: <AdminDashboard/>,
+  },
+  {
+    path: "/login",
+    element: <Login/>,
+  },
+  {
+    path: "/register",
+    element: <Register/>,
+  },
+  {
+    path: "/userProfile",
+    element: <UserProfile/>,
   },
   {
     path: "/manageLocations",
@@ -86,10 +101,17 @@ const router = createBrowserRouter([
     path: "/SiteReviewPage",
     element: <SiteReviewPage />,
   },
+
   {
-    path:"/addReview",
-    element:<AddReview/>,
+    path: "/reviewform",
+    element: <ReviewForm/>,
   },
+
+  {
+    path: "/allreview",
+    element: <AllReview/>,
+  },
+
 
 ]);
 
