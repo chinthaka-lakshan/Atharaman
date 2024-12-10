@@ -1,0 +1,161 @@
+.user-page {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(rgba(8,0,58,0.7),rgba(8,0,58,0.7)), url('../../Assets/Background.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+.profile-container {
+    max-width: 600px;
+    margin: auto;
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+
+  .profile-card {
+    background-color: rgba(255, 255, 255, 0.7); /* Transparent white background */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Soft border with transparency */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(10px); /* Adds a glassy effect */
+  }
+  
+  .profile-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .profile-card input,
+  .profile-card textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.8); /* Slightly less transparent for input fields */
+  }
+  
+  .profile-card button {
+    background-color: rgba(0, 123, 255, 0.9); /* Transparent button background */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .profile-card button:hover {
+    background-color: rgba(0, 86, 179, 0.9); /* Darker transparent blue */
+  }
+  
+  .profile-card button[type='button'] {
+    background-color: rgba(108, 117, 125, 0.9); /* Transparent gray */
+  }
+  
+  .profile-card button[type='button']:hover {
+    background-color: rgba(90, 98, 104, 0.9); /* Darker transparent gray */
+  }
+  
+  
+  .welcome-message {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .profile-details {
+    font-size: 1.1em;
+    color: #555;
+  }
+  
+  .profile-details span {
+    font-weight: bold;
+    color: #222;
+  }
+  
+  .edit-profile-section, .requests-section, .request-form {
+    margin-top: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #444;
+  }
+  
+  .form-group input, .form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .form-group textarea {
+    resize: none;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .edit-btn {
+    background-color: #007bff;
+  }
+  
+  .save-btn {
+    background-color: #28a745;
+  }
+  
+  .cancel-btn {
+    background-color: #dc3545;
+  }
+  
+  .request-btn {
+    background-color: #0c4a81c9;
+    margin-right: 10px;
+  }
+  
+  .submit-btn {
+    background-color: #17a2b8;
+  }
+  
+  .loading-text {
+    text-align: center;
+    font-size: 1.2em;
+    color: #555;
+  }
+  
+  .pending-message {
+    color: #ff8800;
+    font-weight: bold;
+    text-align: center;
+  }
+  
