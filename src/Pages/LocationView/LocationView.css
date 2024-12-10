@@ -1,267 +1,299 @@
-.locationPlatter {
-    width: 100%;
-    height: 140vh;
+.locationView{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 50px;
+  
+  .locationPlatter {
+    height: 100vh;
     background: #2A363B;
     background-size: cover;
     background-position: center;
     color: #ffffff;
     display: flex;
+    flex: 1;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    .locationPlatter-text {
+      text-align: center;
+      margin-top: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      h1 {
+        font-size: 50px;
+        font-weight: bold;
+      }
+
+      p {
+        max-width: 90%;
+        margin: 5px auto;
+        line-height: 1.3;
+        font-size: 18px;
+      }
+    }
+
+    .photo-grid {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 20px;
+
+      .main-image {
+        width: 48%;
+        height: 100%;
+        border-radius: 10px;
+        transition: transform 0.3s;
+        cursor: pointer;
+      }
+
+      .main-image:hover {
+        transform: scale(1.05);
+      }
+
+      .side-images {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        width: 48%;
+
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: 10px;
+          transition: transform 0.3s;
+          cursor: pointer;
+        }
+
+        img:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
   }
-  
-  .container {
-    padding: 20px;
-  }
-  
-  .locationPlatter-text {
-    text-align: center;
-  }
-  
-  .locationPlatter-text h1 {
-    margin-top: 600px;
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .locationPlatter-text p {
-    font-size: 1.2rem;
-    margin: 0 auto;
-    max-width: 800px;
-    line-height: 1.5;
-  }
-  
-  .photo-grid {
-    display: flex;
-    justify-content: center; /* Align all content in the center */
-    align-items: flex-start; /* Align the items to the top */
-    gap: 30px; /* Space between the left and right side images */
-    margin-top: 20px;
-    width: 100%;
-  }
-  
-  .main-image {
-    width: 49.4%;
-    height: auto;
-    border-radius: 10px;
-    transition: transform 0.3s;
-    cursor: pointer;
-  }
-  
-  .main-image:hover {
-    transform: scale(1.05);
-  }
-  
-  .side-images {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 columns */
-    gap: 20px; /* Space between images */
-    width: 50%; /* Ensure the side images take 30% of the container */
-  }
-  
-  .side-images img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    transition: transform 0.3s;
-    cursor: pointer;
-  }
-  
-  .side-images img:hover {
-    transform: scale(1.05);
-  }
-  
+
   .main-container {
     display: flex;
+    flex: 2;
     flex-direction: column;
+    width: 94%;
     align-items: center;
-    
+    justify-content: center;
+    gap: 50px;
+    color: #425060;
+
+    .description-container {
+      background-color: #f8f8f8;
+      border-radius: 10px;
+      box-shadow: 2px 4px 10px 1px rgba(145, 145, 145, 0.47);
+      padding: 20px;
+
+      p{
+        font-size: 18px;
+        line-height: 1.3;
+      }
+    }
+
+    .side-info {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+
+      .map-view, .weather-view {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        height: 400px;
+        background-color: #f8f8f8;
+        border-radius: 10px;
+        box-shadow: 2px 4px 10px 1px rgba(145, 145, 145, 0.47);
+        padding: 20px;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+        h2{
+          font-size: 25px;
+        }
+      }
+    }
+
+    .guides-container, .shops-container, .reviews-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      background-color: #f8f8f8;
+      border-radius: 10px;
+      box-shadow: 2px 4px 10px 1px rgba(145, 145, 145, 0.47);
+      padding: 20px;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+
+      .guides-list, .shops-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        background-color: #f9f9f9;
+
+        .guideTile, .shopTile {
+          width: 250px;
+          height: 400px;
+          background: #ffffff;
+          border-radius: 10px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+      }
+    }
   }
+}
+
+.guideTile:hover, .shopTile:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.tile-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-bottom: 1px solid #ddd;
+}
+
+.tile-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tile-content h3 {
+  font-size: 20px;
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.tile-content p {
+  font-size: 15px;
+  color: #666;
+  text-align: justify;
+  line-height: 1.3;
+}
+
+.star-rating {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.star {
+  font-size: 20px;
+  color: #ccc;
+  margin-right: 3px;
+}
+
+.star.filled {
+  color: #ffbc00;
+}
+
+.view-more-button {
+  display: block;
+  margin: 10px auto 0;
+  padding: 10px 20px;
+  background-color: #2a363b;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.view-more-button:hover {
+  background-color: #1d262a;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
   
-  .description-container {
-    max-width: 100%;
-    margin-top: 50px;
-    background-color: #f8f8f8;
-    border-radius: 10px;
-    color: rgb(0, 0, 0);
-    padding: 20px;
-    margin-left: 0%;
-    box-shadow: #000000;
-  }
+.modal-content {
+  position: relative;
+  width: 80%;
+  max-width: 800px;
+}
   
-  .side-info {
+.modal-content img {
+  width: 100%;
+  border-radius: 10px;
+}
+  
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 2rem;
+  color: #000000;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1001;
+}
+  
+.close-button:hover {
+  color: #ff5757;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  width: 85%;
+  gap: 5px;
+}
+
+.reviewTile {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 2px 4px 10px 1px #ddd;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  color: #425060;
+
+  .review-header {
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    margin-top: 20px;
-    gap: 20px;
-  }
-  
-  .map-view,
-  .weather-view {
-    flex: 1;
-    padding: 20px;
-    background-color: #ececec;
-    border-radius: 10px;
-    color: #000000;
-    box-shadow: 2px 4px 10px 1px rgba(145, 145, 145, 0.47);
-  }
-  
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
+  
+    h3{
+      font-size: 18px;
+    }
   }
   
-  .modal-content {
-    position: relative;
-    width: 80%;
-    max-width: 800px;
+  .review-comment {
+    margin-top: 10px;
+    font-size: 15px;
   }
-  
-  .modal-content img {
-    width: 100%;
-    border-radius: 10px;
-  }
-  
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 2rem;
-    color: #000000;
-    background: none;
-    border: none;
-    cursor: pointer;
-    z-index: 1001;
-  }
-  
-  .close-button:hover {
-    color: #ff5757;
-  }
-  
-  .guides-container {
-    margin-top: 550px;
-    padding: 20px;
-    background-color: #ececec;
-    border-radius: 10px;
-    box-shadow: 2px 4px 10px 1px rgba(145, 145, 145, 0.47);
-    width: 100%; /* Ensure it aligns with the side-info section */
-  }
-  
-  .guides-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-around;
-  }
-  
-  .guide-card {
-    width: calc(25% - 20px); /* Four cards in a row with spacing */
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    padding: 10px;
-  }
-  
-  .guide-photo {
-    width: 100%;
-    height: 300px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-  }
-  /* Star Rating */
-  .star-rating {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 5px;
-  }
-  
-  .star {
-    font-size: 1.2rem;
-    color: #ccc; /* Default star color */
-    margin: 0 2px;
-    transition: color 0.2s ease-in-out;
-  }
-  
-  .star.filled {
-    color: #f5c518; /* Gold color for filled stars */
-  }
-  
-  .view-more-button {
-    display: block;
-    margin: 20px auto 0;
-    padding: 10px 20px;
-    background-color: #2a363b;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .view-more-button:hover {
-    background-color: #1d262a;
-  }
-  
-  
-  
-  
-  .shops-container {
-    margin-top: 50px;
-    padding: 20px;
-    background-color: #ececec;
-    border-radius: 10px;
-    box-shadow: 2px 4px 10px 1px rgba(145, 145, 145, 0.47);
-    width: 100%; /* Ensure it aligns with the side-info section */
-  }
-  
-  .shops-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-around;
-  }
-  
-  .shop-card {
-    width: calc(25% - 20px); /* Four cards in a row with spacing */
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    padding: 10px;
-  }
-  
-  .shop-photo {
-    width: 100%;
-    height: 300px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .view-more-button {
-    display: block;
-    margin: 20px auto 0;
-    padding: 10px 20px;
-    background-color: #2a363b;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .view-more-button:hover {
-    background-color: #1d262a;
-  }
+}
