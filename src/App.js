@@ -18,12 +18,21 @@ import AddNewShop from './Pages/AddNewShop/AddNewShop';
 import ViewShop from './Pages/ViewShop/ViewShop';
 import AddReview from './Pages/AddReviewpage/AddReview';
 import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage';
-import ReviewForm from './Pages/SiteReviewPage/ReviewForm';
+import Login from './Components/LoginRegistration/Login';
+import Register from './Components/LoginRegistration/Register';
 
 const router = createBrowserRouter([
   {
     path: "/adminPanel",
     element: <AdminDashboard/>,
+  },
+  {
+    path: "/login",
+    element: <Login/>,
+  },
+  {
+    path: "/register",
+    element: <Register/>,
   },
   {
     path: "/manageLocations",
