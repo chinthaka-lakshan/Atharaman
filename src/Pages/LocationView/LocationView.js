@@ -87,29 +87,6 @@ const LocationView = () => {
     setModalImage(null);
   };
 
-  // const [reviews] = useState([ // Dummy reviews
-  //   {
-  //     reviewerName: "John Doe",
-  //     rating: 5,
-  //     comment: "An amazing place with breathtaking views! Highly recommended for adventure seekers.",
-  //   },
-  //   {
-  //     reviewerName: "Jane Smith",
-  //     rating: 4,
-  //     comment: "The climb was challenging but worth it. A great experience overall!",
-  //   },
-  //   {
-  //     reviewerName: "Sam Wilson",
-  //     rating: 3,
-  //     comment: "Good place to visit, but make sure to check the weather before going.",
-  //   },
-  //   {
-  //     reviewerName: "Emily Davis",
-  //     rating: 5,
-  //     comment: "Absolutely stunning! The golden grass and scenery are unforgettable.",
-  //   },
-  // ]);
-
   return (
     <div>
       <Navbar/>
@@ -120,31 +97,14 @@ const LocationView = () => {
             <p>{shortDescription}</p>
           </div>
           <div className="photo-grid">
-          <div className="imageGallery">
-          {mainImagePreview && <img src={mainImagePreview} alt="Main"  className="main-image"/>}
-            {extraImagePreviews.map((img, index) =>
-              img ? <img key={index} src={img} alt={`Extra ${index + 1}`} className="side-images"/> : null
-            )}
-                        
-            {/* <img
-              src={Narangala}
-              alt="Main view"
-              className="main-image"
-              onClick={() => openImage(Narangala)}
-            />
-            <div className="side-images">
-              {[Narangala, Narangala, Narangala, Narangala].map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`Gallery ${index + 1}`}
-                  onClick={() => openImage(image)}
-                />
-              ))} */}
+            <div className="imageGallery">
+              {mainImagePreview && <img src={mainImagePreview} alt="Main"  className="main-image"/>}
+              {extraImagePreviews.map((img, index) =>
+                img ? <img key={index} src={img} alt={`Extra ${index + 1}`} className="side-images"/> : null
+              )}
             </div>
           </div>
         </div>
-
         <div className="main-container">
           <div className="description-container">
             <p>{longDescription}</p>
@@ -252,7 +212,6 @@ const LocationView = () => {
               <button className="view-more-button">Add Location Review</button>
             </Link>
           </div>
-
           {modalImage && (
             <div className="modal">
               <div className="modal-content">
@@ -263,7 +222,6 @@ const LocationView = () => {
               </div>
             </div>
           )}
-
         </div>
       </div>
     </div>
