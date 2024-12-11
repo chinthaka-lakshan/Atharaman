@@ -114,11 +114,11 @@ const router = createBrowserRouter([
     element: <AllReview/>,
   },
   {
-    path: "/viewItem",
+    path: "/viewItem/:id",
     element: <ViewItem/>,
   },
   {
-    path: "/viewItemShop",
+    path: "/viewItemShop/:id",
     element: <ViewItemShop/>,
   },
 

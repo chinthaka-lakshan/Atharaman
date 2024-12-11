@@ -1,6 +1,7 @@
 import React from 'react'
 import './ShopsPage.css'
-import Navbar from '../../Components/Navbar/Navbar'
+import ItemList from '../../Components/ItemList/ItemList';
+import Navbar from '../../Components/Navbar/Navbar';
 
 const ShopsPage = () => {
   return (
@@ -13,6 +14,7 @@ const ShopsPage = () => {
           <button className='btn'>Explore More</button>
         </div>
       </div>
+      <ItemList/>
     </div>
   )
 }
