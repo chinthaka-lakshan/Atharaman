@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import "./LocationView.css";
 import Navbar from "../../Components/Navbar/Navbar";
 import Narangala from "../../Assets/Narangala_1.jpg";
@@ -8,6 +9,36 @@ import { Link } from 'react-router-dom';
 import axios from "axios";
 
 const LocationView = () => {
+  const { id } = useParams();
+    const [location, setLocation] = useState("");
+    const [shortDescription, setShortDescription] = useState("");
+    const [longDescription, setLongDescription] = useState("");
+    const [province, setProvince] = useState("");
+    const [mainImage, setMainImage] = useState(null);
+    const [mainImagePreview, setMainImagePreview] = useState(null);
+    const [extraImages, setExtraImages] = useState([null, null, null, null]);  
+    const [extraImagePreviews, setExtraImagePreviews] = useState([null, null, null, null]);
+
+    useEffect(() => {
+      fetchLocation();
+  }, [id]);
+
+  async function fetchLocation() {
+    try {
+        const response = await axios.get(`http://localhost:8080/locations/${id}`);
+        const data = response.data;
+        setLocation(data.location);
+        setShortDescription(data.shortDescription);
+        setLongDescription(data.longDescription);
+        setProvince(data.province);
+        setMainImagePreview(data.mainImage);
+        setExtraImagePreviews([data.extraImage1, data.extraImage2, data.extraImage3, data.extraImage4]);
+    } catch (error) {
+        console.error("Error fetching location details:", error.message);
+        alert("Failed to fetch location details.");
+    }
+}
+
   const [weather, setWeather] = useState(null);
   const [modalImage, setModalImage] = useState(null); // State for modal
   const [currentLocations, setLocations] = useState([]);
@@ -51,28 +82,28 @@ const LocationView = () => {
     return stars;
   };
   
-  useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/locations");
-        setLocations(response.data);
-      } catch (error) {
-        console.error("Error Fetching Locations:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchLocations = async () => {
+  //     try {
+  //       const response = await axios.get("http://localhost:8080/locations");
+  //       setLocations(response.data);
+  //     } catch (error) {
+  //       console.error("Error Fetching Locations:", error);
+  //     }
+  //   };
 
-    /*const fetchReviews = async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/reviews?locationId=1");
-        setReviews(response.data);
-      } catch (error) {
-        console.error("Error Fetching Reviews:", error);
-      }
-    };*/
+  //   /*const fetchReviews = async () => {
+  //     try {
+  //       const response = await axios.get("http://localhost:8080/reviews?locationId=1");
+  //       setReviews(response.data);
+  //     } catch (error) {
+  //       console.error("Error Fetching Reviews:", error);
+  //     }
+  //   };*/
 
-    fetchLocations();
-    /*fetchReviews();*/
-  }, []);
+  //   fetchLocations();
+  //   /*fetchReviews();*/
+  // }, []);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -105,7 +136,13 @@ const LocationView = () => {
             <p>Narangala Mountain is a 1,521-meter peak in the Uva Province with scenic views and diverse wildlife. Learn about its history, trails, and how to visit this remote and rugged place.</p>
           </div>
           <div className="photo-grid">
-            <img
+          <div className="imageGallery">
+          {mainImagePreview && <img src={mainImagePreview} alt="Main"  className="main-image"/>}
+            {extraImagePreviews.map((img, index) =>
+              img ? <img key={index} src={img} alt={`Extra ${index + 1}`} className="side-images"/> : null
+                        )}
+                        
+            {/* <img
               src={Narangala}
               alt="Main view"
               className="main-image"
@@ -119,13 +156,14 @@ const LocationView = () => {
                   alt={`Gallery ${index + 1}`}
                   onClick={() => openImage(image)}
                 />
-              ))}
+              ))} */}
             </div>
           </div>
         </div>
         <div className="main-container">
           <div className="description-container">
-            <p>Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m (1527 m). There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills. Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m. There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills. Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m. There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills.</p>
+          <p><strong>Long Description:</strong> {longDescription}</p>
+            {/* <p>Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m (1527 m). There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills. Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m. There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills. Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m. There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills.</p> */}
           </div>
           <div className="side-info">
             <div className="map-view">
