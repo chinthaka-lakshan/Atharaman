@@ -1,37 +1,28 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import "./GuideView.css";
 import Navbar from "../../Components/Navbar/Navbar";
-import SachinthaJayaweera from '../../Assets/SachinthaJayaweera_1.jpg'
 import Narangala from "../../Assets/Narangala_1.jpg";
+import SachinthaJayaweera from '../../Assets/SachinthaJayaweera_1.jpg'
+import Lamborghini from '../../Assets/Lamborghini_1.jpg'
 import { Link } from 'react-router-dom';
 import axios from "axios";
 
 const GuideView = () => {
+  const { id } = useParams();
+  const [guideName, setGuideName] = useState("");
+  const [description, setDescription] = useState("");
+  const [phoneNo, setPhoneNo] = useState('');
+  const [email, setEmail] = useState('');
+  const [nic, setNic] = useState('');
+  const guideLocations = ["Central", "Western", "Uva", "North", "Southern", "Eastern"];
+  const [mainImagePreview, setMainImagePreview] = useState(null);
+  const [extraImagePreviews, setExtraImagePreviews] = useState([null, null, null, null]);
+
   const [modalImage, setModalImage] = useState(null);
-  const [currentGuides, setGuides] = useState([]);
-  /*const [reviews, setReviews] = useState([]);*/
-  const [reviews] = useState([ // Dummy reviews
-    {
-      reviewerName: "John Doe",
-      rating: 5,
-      comment: "An amazing place with breathtaking views! Highly recommended for adventure seekers.",
-    },
-    {
-      reviewerName: "Jane Smith",
-      rating: 4,
-      comment: "The climb was challenging but worth it. A great experience overall!",
-    },
-    {
-      reviewerName: "Sam Wilson",
-      rating: 3,
-      comment: "Good place to visit, but make sure to check the weather before going.",
-    },
-    {
-      reviewerName: "Emily Davis",
-      rating: 5,
-      comment: "Absolutely stunning! The golden grass and scenery are unforgettable.",
-    },
-  ]);
+  const [currentLocations, setLocations] = useState([])
+
+  const [reviews, setReviews] = useState([]);
 
   const renderStars = (rating) => {
     const stars = [];
@@ -44,29 +35,37 @@ const GuideView = () => {
     }
     return stars;
   };
-  
-  useEffect(() => {
-    const fetchGuides = async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/guides");
-        setGuides(response.data);
-      } catch (error) {
-        console.error("Error Fetching Guides:", error);
-      }
-    };
 
-    /*const fetchReviews = async () => {
+  useEffect(() => {
+    async function fetchGuide() {
       try {
-        const response = await axios.get("http://localhost:8080/reviews?guideId=1");
+        const response = await axios.get(`http://localhost:8080/guides/${id}`);
+        const data = response.data;
+        setGuideName(data.guideName);
+        setDescription(data.description);
+        setPhoneNo(data.phoneNo);
+        setEmail(data.email);
+        setNic(data.nic);
+        setMainImagePreview(SachinthaJayaweera);
+        setExtraImagePreviews([SachinthaJayaweera, SachinthaJayaweera, SachinthaJayaweera, SachinthaJayaweera]);
+      } catch (error) {
+        console.error("Error fetching guide details:", error.message);
+        alert("Failed to fetch guide details.");
+      }
+    }
+
+    async function fetchReviews() {
+      try {
+        const response = await axios.get('http://localhost:8080/placereview');
         setReviews(response.data);
       } catch (error) {
-        console.error("Error Fetching Reviews:", error);
+        console.error('Error loading reviews:', error);
       }
-    };*/
+    }
 
-    fetchGuides();
-    /*fetchReviews();*/
-  }, []);
+    fetchGuide();
+    fetchReviews();
+  }, [id]);
 
   const openImage = (image) => {
     setModalImage(image);
@@ -82,74 +81,37 @@ const GuideView = () => {
       <div className="guideView">
         <div className="guidePlatter container">
           <div className="guidePlatter-text">
-            <h1>Sachintha Jayaweera</h1>
-            <p>Sachintha is a great guide for you to lead the way. He is a travelling enthusiast and has shown way for a lot of foreign travellers safely.</p>
+            <h1>{guideName}</h1>
+            <p>{description}</p>
           </div>
           <div className="photo-grid">
-            <img
-              src={Narangala}
-              alt="Main view"
-              className="main-image"
-              onClick={() => openImage(Narangala)}
-            />
+            <div className="main-image">
+              {mainImagePreview && <img src={mainImagePreview} alt="Main" onClick={() => openImage(mainImagePreview) }/>}
+            </div>
             <div className="side-images">
-              {[Narangala, Narangala, Narangala, Narangala].map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`Gallery ${index + 1}`}
-                  onClick={() => openImage(image)}
-                />
-              ))}
+              {extraImagePreviews.map((img, index) =>
+                img ? <img key={index} src={img} alt={`Extra ${index + 1}`} onClick={() => openImage(img) }/> : null
+              )}
             </div>
           </div>
         </div>
         <div className="main-container">
           <div className="description-container">
-            <p>Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m (1527 m). There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills. Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m. There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills. Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m. There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills.</p>
+            <p>{description}</p>
           </div>
-          <div className="side-info">
-            <div className="map-view">
-              <h2>Location Map</h2>
-              <iframe
-                title="Narangala Map"
-                src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${latitude},${longitude}`}
-                width="100%"
-                height="300"
-                style={{ border: "0" }}
-                allowFullScreen
-              ></iframe>
-            </div>
-            <div className="weather-view">
-              <h2>Current Weather</h2>
-              {weather && weather.main && weather.weather ? (
-                <div>
-                  <p>
-                    <strong>Temperature:</strong> {weather.main.temp}°C
-                  </p>
-                  <p>
-                    <strong>Condition:</strong> {weather.weather[0].description}
-                  </p>
-                  <p>
-                    <strong>Humidity:</strong> {weather.main.humidity}%
-                  </p>
-                  <p>
-                    <strong>Wind Speed:</strong> {weather.wind.speed} m/s
-                  </p>
-                </div>
-              ) : (
-              <p>Loading weather information...</p>
-              )}
-            </div>
+          <div className="details-container">
+            <p><strong>Phone No :</strong> {phoneNo}</p>
+            <p><strong>E-Mail :</strong> {email}</p>
+            <p><strong>NIC :</strong> {nic}</p>
           </div>
-          <div className="guides-container">
-            <h2>Top Guides Nearby</h2>
-            <div className="guides-list">
+          <div className="locations-container">
+            <h2>Expert Locations</h2>
+            <div className="locations-list">
               {currentLocations.length > 0 ? (
                 currentLocations.slice(0, 4).map((location, index) => (
                   <Link key={index} to={`/locationView/${location.id}`}>
-                    <div className="guideTile">
-                      <img src={location.image || SachinthaJayaweera} alt={location.name} className="tile-img" />
+                    <div className="locationTile">
+                      <img src={location.image || Narangala} alt={location.name} className="tile-img" />
                         <div className="tile-content">
                           <h3>{location.location}</h3>
                           <p>{location.shortDescription}</p>
@@ -161,43 +123,19 @@ const GuideView = () => {
                   </Link>
                 ))
               ) : (
-              <p>No Guides Found</p>
+              <p>No Locations Found</p>
               )}
             </div>
-            <button className="view-more-button">View More Guides</button>
-          </div>
-          <div className="shops-container">
-            <h2>Top Shops Nearby</h2>
-            <div className="shops-list">
-              {currentLocations.length > 0 ? (
-                currentLocations.slice(0, 4).map((location, index) => (
-                  <Link key={index} to={`/locationView/${location.id}`}>
-                    <div className="shopTile">
-                      <img src={location.image || Lamborghini} alt={location.name} className="tile-img" />
-                        <div className="tile-content">
-                          <h3>{location.location}</h3>
-                          <p>{location.shortDescription}</p>
-                          <div className="star-rating">
-                            {renderStars(location.rating || 3)}
-                          </div>
-                        </div>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-              <p>No Shops Found</p>
-              )}
-            </div>
-            <button className="view-more-button">View More Shops</button>
+            <button className="view-more-button">View More Locations</button>
           </div>
           <div className="reviews-container">
-            <h2>Location Reviews</h2>
+            <h2>Guide Reviews</h2>
             <div className="reviews-list">
               {reviews.length > 0 ? (
                 reviews.map((review, index) => (
                   <div key={index} className="reviewTile">
                     <div className="review-header">
-                      <h3>{review.reviewerName}</h3>
+                      <h3>Sachintha</h3>
                       <div className="star-rating">{renderStars(review.rating)}</div>
                     </div>
                     <p className="review-comment">{review.comment}</p>
@@ -207,11 +145,10 @@ const GuideView = () => {
                 <p>No Reviews Found</p>
               )}
             </div>
-            <Link to="/locationReviewPage">
-              <button className="view-more-button">Add Location Review</button>
+            <Link to="/guideReviewPage">
+              <button className="view-more-button">Add Guide Review</button>
             </Link>
           </div>
-
           {modalImage && (
             <div className="modal">
               <div className="modal-content">
@@ -222,11 +159,10 @@ const GuideView = () => {
               </div>
             </div>
           )}
-
         </div>
       </div>
     </div>
   );
 };
 
-export default LocationView;
+export default GuideView;
