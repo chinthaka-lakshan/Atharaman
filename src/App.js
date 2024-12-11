@@ -22,7 +22,8 @@ import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage';
 import Login from './Components/LoginRegistration/Login';
 import Register from './Components/LoginRegistration/Register';
 import UserProfile from './Pages/UserProfile/UserProfile';
-import LocationReviewPage from './Pages/LocationReviewPage/LocationReviewPage';
+import ViewItem from './Pages/ViewItem/ViewItem';
+import ViewItemShop from './Pages/ViewItemShop/ViewItemShop';
 
 const router = createBrowserRouter([
   {
@@ -113,8 +114,12 @@ const router = createBrowserRouter([
     element: <AllReview/>,
   },
   {
-    path: "/locationReviewPage",
-    element: <LocationReviewPage/>,
+    path: "/viewItem/:id",
+    element: <ViewItem/>,
+  },
+  {
+    path: "/viewItemShop/:id",
+    element: <ViewItemShop/>,
   },
 
 
