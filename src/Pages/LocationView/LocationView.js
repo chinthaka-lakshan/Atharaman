@@ -97,10 +97,12 @@ const LocationView = () => {
             <p>{shortDescription}</p>
           </div>
           <div className="photo-grid">
-            <div className="imageGallery">
-              {mainImagePreview && <img src={mainImagePreview} alt="Main"  className="main-image"/>}
+            <div className="main-image">
+              {mainImagePreview && <img src={mainImagePreview} alt="Main" onClick={() => openImage(mainImagePreview) }/>}
+            </div>
+            <div className="side-images">
               {extraImagePreviews.map((img, index) =>
-                img ? <img key={index} src={img} alt={`Extra ${index + 1}`} className="side-images"/> : null
+                img ? <img key={index} src={img} alt={`Extra ${index + 1}`} onClick={() => openImage(img) }/> : null
               )}
             </div>
           </div>
