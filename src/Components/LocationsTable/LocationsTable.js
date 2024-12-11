@@ -11,22 +11,22 @@ const LocationsTable = () => {
     { field: "id", headerName: "Location ID", width: 70 },
     { field: "location", headerName: "Location", width: 180 },
     { field: "province", headerName: "Province", width: 120 },
-    { field: "shortDescription", headerName: "Short Description", width: 180 },
-    { field: "longDescription", headerName: "Long Description", width: 250 },
+    { field: "shortDescription", headerName: "Short Description", width: 250 },
+    { field: "longDescription", headerName: "Long Description", width: 290 },
   ];
 
   const actionColumn = [
     {
       field: "action",
       headerName: "Action",
-      width: 200,
+      width: 150,
       renderCell: (params) => {
         return (
           <div className="cellAction">
             <Link to={`/viewLocation/${params.row.id}`}>
-              <span className="viewButton">View</span>
+              <button className="viewButton">View</button>
             </Link>
-            <div className="deleteButton" onClick={() => handleDelete(params.row.id)}>Delete</div>
+              <button className="deleteButton" onClick={() => handleDelete(params.row.id)}>Delete</button>
           </div>
         );
       },
@@ -60,7 +60,7 @@ const LocationsTable = () => {
       <div className="locationsTableTitle">
         <span>Locations List</span>
         <Link to="/manageLocations/addNew">
-          <span className="link">Add New</span>
+          <button className="link">Add New</button>
         </Link>
       </div>
       <DataGrid

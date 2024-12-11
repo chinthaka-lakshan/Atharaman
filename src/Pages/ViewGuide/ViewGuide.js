@@ -13,11 +13,11 @@ const ViewGuide = () => {
     const [phoneNo, setPhoneNo] = useState('');
     const [email, setEmail] = useState('');
     const [nic, setNic] = useState('');
-    const [locations, setLocations] = useState('');
+    const [guideLocations, setGuideLocations] = useState('');
     const [mainImage, setMainImage] = useState(null);
     const [mainImagePreview, setMainImagePreview] = useState(null);
 
-    const guideLocations = ["Central", "Western", "Uva", "North", "Southern", "Eastern"];
+    const guideLocationsList = ["Central", "Western", "Uva", "North", "Southern", "Eastern"];
 
     useEffect(() => {
         fetchGuide();
@@ -32,7 +32,7 @@ const ViewGuide = () => {
             setPhoneNo(data.phoneNo);
             setEmail(data.email);
             setNic(data.nic);
-            setLocations(data.locations)
+            setGuideLocations(data.guideLocations)
             setMainImagePreview(data.mainImage);
         } catch (error) {
             console.error("Error fetching guide details:", error.message);
@@ -68,7 +68,7 @@ const ViewGuide = () => {
         formData.append("phoneNo", phoneNo);
         formData.append("email", email);
         formData.append("nic", nic);
-        formData.append("locations", locations);
+        formData.append("guideLocations", guideLocations);
     
         if (mainImage) {
             formData.append("mainImage", mainImage);
@@ -103,6 +103,7 @@ const ViewGuide = () => {
                         <p><strong>Phone No:</strong> {phoneNo}</p>
                         <p><strong>E-Mail:</strong> {email}</p>
                         <p><strong>NIC:</strong> {nic}</p>
+                        <p><strong>Expert Locations:</strong> {guideLocations}</p>
                     </div>
                 </div>
                 <div className="bottom">
