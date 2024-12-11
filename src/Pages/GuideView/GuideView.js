@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./LocationView.css";
+import "./GuideView.css";
 import Navbar from "../../Components/Navbar/Navbar";
 import SachinthaJayaweera from '../../Assets/SachinthaJayaweera_1.jpg'
 import Narangala from "../../Assets/Narangala_1.jpg";
@@ -7,13 +7,9 @@ import { Link } from 'react-router-dom';
 import axios from "axios";
 
 const GuideView = () => {
-  const [modalImage, setModalImage] = useState(null); // State for modal
-  const [currentLocations, setLocations] = useState([]);
+  const [modalImage, setModalImage] = useState(null);
+  const [currentGuides, setGuides] = useState([]);
   /*const [reviews, setReviews] = useState([]);*/
-  const API_KEY = "YOUR_OPENWEATHERMAP_API_KEY"; // Replace with your OpenWeatherMap API Key
-  const latitude = 7.1167; // Latitude of Narangala
-  const longitude = 81.0333; // Longitude of Narangala
-
   const [reviews] = useState([ // Dummy reviews
     {
       reviewerName: "John Doe",
@@ -50,39 +46,26 @@ const GuideView = () => {
   };
   
   useEffect(() => {
-    const fetchLocations = async () => {
+    const fetchGuides = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/locations");
-        setLocations(response.data);
+        const response = await axios.get("http://localhost:8080/guides");
+        setGuides(response.data);
       } catch (error) {
-        console.error("Error Fetching Locations:", error);
+        console.error("Error Fetching Guides:", error);
       }
     };
 
     /*const fetchReviews = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/reviews?locationId=1");
+        const response = await axios.get("http://localhost:8080/reviews?guideId=1");
         setReviews(response.data);
       } catch (error) {
         console.error("Error Fetching Reviews:", error);
       }
     };*/
 
-    fetchLocations();
+    fetchGuides();
     /*fetchReviews();*/
-  }, []);
-
-  useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`);
-        const data = await response.json();
-        setWeather(data);
-      } catch (error) {
-        console.error("Error fetching weather data:", error);
-      }
-    };
-    fetchWeather();
   }, []);
 
   const openImage = (image) => {
@@ -96,11 +79,11 @@ const GuideView = () => {
   return (
     <div>
       <Navbar/>
-      <div className="locationView">
-        <div className="locationPlatter container">
-          <div className="locationPlatter-text">
-            <h1>Narangala</h1>
-            <p>Narangala Mountain is a 1,521-meter peak in the Uva Province with scenic views and diverse wildlife. Learn about its history, trails, and how to visit this remote and rugged place.</p>
+      <div className="guideView">
+        <div className="guidePlatter container">
+          <div className="guidePlatter-text">
+            <h1>Sachintha Jayaweera</h1>
+            <p>Sachintha is a great guide for you to lead the way. He is a travelling enthusiast and has shown way for a lot of foreign travellers safely.</p>
           </div>
           <div className="photo-grid">
             <img
