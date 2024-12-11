@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./LocationView.css";
 import Navbar from "../../Components/Navbar/Navbar";
-import Narangala from "../../Assets/Narangala_1.jpg";
 import SachinthaJayaweera from '../../Assets/SachinthaJayaweera_1.jpg'
-import Lamborghini from '../../Assets/Lamborghini_1.jpg'
+import Narangala from "../../Assets/Narangala_1.jpg";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 
-const LocationView = () => {
-  const [weather, setWeather] = useState(null);
+const GuideView = () => {
   const [modalImage, setModalImage] = useState(null); // State for modal
   const [currentLocations, setLocations] = useState([]);
   /*const [reviews, setReviews] = useState([]);*/
