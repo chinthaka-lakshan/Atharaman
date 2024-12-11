@@ -103,7 +103,7 @@ const ViewLocation = () => {
                         )}
                     </div>
                     <div className="details">
-                        <p><strong>ID:</strong> {id}</p>
+                        <p><strong>Location ID:</strong> {id}</p>
                         <p><strong>Location:</strong> {location}</p>
                         <p><strong>Province:</strong> {province}</p>
                         <p><strong>Short Description:</strong> {shortDescription}</p>

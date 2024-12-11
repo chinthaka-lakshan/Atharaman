@@ -6,7 +6,7 @@
     -webkit-box-shadow: 2px 2px 5px 1px #425060;
     box-shadow: 2px 2px 5px 1px #a0afc1;
     border-radius: 5px;
-    height: 80px;
+    height: 200px;
 
     .left,.right{
         display: flex;
@@ -20,7 +20,7 @@
         }
 
         .counter{
-            font-size: 35px;
+            font-size: 25px;
             font-weight: 300;
             color: #a0afc1;
         }
@@ -33,7 +33,7 @@
         }
 
         .icon{
-            font-size: 25px;
+            font-size: 50px;
             padding: 5px;
             align-self: flex-end;
         }

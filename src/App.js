@@ -22,6 +22,7 @@ import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage';
 import Login from './Components/LoginRegistration/Login';
 import Register from './Components/LoginRegistration/Register';
 import UserProfile from './Pages/UserProfile/UserProfile';
+import LocationReviewPage from './Pages/LocationReviewPage/LocationReviewPage';
 
 const router = createBrowserRouter([
   {
@@ -110,6 +111,10 @@ const router = createBrowserRouter([
   {
     path: "/allreview",
     element: <AllReview/>,
+  },
+  {
+    path: "/locationReviewPage",
+    element: <LocationReviewPage/>,
   },
 
 

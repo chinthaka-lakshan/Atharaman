@@ -1,239 +1,226 @@
-.viewGuide{
+.viewGuide {
     display: flex;
-    width: 100%;
-    background-color: whitesmoke;
-    color: #616161;
 
-    .viewGuideContainer{
+    .viewGuideContainer {
         flex: 6;
 
-        .top{
+        .top {
             display: flex;
+            flex: 1;
             flex-direction: column;
-            padding: 20px;
-            gap: 30px;
             height: auto;
+            align-items: center;
+            justify-content: center;
             -webkit-box-shadow: 2px 2px 5px 1px #425060;
             box-shadow: 2px 2px 5px 1px #a0afc1;
             border-radius: 5px;
             margin: 20px;
+            padding: 20px;
+            gap: 40px;
 
-            .titleImg{
+            h1{
+                font-size: 25px;
+                color: #425060;
+            }
+
+            .imageGallery {
                 display: flex;
                 flex-direction: row;
-                gap: 50px;
-                margin-left: 30px;
+                align-items: center;
+                justify-content: center;
+                gap: 40px;
 
-                .title{
-                    font-size: 25px;
-                    margin-bottom: 20px;
-                    color: gray;
-                }
-
-                .itemImages{
-                    display: flex;
-                    flex-direction: row;
-                    gap: 30px;
-
-                    .itemImg{
-                        width: 120px;
-                        height: 120px;
-                        border-radius: 50%;
-                        object-fit: cover;
-                    }
+                img{
+                    width: 120px;
+                    height: 120px;
+                    object-fit: cover;
+                    border-radius: 10px;
+                    color: #a0afc1;
                 }
             }
 
             .details{
                 display: flex;
                 flex-direction: column;
-                gap: 10px;
-                margin-left: 30px;
+                gap: 20px;
+                color: #425060;
+                font-size: 20px;
 
-                .detailItem{
-                    margin-bottom: 10px;
-                    font-size: 18px;
-                    color: #616161;
+                p{
+                    font-weight: 400;
+                }
 
-                    .itemKey{
-                        font-weight: bold;
-                        margin-right: 5px;
-                    }
-                    
-                    .itemValue{
-                        font-weight: 400;
-                    }
+                p strong{
+                    font-weight: bold;
                 }
             }
         }
-
-        .bottom{
+        
+        .bottom {
             display: flex;
+            flex: 2;
             flex-direction: column;
             height: auto;
+            align-items: center;
+            justify-content: center;
             -webkit-box-shadow: 2px 2px 5px 1px #425060;
             box-shadow: 2px 2px 5px 1px #a0afc1;
             border-radius: 5px;
             margin: 20px;
             padding: 20px;
+            gap: 20px;
 
-            .title{
+            h2{
                 font-size: 25px;
-                color: gray;
-                margin-top: 5px;
+                color: #425060;
             }
 
-            .images{
+            .eForm{
                 display: flex;
+                flex-direction: column;
+                gap: 20px;
                 align-items: center;
                 justify-content: center;
+                width: 100%;
 
-                .imageGrid{
+                .formImages{
                     display: flex;
                     flex-direction: row;
                     gap: 40px;
+                    align-items: center;
+                    justify-content: center;
 
-                    .imageContainer{
-                        position: relative;
-                        margin: 5px;
+                    .mainImage{
+                        display: flex;
+                        flex-direction: column;
+                        width: 120px;
+                        gap: 5px;
 
-                        .imageWrapper{
-                            position: relative;
+                        .mainImg{
+                            border-radius: 5px;
+                            color: #a0afc1;
+                        }
 
-                            .imagePreview{
+                        img{
+                            width: 120px;
+                            height: 120px;
+                            object-fit: cover;
+                            border-radius: 10px;
+                            color: #a0afc1;
+                        }
+                    }
+
+                    .extraImages{
+                        display: flex;
+                        flex-direction: row;
+                        gap: 40px;
+
+                        .extraImage{
+                            display: flex;
+                            flex-direction: column;
+                            width: 120px;
+                            gap: 5px;
+
+                            .extraImg{
+                                border-radius: 5px;
+                                color: #a0afc1;
+                            }
+
+                            img{
                                 width: 120px;
                                 height: 120px;
                                 object-fit: cover;
                                 border-radius: 10px;
                                 color: #a0afc1;
                             }
-
-                            .removeIcon {
-                                position: absolute;
-                                top: 5px;
-                                right: 5px;
-                                cursor: pointer;
-                                color: red;
-                                background-color: #f0f0f0;
-                                border: 2px solid red;
-                                border-radius: 5px;
-                                font-size: 20px;
-                            }
-                        }
-
-                        .placeholder{
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            width: 120px;
-                            height: 120px;
-                            border-radius: 10px;
-                            color: #a0afc1;
-                            background-color: #e6f3f3;
-                        }
-                    }
-                }
-            }
-
-            form{
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-
-                .uploadButtons{
-                    display: flex;
-                    flex-direction: row;
-                    gap: 50px;
-
-                    .formInput{
-                        width: 120px;
-
-                        .fileUploadLabel{
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            gap: 10px;
-                            cursor: pointer;
-                            background-color: white;
-                            padding: 5px 5px;
-                            border: 1px dotted #616161;
-                            border-radius: 5px;
-                            transition: background-color 0.3s;
-    
-                            .uploadIcon{
-                                font-size: 15px;
-                                color: #616161;
-                            }
-                        }
-    
-                        .fileUploadLabel:hover{
-                            -webkit-box-shadow: 2px 2px 5px 1px #425060;
-                            box-shadow: 2px 2px 5px 1px #a0afc1;
-                            background-color: #f0f0f0;
-                            border: none;
                         }
                     }
                 }
 
-                .inputFields{
+                .formDetails{
                     display: flex;
                     flex-direction: column;
-                    width: 80%;
-                    margin: 20px 0;
-                    gap: 30px;
+                    gap: 25px;
+                    color: #425060;
+                    width: 100%;
 
-                    .formInput{
-                        color: #616161;
-    
+                    .editFormInput{
+                        display: flex;
+                        flex-direction: column;
+                        gap: 5px;
+                        font-size: 20px;
+
                         label{
-                            display: flex;
-                            align-items: center;
-                            gap: 10px;
-                            font-size: 18px;
                             font-weight: bold;
                         }
-    
-                        input, select{
+
+                        input, select, textarea{
                             width: 100%;
-                            padding: 5px;
-                            border: none;
-                            border-bottom: 1px solid #616161;
-                            font-size: 18px;
+                            font-weight: 400;
+                            height: auto;
+                            padding: 10px;
+                            font-size: 20px;
+                            border: 1px solid #dcdcdc;
+                            border-radius: 5px;
                             outline: none;
-                            background-color: transparent;
-    
-                            &::placeholder{
-                                font-size: 15px;
-                            }
-                        }
-    
-                        select{
-                            cursor: pointer;
-    
-                            option{
-                                font-size: 15px;
-                            }
                         }
                     }
                 }
 
                 button{
-                    display: flex;
-                    align-self: center;
-                    justify-content: center;
                     width: 150px;
                     padding: 10px;
-                    margin: 10px 0;
-                    border: none;
-                    border-radius: 5px;
+                    margin-top: 10px;
                     background-color: #425060;
                     color: white;
-                    font-size: 18px;
-                    font-weight: bold;
+                    font-size: 16px;
+                    border: none;
+                    border-radius: 5px;
                     cursor: pointer;
+                    align-self: center;
+                }
+
+                button:hover{
+                    background-color: #334150;
                 }
             }
         }
     }
+}
+
+.mainImage input[type="file"] + label,
+.extraImage input[type="file"] + label {
+    display: flex;
+    width: 120px;
+}
+
+.mainImage .mainImg,
+.extraImage .extraImg {
+    display: none;
+}
+
+.mainImage label,
+.extraImage label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    background-color: white;
+    padding: 5px 5px;
+    border: 1px dotted #616161;
+    border-radius: 5px;
+    width: 120px;
+    font-size: 13px;
+    transition: background-color 0.3s;
+}
+
+.mainImage label:hover,
+.extraImage label:hover {
+    -webkit-box-shadow: 2px 2px 5px 1px #425060;
+    box-shadow: 2px 2px 5px 1px #a0afc1;
+    background-color: #f0f0f0;
+    border: none;
+    width: 120px;
+    font-size: 13px;
 }
