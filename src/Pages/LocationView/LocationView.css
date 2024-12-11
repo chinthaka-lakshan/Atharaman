@@ -43,15 +43,24 @@
       flex-direction: row;
       align-items: center;
       justify-content: center;
-      margin-top: 20px;
+      margin: 20px 0;
       gap: 20px;
+      width: 100%;
 
       .main-image {
-        width: 48%;
+        width: 50%;
         height: 100%;
-        border-radius: 10px;
-        transition: transform 0.3s;
-        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+
+        img{
+          width: 100%;
+          height: 100%;
+          border-radius: 10px;
+          transition: transform 0.3s;
+          cursor: pointer;
+          object-fit: cover;
+        }
       }
 
       .main-image:hover {
@@ -61,15 +70,17 @@
       .side-images {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
+        align-items: center;
+        justify-content: center;
         gap: 20px;
-        width: 48%;
 
         img {
-          width: 100%;
-          height: 100%;
           border-radius: 10px;
           transition: transform 0.3s;
           cursor: pointer;
+          object-fit: cover;
+          width: 300px;
+          height: 200px;
         }
 
         img:hover {
