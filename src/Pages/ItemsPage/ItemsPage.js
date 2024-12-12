@@ -1,6 +1,6 @@
 import React from 'react'
 import './ItemsPage.css'
-import ItemList from '../../Components/ItemList/ItemList';
+import ItemsList from '../../Components/ItemsList/ItemsList';
 
 const ItemsPage = () => {
   return (
@@ -12,7 +12,7 @@ const ItemsPage = () => {
           <button className='btn'>Explore More</button>
         </div>
       </div>
-      <ItemList/>
+      <ItemsList/>
     </div>
   )
 }

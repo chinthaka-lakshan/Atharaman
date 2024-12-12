@@ -31,6 +31,10 @@ nav ul li{
     display: none;
 }
 
+.link-button{
+    cursor: pointer;
+}
+
 /* ----- media query ----- */
 
 @media (max-width: 1000px){
