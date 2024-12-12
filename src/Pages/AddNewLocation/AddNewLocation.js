@@ -5,10 +5,13 @@ import AdminSidebar from '../../Components/AdminSidebar/AdminSidebar';
 import AdminNavbar from '../../Components/AdminNavbar/AdminNavbar';
 import { DriveFolderUploadOutlined, Close } from '@mui/icons-material';
 import LocationOnSharpIcon from '@mui/icons-material/LocationOnSharp';
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
 const AddNewLocation = () => {
   const [image1, setImage1] = useState(null);
   const [extraImages, setExtraImages] = useState([null, null, null, null]);
+  const [location, setLocation] = useState(null);
+  const [coordinates, setCoordinates] = useState(null);
 
   const provinces = ['Central', 'Western', 'Uva', 'North', 'Southern', 'Eastern'];
 
@@ -29,6 +32,25 @@ const AddNewLocation = () => {
     }
   };
 
+  const handleLocationSelect = async (place) => {
+    setLocation(place);
+
+    const geocodeApiKey = 'AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk';
+
+    try {
+      const geocodeResponse = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${place.value.place_id}&key=${geocodeApiKey}`);
+      const geocodeData = await geocodeResponse.json();
+      if (geocodeData.results && geocodeData.results[0]) {
+        const { lat, lng } = geocodeData.results[0].geometry.location;
+        setCoordinates({ lat, lng });
+      } else {
+        alert('Unable to fetch coordinates for the selected location.');
+      }
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -38,9 +60,17 @@ const AddNewLocation = () => {
     formData.append('longDescription', e.target.locationLongDescription.value);
     formData.append('province', e.target.province.value);
 
+    if (location) {
+      formData.append('place', location.label);
+      if (coordinates) {
+        formData.append('latitude', coordinates.lat);
+        formData.append('longitude', coordinates.lng);
+      }
+    }
+
     if (image1) formData.append('mainImage', image1);
     extraImages.forEach((img, idx) => {
-      if (img) formData.append('extraImage', img); // Matches backend array handling
+      if (img) formData.append(`extraImage${idx + 1}`, img);
     });
 
     try {
@@ -52,6 +82,8 @@ const AddNewLocation = () => {
       e.target.reset();
       setImage1(null);
       setExtraImages([null, null, null, null]);
+      setLocation(null);
+      setCoordinates(null);
     } catch (error) {
       console.error('Error submitting the form:', error);
       alert('Failed to add location. Please try again.');
@@ -123,6 +155,20 @@ const AddNewLocation = () => {
                 ))}
               </div>
               <div className="inputFields">
+                <div className="selectLocation">
+                  <label>Search Location</label>
+                  <GooglePlacesAutocomplete
+                    apiKey="AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk"
+                    selectProps={{
+                      onChange: handleLocationSelect,
+                    }}
+                  />
+                  {location && coordinates && (
+                    <p>
+                      Selected Place: {location.label} ({coordinates.lat}, {coordinates.lng})
+                    </p>
+                  )}
+                </div>
                 <div className="formInput">
                   <label>Location Name</label>
                   <input
@@ -144,7 +190,8 @@ const AddNewLocation = () => {
                 </div>
                 <div className="formInput">
                   <label>Short Description</label>
-                  <textarea
+                  <input
+                    type="text"
                     name="locationShortDescription"
                     placeholder="Enter Short Description"
                     required

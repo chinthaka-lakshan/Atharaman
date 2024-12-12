@@ -96,6 +96,7 @@
                     align-items: center;
                     justify-content: center;
                     gap: 40px;
+                    color: #616161;
 
                     .uploadButtons{
                         display: flex;
@@ -139,9 +140,8 @@
                         flex-direction: column;
                         width: 100%;
                         gap: 30px;
-                        color: #616161;
 
-                        .formInput{
+                        .formInput, .selectLocation{
                             display: flex;
                             flex-direction: column;
                             gap: 10px;
