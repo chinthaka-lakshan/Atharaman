@@ -33,7 +33,7 @@ const Navbar = ({ user, logout }) => {
         <li><Link to='/items'>Items</Link></li>
         <li><Link to='aboutUs' smooth={true} offset={-150} duration={500}>About Us</Link></li>
         <li><Link to='/contactUs' smooth={true} offset={0} duration={500}>Contact Us</Link></li>
-        <li><Link to='/SiteReviewPage'>Review</Link></li>
+        <li><Link to='/reviews'>Review</Link></li>
 
         {user ? (
           <>

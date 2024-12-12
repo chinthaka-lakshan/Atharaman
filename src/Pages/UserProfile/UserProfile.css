@@ -1,161 +1,234 @@
 .user-page {
-    width: 100%;
-    min-height: 100vh;
-    background: linear-gradient(rgba(8,0,58,0.7),rgba(8,0,58,0.7)), url('../../Assets/Background.jpg');
-    background-size: cover;
-    background-position: center;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+  padding: 2rem;
+}
 
 .user-profile-container {
-    max-width: 600px;
-    margin: auto;
-    font-family: 'Arial', sans-serif;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+}
+
+.user-welcome-message {
+  color: #2d3748;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 1rem;
+}
+
+.user-profile-details {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.user-profile-details p {
+  color: #4a5568;
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.user-profile-details span {
+  color: #2b6cb0;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.user-requests-section {
+  margin: 2rem 0;
+}
+
+.user-requests-section h2 {
+  color: #2d3748;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.request-btn {
+  background: #4299e1;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.request-btn:hover {
+  background: #3182ce;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.2);
+}
+
+.user-pending-message {
+  background: #ebf8ff;
+  color: #2b6cb0;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #4299e1;
+  margin: 1rem 0;
+}
+
+.request-form {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.request-form h3 {
+  color: #2d3748;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.user-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.user-form-group label {
+  display: block;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.user-form-group input,
+.user-form-group textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.user-form-group input:focus,
+.user-form-group textarea:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.user-form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.user-form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.submit-btn {
+  background: #48bb78;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #38a169;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
+}
+
+.user-btn.cancel-btn {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.user-btn.cancel-btn:hover {
+  background: #c53030;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
+}
+
+.user-delete-profile-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+.user-delete-profile-section h2 {
+  color: #2d3748;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.delete-btn {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: #c53030;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
+}
+
+.user-loading-text {
+  text-align: center;
+  color: #4a5568;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .user-page {
+    padding: 1rem;
   }
 
+  .user-profile-container {
+    padding: 1.5rem;
+  }
 
-  .user-profile-card {
-    background-color: rgba(255, 255, 255, 0.7); 
-    border: 1px solid rgba(255, 255, 255, 0.3); 
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    backdrop-filter: blur(10px); 
+  .user-welcome-message {
+    font-size: 1.8rem;
   }
-  
-  .user-profile-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  .usewr-profile-card input,
-  .user-profile-card textarea {
+
+  .request-btn {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.8); 
+    margin-right: 0;
   }
-  
-  .user-profile-card button {
-    background-color: rgba(0, 123, 255, 0.9); 
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .user-profile-card button:hover {
-    background-color: rgba(0, 86, 179, 0.9); 
-  }
-  
-  .user-profile-card button[type='button'] {
-    background-color: rgba(108, 117, 125, 0.9);
-  }
-  
-  .user-profile-card button[type='button']:hover {
-    background-color: rgba(90, 98, 104, 0.9); 
-  }
-  
-  
-  .welcome-message {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  .user-profile-details {
-    font-size: 1.1em;
-    color: #555;
-  }
-  
-  .user-profile-details span {
-    font-weight: bold;
-    color: #222;
-  }
-  
-  .edit-profile-section, .requests-section, .request-form {
-    margin-top: 30px;
-  }
-  
-  .user-form-group {
-    margin-bottom: 15px;
-  }
-  
-  .user-form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #444;
-  }
-  
-  .user-form-group input, .form-group textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
-  
-  .user-form-group textarea {
-    resize: none;
-  }
-  
+
   .user-form-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
+    flex-direction: column;
   }
-  
-  .user-btn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
+
+  .submit-btn,
+  .user-btn.cancel-btn {
+    width: 100%;
   }
-  
-  .user-edit-btn {
-    background-color: #007bff;
-  }
-  
-  .user-save-btn {
-    background-color: #28a745;
-  }
-  
-  .user-cancel-btn {
-    background-color: #dc3545;
-  }
-  
-  .user-request-btn {
-    background-color: #0c4a81c9;
-    margin-right: 10px;
-  }
-  
-  .user-submit-btn {
-    background-color: #17a2b8;
-  }
-  
-  .user-loading-text {
-    text-align: center;
-    font-size: 1.2em;
-    color: #555;
-  }
-  
-  .user-pending-message {
-    color: #ff8800;
-    font-weight: bold;
-    text-align: center;
-  }
-  
+}
