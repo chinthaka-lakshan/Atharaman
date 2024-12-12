@@ -1,4 +1,3 @@
-
 import './HomePage.css';
 import AboutUs from '../../Components/AboutUs/AboutUs';
 import Guides from '../../Components/Guides/Guides';

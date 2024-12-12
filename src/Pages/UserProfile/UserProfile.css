@@ -10,7 +10,7 @@
     justify-content: center;
   }
 
-.profile-container {
+.user-profile-container {
     max-width: 600px;
     margin: auto;
     font-family: 'Arial', sans-serif;
@@ -21,33 +21,33 @@
   }
 
 
-  .profile-card {
-    background-color: rgba(255, 255, 255, 0.7); /* Transparent white background */
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Soft border with transparency */
+  .user-profile-card {
+    background-color: rgba(255, 255, 255, 0.7); 
+    border: 1px solid rgba(255, 255, 255, 0.3); 
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    backdrop-filter: blur(10px); /* Adds a glassy effect */
+    backdrop-filter: blur(10px); 
   }
   
-  .profile-card:hover {
+  .user-profile-card:hover {
     transform: scale(1.02);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   }
   
-  .profile-card input,
-  .profile-card textarea {
+  .usewr-profile-card input,
+  .user-profile-card textarea {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.8); /* Slightly less transparent for input fields */
+    background-color: rgba(255, 255, 255, 0.8); 
   }
   
-  .profile-card button {
-    background-color: rgba(0, 123, 255, 0.9); /* Transparent button background */
+  .user-profile-card button {
+    background-color: rgba(0, 123, 255, 0.9); 
     color: white;
     border: none;
     padding: 10px 15px;
@@ -56,16 +56,16 @@
     transition: background-color 0.3s ease;
   }
   
-  .profile-card button:hover {
-    background-color: rgba(0, 86, 179, 0.9); /* Darker transparent blue */
+  .user-profile-card button:hover {
+    background-color: rgba(0, 86, 179, 0.9); 
   }
   
-  .profile-card button[type='button'] {
-    background-color: rgba(108, 117, 125, 0.9); /* Transparent gray */
+  .user-profile-card button[type='button'] {
+    background-color: rgba(108, 117, 125, 0.9);
   }
   
-  .profile-card button[type='button']:hover {
-    background-color: rgba(90, 98, 104, 0.9); /* Darker transparent gray */
+  .user-profile-card button[type='button']:hover {
+    background-color: rgba(90, 98, 104, 0.9); 
   }
   
   
@@ -75,12 +75,12 @@
     margin-bottom: 20px;
   }
   
-  .profile-details {
+  .user-profile-details {
     font-size: 1.1em;
     color: #555;
   }
   
-  .profile-details span {
+  .user-profile-details span {
     font-weight: bold;
     color: #222;
   }
@@ -89,35 +89,35 @@
     margin-top: 30px;
   }
   
-  .form-group {
+  .user-form-group {
     margin-bottom: 15px;
   }
   
-  .form-group label {
+  .user-form-group label {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
     color: #444;
   }
   
-  .form-group input, .form-group textarea {
+  .user-form-group input, .form-group textarea {
     width: 100%;
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 5px;
   }
   
-  .form-group textarea {
+  .user-form-group textarea {
     resize: none;
   }
   
-  .form-actions {
+  .user-form-actions {
     display: flex;
     gap: 10px;
     margin-top: 10px;
   }
   
-  .btn {
+  .user-btn {
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
@@ -126,34 +126,34 @@
     color: white;
   }
   
-  .edit-btn {
+  .user-edit-btn {
     background-color: #007bff;
   }
   
-  .save-btn {
+  .user-save-btn {
     background-color: #28a745;
   }
   
-  .cancel-btn {
+  .user-cancel-btn {
     background-color: #dc3545;
   }
   
-  .request-btn {
+  .user-request-btn {
     background-color: #0c4a81c9;
     margin-right: 10px;
   }
   
-  .submit-btn {
+  .user-submit-btn {
     background-color: #17a2b8;
   }
   
-  .loading-text {
+  .user-loading-text {
     text-align: center;
     font-size: 1.2em;
     color: #555;
   }
   
-  .pending-message {
+  .user-pending-message {
     color: #ff8800;
     font-weight: bold;
     text-align: center;

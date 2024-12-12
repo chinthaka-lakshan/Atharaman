@@ -128,12 +128,12 @@
     text-decoration: underline;
   }
   
-  /* Error state styling */
+  
   .form-control.error {
     border-color: #e74c3c;
   }
   
-  /* Responsive adjustments */
+
   @media (max-width: 480px) {
     .login-container {
       padding: 2rem;
@@ -146,4 +146,4 @@
     .form-control {
       padding: 0.625rem 0.875rem;
     }
-  }
+  } 

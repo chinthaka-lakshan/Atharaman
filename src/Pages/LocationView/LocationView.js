@@ -1,16 +1,70 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import "./LocationView.css";
 import Navbar from "../../Components/Navbar/Navbar";
 import Narangala from "../../Assets/Narangala_1.jpg";
 import SachinthaJayaweera from '../../Assets/SachinthaJayaweera_1.jpg'
 import Lamborghini from '../../Assets/Lamborghini_1.jpg'
+import { Link } from 'react-router-dom';
+import axios from "axios";
 
 const LocationView = () => {
+  const { id } = useParams();
+  const [location, setLocation] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
+  const [longDescription, setLongDescription] = useState("");
+  const [mainImagePreview, setMainImagePreview] = useState(null);
+  const [extraImagePreviews, setExtraImagePreviews] = useState([null, null, null, null]);
+
   const [weather, setWeather] = useState(null);
-  const [modalImage, setModalImage] = useState(null); // State for modal
+  const [modalImage, setModalImage] = useState(null);
+  const [currentLocations, setLocations] = useState([])
   const API_KEY = "YOUR_OPENWEATHERMAP_API_KEY"; // Replace with your OpenWeatherMap API Key
   const latitude = 7.1167; // Latitude of Narangala
   const longitude = 81.0333; // Longitude of Narangala
+
+  const [reviews, setReviews] = useState([]);
+
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      if (i < rating) {
+        stars.push(<span key={i} className="star filled">★</span>); // filled star
+      } else {
+        stars.push(<span key={i} className="star">☆</span>); // empty star
+      }
+    }
+    return stars;
+  };
+
+  useEffect(() => {
+    async function fetchLocation() {
+      try {
+        const response = await axios.get(`http://localhost:8080/locations/${id}`);
+        const data = response.data;
+        setLocation(data.location);
+        setShortDescription(data.shortDescription);
+        setLongDescription(data.longDescription);
+        setMainImagePreview(data.mainImage);
+        setExtraImagePreviews([data.extraImage1, data.extraImage2, data.extraImage3, data.extraImage4]);
+      } catch (error) {
+        console.error("Error fetching location details:", error.message);
+        alert("Failed to fetch location details.");
+      }
+    }
+
+    async function fetchReviews() {
+      try {
+        const response = await axios.get('http://localhost:8080/placereview');
+        setReviews(response.data);
+      } catch (error) {
+        console.error('Error loading reviews:', error);
+      }
+    }
+
+    fetchLocation();
+    fetchReviews();
+  }, [id]);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -35,45 +89,28 @@ const LocationView = () => {
 
   return (
     <div>
-      <Navbar />
-      <div className="locationPlatter container">
-        <div className="locationPlatter-text">
-          <h1>Narangala</h1>
-          <p>
-            Narangala Mountain is a 1,521-meter peak in the Uva Province with
-            scenic views and diverse wildlife. Learn about its history, trails,
-            and how to visit this remote and rugged place.
-          </p>
-        </div>
-        <div className="photo-grid">
-          {/* Main Image */}
-          <img
-            src={Narangala}
-            alt="Main view"
-            className="main-image"
-            onClick={() => openImage(Narangala)}
-          />
-          {/* Gallery Images */}
-          <div className="side-images">
-            {[Narangala, Narangala, Narangala, Narangala].map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt={`Gallery ${index + 1}`}
-                onClick={() => openImage(image)}
-              />
-            ))}
+      <Navbar/>
+      <div className="locationView">
+        <div className="locationPlatter container">
+          <div className="locationPlatter-text">
+            <h1>{location}</h1>
+            <p>{shortDescription}</p>
+          </div>
+          <div className="photo-grid">
+            <div className="main-image">
+              {mainImagePreview && <img src={mainImagePreview} alt="Main" onClick={() => openImage(mainImagePreview) }/>}
+            </div>
+            <div className="side-images">
+              {extraImagePreviews.map((img, index) =>
+                img ? <img key={index} src={img} alt={`Extra ${index + 1}`} onClick={() => openImage(img) }/> : null
+              )}
+            </div>
           </div>
         </div>
         <div className="main-container">
-          {/* Description Section */}
           <div className="description-container">
-            <p>
-              Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m (1527 m). There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills. Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m (1527 m). There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight. As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills. Narangala mountain is another popular mountain among climbers. It is situated 19.7 km away from the Badulla district in the Uva Province. Narangala Mountain is very popular among the climbers and it rises to over 1500 m (1527 m). There are two entrances to Narangala mountain, Keenakale side and Tangamale Devalaya side. The Keenakale side is generally very popular with climbers. The Narangala mountain with golden grass is known as the second highest peak in the Uva Province. It is second only to Namunukula mountain. Narangala mountain is also known as the "Golden Mountain" among Tamils. Because of its sharp rectangular peaks. From a distance it looks like a very attractive sight.
-              As you climb Narangala Mountain, you can see the greenery scenes of these areas and the beauty of the surrounding hills.
-            </p>
+            <p>{longDescription}</p>
           </div>
-          {/* Weather and Map Section */}
           <div className="side-info">
             <div className="map-view">
               <h2>Location Map</h2>
@@ -104,93 +141,93 @@ const LocationView = () => {
                   </p>
                 </div>
               ) : (
-                <p>Loading weather information...</p>
+              <p>Loading weather information...</p>
               )}
             </div>
           </div>
-        </div>
-      </div>
-      <div className="guides-container">
-        <h2>Top Guides Nearby</h2>
-        <div className="guides-list">
-          {[1, 2, 3, 4].map((_, index) => (
-            <div className="guide-card" key={index}>
-              <img
-                src={SachinthaJayaweera}  // Replace with guide image URLs
-                alt={`Guide ${index + 1}`}
-                className="guide-photo"
-              />
-              <div className="guide-info">
-                <h3>Guide Name {index + 1}</h3>
-                <p>
-                  This is a short description about the guide. They are experienced
-                  and know the area well.
-                </p>
-                <div className="star-rating">
-                  {[1, 2, 3, 4, 5].map((star, i) => (
-                    <span
-                      key={i}
-                      className={`star ${i < 4 ? "filled" : ""}`} // Adjust "4" based on rating
-                    >
-                      ★
-                    </span>
-                  ))}
-                </div>
-              </div>
+          <div className="guides-container">
+            <h2>Top Guides Nearby</h2>
+            <div className="guides-list">
+              {currentLocations.length > 0 ? (
+                currentLocations.slice(0, 4).map((location, index) => (
+                  <Link key={index} to={`/locationView/${location.id}`}>
+                    <div className="guideTile">
+                      <img src={location.image || SachinthaJayaweera} alt={location.name} className="tile-img" />
+                        <div className="tile-content">
+                          <h3>{location.location}</h3>
+                          <p>{location.shortDescription}</p>
+                          <div className="star-rating">
+                            {renderStars(location.rating || 3)}
+                          </div>
+                        </div>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+              <p>No Guides Found</p>
+              )}
             </div>
-          ))}
-        </div>
-        <button className="view-more-button">View More Guides</button>
-      </div>
-
-      {/* Top Shops Nearby Section */}
-      <div className="shops-container">
-        <h2>Top Shops Nearby</h2>
-        <div className="shops-list">
-          {[1, 2, 3, 4].map((_, index) => (
-            <div className="shop-card" key={index}>
-              <img
-                src={Lamborghini} // Replace with shop image URLs
-                alt={`Shop ${index + 1}`}
-                className="shop-photo"
-              />
-              <div className="shop-info">
-                <h3>Shop Name {index + 1}</h3>
-                <p>
-                  This is a short description about the shop.
-                </p>
-                <div className="star-rating">
-                  {[1, 2, 3, 4, 5].map((star, i) => (
-                    <span
-                      key={i}
-                      className={`star ${i < 4 ? "filled" : ""}`} // Adjust "4" based on rating
-                    >
-                      ★
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <button className="view-more-button">View More Shops</button>
-      </div>
-
-      {/* Modal for Enlarged Image */}
-      {modalImage && (
-        <div className="modal">
-          <div className="modal-content">
-            <button className="close-button" onClick={closeModal}>
-              &times;
-            </button>
-            <img src={modalImage} alt="Enlarged view" />
+            <button className="view-more-button">View More Guides</button>
           </div>
+          <div className="shops-container">
+            <h2>Top Shops Nearby</h2>
+            <div className="shops-list">
+              {currentLocations.length > 0 ? (
+                currentLocations.slice(0, 4).map((location, index) => (
+                  <Link key={index} to={`/locationView/${location.id}`}>
+                    <div className="shopTile">
+                      <img src={location.image || Lamborghini} alt={location.name} className="tile-img" />
+                        <div className="tile-content">
+                          <h3>{location.location}</h3>
+                          <p>{location.shortDescription}</p>
+                          <div className="star-rating">
+                            {renderStars(location.rating || 3)}
+                          </div>
+                        </div>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+              <p>No Shops Found</p>
+              )}
+            </div>
+            <button className="view-more-button">View More Shops</button>
+          </div>
+          <div className="reviews-container">
+            <h2>Location Reviews</h2>
+            <div className="reviews-list">
+              {reviews.length > 0 ? (
+                reviews.map((review, index) => (
+                  <div key={index} className="reviewTile">
+                    <div className="review-header">
+                      <h3>Sachintha</h3>
+                      <div className="star-rating">{renderStars(review.rating)}</div>
+                    </div>
+                    <p className="review-comment">{review.comment}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No Reviews Found</p>
+              )}
+            </div>
+            <Link to="/locationReview">
+              <button className="view-more-button">Add Location Review</button>
+            </Link>
+          </div>
+          {modalImage && (
+            <div className="modal">
+              <div className="modal-content">
+                <button className="close-button" onClick={closeModal}>
+                  &times;
+                </button>
+                <img src={modalImage} alt="Enlarged view" />
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
-  
-
 };
 
 export default LocationView;

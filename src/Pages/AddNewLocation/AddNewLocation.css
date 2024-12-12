@@ -90,14 +90,18 @@
                 justify-content: center;
 
                 form{
+                    display: flex;
+                    flex-direction: column;
                     width: 90%;
                     align-items: center;
                     justify-content: center;
-                    gap: 30px;
+                    gap: 40px;
 
                     .uploadButtons{
                         display: flex;
                         flex-direction: row;
+                        align-items: center;
+                        justify-content: center;
                         gap: 40px;
 
                         .fileUploadLabel{
@@ -138,10 +142,12 @@
                         color: #616161;
 
                         .formInput{
+                            display: flex;
+                            flex-direction: column;
+                            gap: 10px;
     
                             label{
                                 display: flex;
-                                gap: 10px;
                                 font-size: 18px;
                                 font-weight: bold;
                             }
@@ -151,8 +157,21 @@
                                 border-bottom: 1px solid #616161;
                                 font-size: 18px;
                                 outline: none;
+                                width: 100%;
                                 background-color: transparent;
     
+                                &::placeholder{
+                                    font-size: 15px;
+                                }
+                            }
+
+                            textarea{
+                                width: 100%;
+                                font-weight: 400;
+                                height: auto;
+                                padding: 10px;
+                                font-size: 18px;
+
                                 &::placeholder{
                                     font-size: 15px;
                                 }

@@ -69,22 +69,22 @@ const UserProfile = ({ user }) => {
     }
   };
 
-  if (!profile) return <p className="loading-text">Loading...</p>;
+  if (!profile) return <p className="user-loading-text">Loading...</p>;
 
   return (
    <div className="user-page">
-        <div className="profile-container">
-        <h1 className="welcome-message">Welcome, {profile.username}</h1>
-        <div className="profile-details">
+        <div className="user-profile-container">
+        <h1 className="user-welcome-message">Welcome, {profile.username}</h1>
+        <div className="user-profile-details">
             <p>Email: <span>{profile.email}</span></p>
             <p>Role: <span>{profile.role || 'USER'}</span></p>
         </div>
 
-        <div className="edit-profile-section">
+        <div className="user-edit-profile-section">
             <h2>Edit Profile</h2>
             {isEditing ? (
             <form onSubmit={handleEditSubmit} className="edit-form">
-                <div className="form-group">
+                <div className="user-form-group">
                 <label>Username:</label>
                 <input
                     type="text"
@@ -93,7 +93,7 @@ const UserProfile = ({ user }) => {
                     required
                 />
                 </div>
-                <div className="form-group">
+                <div className="user-form-group">
                 <label>Email:</label>
                 <input
                     type="email"
@@ -102,20 +102,20 @@ const UserProfile = ({ user }) => {
                     required
                 />
                 </div>
-                <div className="form-actions">
-                <button type="submit" className="btn save-btn">Save</button>
-                <button type="button" onClick={() => setIsEditing(false)} className="btn cancel-btn">Cancel</button>
+                <div className="user-form-actions">
+                <button type="submit" className="btn user-save-btn">Save</button>
+                <button type="button" onClick={() => setIsEditing(false)} className="btn user-cancel-btn">Cancel</button>
                 </div>
             </form>
             ) : (
-            <button onClick={() => setIsEditing(true)} className="btn edit-btn">Edit Profile</button>
+            <button onClick={() => setIsEditing(true)} className="user-btn edit-btn">Edit Profile</button>
             )}
         </div>
 
-        <div className="requests-section">
+        <div className="user-requests-section">
             <h2>Requests</h2>
             {hasPendingRequest ? (
-            <p className="pending-message">You have a pending request. Please wait for admin approval.</p>
+            <p className="user-user-pending-message">You have a pending request. Please wait for admin approval.</p>
             ) : (
             <>
                 <button onClick={() => setCurrentForm('GUIDE')} className="btn request-btn">Request to Become a Guide</button>
@@ -127,7 +127,7 @@ const UserProfile = ({ user }) => {
         {currentForm && (
             <form onSubmit={handleSubmitRequest} className="request-form">
             <h3>{currentForm === 'GUIDE' ? 'Guide Request Form' : 'Shop Owner Request Form'}</h3>
-            <div className="form-group">
+            <div className="user-form-group">
                 <label>Birthday:</label>
                 <input
                 type="date"
@@ -136,7 +136,7 @@ const UserProfile = ({ user }) => {
                 required
                 />
             </div>
-            <div className="form-group">
+            <div className="user-form-group">
                 <label>{currentForm === 'GUIDE' ? 'Guide Number:' : 'Shop Number:'}</label>
                 <input
                 type="text"
@@ -145,7 +145,7 @@ const UserProfile = ({ user }) => {
                 required
                 />
             </div>
-            <div className="form-group">
+            <div className="user-form-group">
                 <label>Contact Number:</label>
                 <input
                 type="text"
@@ -154,7 +154,7 @@ const UserProfile = ({ user }) => {
                 required
                 />
             </div>
-            <div className="form-group">
+            <div className="user-form-group">
                 <label>Experience:</label>
                 <textarea
                 value={requestDetails.experience}
@@ -163,7 +163,7 @@ const UserProfile = ({ user }) => {
                 placeholder="Describe your experience..."
                 />
             </div>
-            <div className="form-actions">
+            <div className="user-form-actions">
                 <button type="submit" className="btn submit-btn">Submit Request</button>
                 <button
                 type="button"
@@ -176,7 +176,7 @@ const UserProfile = ({ user }) => {
                     experience: '',
                     });
                 }}
-                className="btn cancel-btn"
+                className="user-btn cancel-btn"
                 >
                 Cancel
                 </button>

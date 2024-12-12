@@ -22,7 +22,7 @@ const ViewLocation = () => {
         fetchLocation();
     }, [id]);
 
-    const fetchLocation = async () => {
+    async function fetchLocation() {
         try {
             const response = await axios.get(`http://localhost:8080/locations/${id}`);
             const data = response.data;
@@ -36,19 +36,18 @@ const ViewLocation = () => {
             console.error("Error fetching location details:", error.message);
             alert("Failed to fetch location details.");
         }
-    };
-    
+    }
 
     const handleImageChange = (index, file) => {
         if (file && !["image/jpeg", "image/png"].includes(file.type)) {
             alert("Invalid file type. Please upload JPEG or PNG images.");
             return;
         }
-
-        if (index === -1) {
+    
+        if (index === -1) { // Main image case
             setMainImage(file);
             setMainImagePreview(URL.createObjectURL(file));
-        } else {
+        } else { // Extra images case
             const updatedImages = [...extraImages];
             const updatedPreviews = [...extraImagePreviews];
             updatedImages[index] = file;
@@ -96,49 +95,74 @@ const ViewLocation = () => {
             <div className="viewLocationContainer">
                 <AdminNavbar />
                 <div className="top">
+                    <h1>Location Details</h1>
+                    <div className="imageGallery">
+                        {mainImagePreview && <img src={mainImagePreview} alt="Main" />}
+                        {extraImagePreviews.map((img, index) =>
+                            img ? <img key={index} src={img} alt={`Extra ${index + 1}`} /> : null
+                        )}
+                    </div>
                     <div className="details">
-                        <h1>Location Details</h1>
-                        <div className="imageGallery">
-                            {mainImagePreview && <img src={mainImagePreview} alt="Main" />}
-                            {extraImagePreviews.map((img, index) =>
-                                img ? <img key={index} src={img} alt={`Extra ${index + 1}`} /> : null
-                            )}
-                        </div>
-                        <div>
-                            <p><strong>ID:</strong> {id}</p>
-                            <p><strong>Location:</strong> {location}</p>
-                            <p><strong>Province:</strong> {province}</p>
-                            <p><strong>Short Description:</strong> {shortDescription}</p>
-                            <p><strong>Long Description:</strong> {longDescription}</p>
-                        </div>
+                        <p><strong>Location ID:</strong> {id}</p>
+                        <p><strong>Location:</strong> {location}</p>
+                        <p><strong>Province:</strong> {province}</p>
+                        <p><strong>Short Description:</strong> {shortDescription}</p>
+                        <p><strong>Long Description:</strong> {longDescription}</p>
                     </div>
                 </div>
                 <div className="bottom">
                     <h2>Edit Location</h2>
-                    <form onSubmit={handleSubmit}>
-                        <label>Main Image:</label>
-                        <input type="file" onChange={(e) => handleImageChange(-1, e.target.files[0])} />
-                        <label>Extra Images:</label>
-                        {extraImages.map((_, index) => (
-                            <div key={index}>
-                                <input type="file" onChange={(e) => handleImageChange(index, e.target.files[0])} />
-                                {extraImagePreviews[index] && (
-                                    <img src={extraImagePreviews[index]} alt={`Preview ${index + 1}`} style={{ width: "100px", marginTop: "10px" }} />
-                                )}
+                    <form className="eForm" onSubmit={handleSubmit}>
+                        <div className="formImages">
+                            <div className="mainImage">
+                                <input
+                                    id="mainImageInput"
+                                    type="file"
+                                    className="mainImg"
+                                    onChange={(e) => handleImageChange(-1, e.target.files[0])}
+                                />
+                                <label htmlFor="mainImageInput">Main Image</label>
+                                {mainImagePreview && <img src={mainImagePreview} alt="Main Preview" />}
                             </div>
-                        ))}
-                        <label>Location Name:</label>
-                        <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
-                        <label>Province:</label>
-                        <select value={province} onChange={(e) => setProvince(e.target.value)}>
-                            {provinces.map((prov, index) => (
-                                <option key={index} value={prov}>{prov}</option>
+                            {extraImages.map((_, index) => (
+                                <div key={index} className="extraImages">
+                                    <div className="extraImage">
+                                        <input
+                                            id={`extraImageInput${index}`}
+                                            type="file"
+                                            className="extraImg"
+                                            onChange={(e) => handleImageChange(index, e.target.files[0])}
+                                        />
+                                        <label htmlFor={`extraImageInput${index}`}>Image {index + 2}</label>
+                                        {extraImagePreviews[index] && (
+                                            <img src={extraImagePreviews[index]} alt={`Extra Preview ${index + 1}`} />
+                                        )}
+                                    </div>
+                                </div>
                             ))}
-                        </select>
-                        <label>Short Description:</label>
-                        <textarea value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} />
-                        <label>Long Description:</label>
-                        <textarea value={longDescription} onChange={(e) => setLongDescription(e.target.value)} />
+                        </div>
+                        <div className="formDetails">
+                            <div className="editFormInput">
+                                <label>Location Name:</label>
+                                <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
+                            </div>
+                            <div className="editFormInput">
+                                <label>Province:</label>
+                                <select value={province} onChange={(e) => setProvince(e.target.value)}>
+                                    {provinces.map((prov, index) => (
+                                        <option key={index} value={prov}>{prov}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="editFormInput">
+                                <label>Short Description:</label>
+                                <textarea value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} />
+                            </div>
+                            <div className="editFormInput">
+                                <label>Long Description:</label>
+                                <textarea value={longDescription} onChange={(e) => setLongDescription(e.target.value)} />
+                            </div>
+                        </div>
                         <button type="submit">Update</button>
                     </form>
                 </div>
