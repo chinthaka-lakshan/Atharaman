@@ -1,0 +1,374 @@
+// import React, { useState, useEffect } from "react";
+// import { Link, useNavigate, useParams } from "react-router-dom";
+// import axios from "axios";
+// import "./ShopProfile.css";
+
+// const ShopProfile = () => {
+//   const navigate = useNavigate();
+//   //
+//   const [shop, setShop] = useState(null);
+//   const [isEditing, setIsEditing] = useState(false);
+//   const [editedShop, setEditedShop] = useState({
+//     name: "",
+//     owner: "",
+//     contact: "",
+//     location: "",
+//     photo: null,
+//   });
+//   const { id } = useParams();
+
+//   // Fetch shop details from the backend
+//   useEffect(() => {
+//     const fetchShop = async () => {
+//       try {
+//         const response = await axios.get(
+//           `http://localhost:8080/Shops/find-by-id/${id}`
+//         );
+//         console.log(id);
+
+//         setShop(response.data);
+//         setEditedShop(response.data); // Initialize editedShop
+//       } catch (error) {
+//         console.error("Error fetching shop details:", error);
+//       }
+//     };
+//     fetchShop();
+//   }, [id]);
+
+//   const handleEditChange = (e) => {
+//     const { name, value } = e.target;
+//     setEditedShop({ ...editedShop, [name]: value });
+//   };
+
+//   const handlePhotoChange = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       setEditedShop({ ...editedShop, photo: URL.createObjectURL(file) });
+//     }
+//   };
+
+//   const saveEdit = async () => {
+//     try {
+//       await axios.put("http://localhost:8080/Shops/update", editedShop);
+//       setShop(editedShop);
+//       setIsEditing(false);
+//     } catch (error) {
+//       console.error("Error saving shop details:", error);
+//     }
+//   };
+
+//   const deleteShop = async () => {
+//     if (window.confirm("Are you sure you want to delete this shop?")) {
+//       try {
+//         await axios.delete(`http://localhost:8080/Shops/${shop.id}`);
+//         alert("Shop deleted!");
+//         navigate("/"); // Redirect to home or another page
+//       } catch (error) {
+//         console.error("Error deleting shop:", error);
+//       }
+//     }
+//   };
+
+//   if (!shop) return <div>Loading...</div>;
+
+//   return (
+//     <div className="shop-profile-container">
+//       {isEditing ? (
+//         <div>
+//           <h2>Edit Shop Profile</h2>
+//           <input
+//             name="name"
+//             placeholder="Shop Name"
+//             value={editedShop.name}
+//             onChange={handleEditChange}
+//           />
+//           <input
+//             name="owner"
+//             placeholder="Owner Name"
+//             value={editedShop.owner}
+//             onChange={handleEditChange}
+//           />
+//           <input
+//             name="contact"
+//             placeholder="Contact"
+//             value={editedShop.contact}
+//             onChange={handleEditChange}
+//           />
+//           <input
+//             name="location"
+//             placeholder="Location"
+//             value={editedShop.location}
+//             onChange={handleEditChange}
+//           />
+//           <input type="file" accept="image/*" onChange={handlePhotoChange} />
+//           {editedShop.photo && (
+//             <img
+//               src={editedShop.photo}
+//               alt="Shop Preview"
+//               className="shop-photo-preview"
+//             />
+//           )}
+//           <button onClick={saveEdit} className="btn-save">
+//             Save
+//           </button>
+//           <button onClick={() => setIsEditing(false)} className="btn-cancel">
+//             Cancel
+//           </button>
+//         </div>
+//       ) : (
+//         <div>
+//           <h1>{shop.name}</h1>
+//           <img
+//             src={shop.photo || "https://via.placeholder.com/150"}
+//             alt="Shop"
+//             className="shop-photo"
+//           />
+//           <p>
+//             <strong>Id:</strong> {shop.id}
+//           </p>
+//           <p>
+//             <strong>Owner:</strong> {shop.owner}
+//           </p>
+//           <p>
+//             <strong>Contact:</strong> {shop.contact}
+//           </p>
+//           <p>
+//             <strong>Location:</strong> {shop.location}
+//           </p>
+//           <Link to={`/add-item/${shop.id}`}>
+//             <button className="btn-add-item">Add Item</button>
+//           </Link>
+
+//           <button onClick={() => setIsEditing(true)} className="btn-edit">
+//             Edit Profile
+//           </button>
+//           <button onClick={deleteShop} className="btn-delete">
+//             Delete Shop
+//           </button>
+//         </div>
+//       )}
+//     </div>
+
+//   );
+// };
+
+// export default ShopProfile;
+
+//-----------------------
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import "./ShopProfile.css";
+
+const ShopProfile = () => {
+  const navigate = useNavigate();
+  const [shop, setShop] = useState(null);
+  const [items, setItems] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedShop, setEditedShop] = useState({
+    name: "",
+    owner: "",
+    contact: "",
+    location: "",
+    photo: null,
+  });
+  const { id } = useParams();
+  // Fetch shop details
+  useEffect(() => {
+    const fetchShop = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/Shops/find-by-id/${id}`
+        ); // Adjust ID dynamically
+        setShop(response.data);
+        console.log(response.data);
+
+        setItems(response.data.itemList);
+        console.log(response.data.itemList);
+
+        setEditedShop(response.data);
+      } catch (error) {
+        console.error("Error fetching shop details:", error);
+      }
+    };
+
+    // const fetchItems = async () => {
+    //   try {
+    //     const response = await axios.get("http://localhost:8080/item/get-all");
+    //     setItems(response.data);
+    //   } catch (error) {
+    //     console.error("Error fetching items:", error);
+    //   }
+    // };
+
+    fetchShop();
+    //fetchItems();
+  }, [id]);
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditedShop({ ...editedShop, [name]: value });
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setEditedShop({ ...editedShop, photo: URL.createObjectURL(file) });
+    }
+  };
+
+  const saveEdit = async () => {
+    try {
+      await axios.put("http://localhost:8080/Shops/update", editedShop);
+      setShop(editedShop);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error saving shop details:", error);
+    }
+  };
+
+  const deleteShop = async () => {
+    if (window.confirm("Are you sure you want to delete this shop?")) {
+      try {
+        await axios.delete(`http://localhost:8080/Shops/${shop.id}`);
+        alert("Shop deleted!");
+        navigate("/");
+      } catch (error) {
+        console.error("Error deleting shop:", error);
+      }
+    }
+  };
+
+  const handleDeleteItem = async (id) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      try {
+        await axios.delete(`http://localhost:8080/item/${id}`);
+        setItems(items.filter((item) => item.id !== id));
+      } catch (error) {
+        console.error("Error deleting item:", error);
+      }
+    }
+  };
+
+  const handleEditItem = (id) => {
+    navigate(`/edit-item/${id}`);
+  };
+
+  if (!shop) return <div>Loading...</div>;
+
+  return (
+    <div className="shop-profile-container">
+      {isEditing ? (
+        <div>
+          <h2>Edit Shop Profile</h2>
+          <input
+            name="name"
+            placeholder="Shop Name"
+            value={editedShop.name}
+            onChange={handleEditChange}
+          />
+          <input
+            name="owner"
+            placeholder="Owner Name"
+            value={editedShop.owner}
+            onChange={handleEditChange}
+          />
+          <input
+            name="contact"
+            placeholder="Contact"
+            value={editedShop.contact}
+            onChange={handleEditChange}
+          />
+          <input
+            name="location"
+            placeholder="Location"
+            value={editedShop.location}
+            onChange={handleEditChange}
+          />
+          <input type="file" accept="image/*" onChange={handlePhotoChange} />
+          {editedShop.photo && (
+            <img
+              src={editedShop.photo}
+              alt="Shop Preview"
+              className="shop-photo-preview"
+            />
+          )}
+          <button onClick={saveEdit} className="btn-save">
+            Save
+          </button>
+          <button onClick={() => setIsEditing(false)} className="btn-cancel">
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <div>
+          <h1>{shop.name}</h1>
+          <img
+            src={shop.photo || "https://via.placeholder.com/150"}
+            alt="Shop"
+            className="shop-photo"
+          />
+          <p>
+            <strong>Owner:</strong> {shop.owner}
+          </p>
+          <p>
+            <strong>Contact:</strong> {shop.contact}
+          </p>
+          <p>
+            <strong>Location:</strong> {shop.location}
+          </p>
+          <Link to={`/add-item/${shop.id}`}>
+            <button className="btn-add-item">Add Item</button>
+          </Link>
+          <button onClick={() => setIsEditing(true)} className="btn-edit">
+            Edit Profile
+          </button>
+          <button onClick={deleteShop} className="btn-delete">
+            Delete Shop
+          </button>
+        </div>
+      )}
+
+      <h2>Items</h2>
+      {items.length === 0 ? (
+        <p>No items available.</p>
+      ) : (
+        <div className="items-container">
+          {items.map((item) => (
+            <div className="item-card" key={item.id}>
+              <img
+                src={item.image || "https://via.placeholder.com/100"}
+                alt={item.name}
+                className="item-image"
+              />
+              <h3>{item.name}</h3>
+              <p>
+                <strong>Price:</strong> ${item.price}
+              </p>
+              <p>
+                <strong>Contact:</strong> {item.contact}
+              </p>
+              <p>
+                <strong>Location:</strong> {item.location}
+              </p>
+              <button
+                className="btn-edit-item"
+                onClick={() => handleEditItem(item.id)}
+              >
+                Edit
+              </button>
+              <button
+                className="btn-delete-item"
+                onClick={() => handleDeleteItem(item.id)}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ShopProfile;

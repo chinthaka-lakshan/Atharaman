@@ -42,11 +42,8 @@ export const getShopOwnerProfile = (userId) => {
   return axios.get(`/api/shop-owners/${userId}`);
 };
 
-
-
+export const deleteUser = (userId) => API.delete(`users/${userId}`);
 
 // New API functions for fetching guides and shop owners
 export const getGuides = () => API.get('/guides');
 export const getShopOwners = () => API.get('shop-owners');
-
-

@@ -6,11 +6,11 @@ const SiteReviewPage =() => {
   const navigate = useNavigate(); 
 
   const handleSeeAllReviews = () => {
-    navigate("/AllReview"); 
+    navigate("/allReviews"); 
   }
 
   const handleAddReviews = () => {
-    navigate("/ReviewForm"); 
+    navigate("/addReview"); 
   }
   
   return (
