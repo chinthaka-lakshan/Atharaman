@@ -210,7 +210,7 @@ const LocationView = () => {
                 <p>No Reviews Found</p>
               )}
             </div>
-            <Link to="/addLocationReview">
+            <Link to="/locationReview">
               <button className="view-more-button">Add Location Review</button>
             </Link>
           </div>

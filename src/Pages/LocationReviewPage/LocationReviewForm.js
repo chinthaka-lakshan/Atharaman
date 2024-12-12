@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './LocationReviewForm.css';
 import Navbar from '../../Components/Navbar/Navbar';
-import { useState } from 'react';
+import axios from 'axios'; // Import Axios
+import { useNavigate } from 'react-router-dom'; // For navigation
 
 const LocationReviewForm = () => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [error, setError] = useState("");
-  
-  const handleSubmit = (e) => {
+  const navigate = useNavigate(); // Initialize navigate function
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (rating === 0) {
@@ -18,23 +20,38 @@ const LocationReviewForm = () => {
       setError('Please add a comment.');
     } else {
       setError('');
-      setShowPopup(true);
-      // Display popup, then clear fields after it disappears
-      setTimeout(() => {
-        setShowPopup(false);
-        setRating(0);
-        setComment('');
-      }, 2000); // Popup displayed for 2 seconds
+      try {
+        // Send POST request to backend to create a new review
+        await axios.post('http://localhost:8080/placereview', {
+          username: "Login User", // Replace with actual logged-in username if available
+          rating,
+          comment,
+        });
+
+        // Display success message
+        setShowPopup(true);
+        setTimeout(() => {
+          setShowPopup(false);
+          setRating(0);
+          setComment('');
+
+          // Navigate to Location View
+          navigate('/locationView/:id');
+        }, 2000);
+      } catch (err) {
+        console.error(err.response?.data || "Error submitting review");
+        setError('Failed to submit the review. Please try again.');
+      }
     }
   };
-  
+
   return (
     <div className='Fullpage1'>    
       <div className="locationreview-form">
         <Navbar/>
         <h2>Location Review</h2>
         <form onSubmit={handleSubmit}>
-          <label2>Username :</label2>
+          <label>Username :</label>
           <input type="text" placeholder="Username" disabled value="Login User" />
           <div className="rating">
             <label>Rating :</label>
