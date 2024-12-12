@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './ReviewForm.css';
-import Navbar from '../../Components/Navbar/Navbar';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -63,7 +62,6 @@ const ReviewForm = () => {
   return (
     <div className="Fullpage">
       <div className="review-form">
-        <Navbar />
         <h2>{isUpdate ? 'Update Review' : 'Site Review'}</h2>
         <form onSubmit={handleSubmit}>
           <label>Username: </label>

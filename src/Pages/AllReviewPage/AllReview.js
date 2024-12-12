@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './AllReview.css';
-import Navbar from '../../Components/Navbar/Navbar';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -60,7 +59,6 @@ const AllReview = () => {
 
   return (
     <div className="all-review-page">
-      <Navbar />
       <div className="all-review-container">
         <h1>All Reviews</h1>
         <div className="reviews-list">
