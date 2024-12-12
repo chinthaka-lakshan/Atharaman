@@ -24,7 +24,7 @@ const Navbar = ({ user, logout }) => {
   };
   
   return (
-    <nav className={`container ${sticky? 'dark-nav' : ''}`}>
+    <nav className={`ccontainer ${sticky? 'dark-nav' : ''}`}>
       <Link to='/adminPanel'><img src={Logo} alt='' className='logo'/></Link>
       <ul className={mobileMenu?'':'hide-mobile-menu'}>
         <li><Link to='/'>Home</Link></li>
