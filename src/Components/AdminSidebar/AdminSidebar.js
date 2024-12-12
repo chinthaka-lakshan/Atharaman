@@ -4,6 +4,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import LocationOnSharpIcon from '@mui/icons-material/LocationOnSharp';
 import ElderlySharpIcon from '@mui/icons-material/ElderlySharp';
 import ShoppingCartSharpIcon from '@mui/icons-material/ShoppingCartSharp';
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import ReviewsSharpIcon from '@mui/icons-material/ReviewsSharp';
 import { Link } from 'react-router-dom';
 import Logo from '../../Assets/Logo.jpg'
@@ -40,6 +41,12 @@ const AdminSidebar = () => {
                     <li>
                         <ShoppingCartSharpIcon className='icon'/>
                         <span>Manage Shops</span>
+                    </li>
+                </Link>
+                <Link to="/manageRequests" style={{textDecoration:"none"}}>
+                    <li>
+                        <ContactSupportIcon className='icon'/>
+                        <span>Manage Requests</span>
                     </li>
                 </Link>
                 <Link to="/manageReviews" style={{textDecoration:"none"}}>

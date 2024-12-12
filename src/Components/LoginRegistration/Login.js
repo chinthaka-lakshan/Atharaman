@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { loginUser } from '../../services/Api';
 import { useNavigate, Link } from 'react-router-dom';
 import './Login.css'
-import Navbar from '../Navbar/Navbar';
 
 const Login = ({ setUser }) => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -22,7 +21,6 @@ const Login = ({ setUser }) => {
 
   return (
     <div>
-        <Navbar/>
         <div className="login-page">
             <div className="login-container">
             <h2>Login</h2>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './LocationReviewForm.css';
-import Navbar from '../../Components/Navbar/Navbar';
 import axios from 'axios'; // Import Axios
 import { useNavigate } from 'react-router-dom'; // For navigation
 
@@ -48,7 +47,6 @@ const LocationReviewForm = () => {
   return (
     <div className='Fullpage1'>    
       <div className="locationreview-form">
-        <Navbar/>
         <h2>Location Review</h2>
         <form onSubmit={handleSubmit}>
           <label>Username :</label>

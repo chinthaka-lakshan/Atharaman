@@ -1,4 +1,4 @@
-.shopsPlatter{
+.itemsPlatter{
     width: 100%;
     min-height: 100vh;
     background: linear-gradient(rgba(8,0,58,0.7),rgba(8,0,58,0.7)), url('../../Assets/HarithaKanda_1.jpg');
@@ -10,17 +10,17 @@
     justify-content: center;
 }
 
-.shopsPlatter-text{
+.itemsPlatter-text{
     text-align: center;
     max-width: 800px;
 }
 
-.shopsPlatter-text h1{
+.itemsPlatter-text h1{
     font-size: 50px;
     font-weight: 600;
 }
 
-.shopsPlatter-text p{
+.itemsPlatter-text p{
     max-width: 700px;
     margin: 10px auto 20px;
     line-height: 1.4;
@@ -29,19 +29,19 @@
 /* ----- media query ----- */
 
 @media (max-width: 850px){
-    .shopsPlatter-text h1{
+    .itemsPlatter-text h1{
         font-size: 40px;
     }
 }
 
 @media (max-width: 650px){
-    .shopsPlatter-text h1{
+    .itemsPlatter-text h1{
         font-size: 30px;
         max-width: 400px;
         margin: auto;
     }
 
-    .shopsPlatter-text p{
+    .itemsPlatter-text p{
         font-size: 14px;
         margin: 15px auto 30px;
     }

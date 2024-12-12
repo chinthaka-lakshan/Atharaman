@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {  useNavigate } from 'react-router-dom';
 import { registerUser } from '../../services/Api';
 import "./Register.css";
-import Navbar from '../Navbar/Navbar';
 const Register = () => {
   const [form, setForm] = useState({ username: '', email: '', password: '', role:'USER' });
   const navigate = useNavigate();
@@ -20,7 +19,6 @@ const Register = () => {
 
   return (
     <div>
-        <Navbar/>
         <div className="register-page">
         <div className="register-container">
             <h2>Register</h2>

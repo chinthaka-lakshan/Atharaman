@@ -24,13 +24,13 @@ const Navbar = ({ user, logout }) => {
   };
   
   return (
-    <nav className={`ccontainer ${sticky? 'dark-nav' : ''}`}>
-      <Link to='/adminPanel'><img src={Logo} alt='' className='logo'/></Link>
-      <ul className={mobileMenu?'':'hide-mobile-menu'}>
+    <nav className={`container ${sticky ? 'dark-nav' : ''}`}>
+      <Link to='/adminPanel'><img src={Logo} alt='logo' className='logo'/></Link>
+      <ul className={`menu ${mobileMenu ? 'show-mobile-menu' : 'hide-mobile-menu'}`}>
         <li><Link to='/'>Home</Link></li>
         <li><Link to='/locations'>Locations</Link></li>
         <li><Link to='/guides'>Guide</Link></li>
-        <li><Link to='/shops'>Shops</Link></li>
+        <li><Link to='/items'>Items</Link></li>
         <li><Link to='aboutUs' smooth={true} offset={-150} duration={500}>About Us</Link></li>
         <li><Link to='/contactUs' smooth={true} offset={0} duration={500}>Contact Us</Link></li>
         <li><Link to='/SiteReviewPage'>Review</Link></li>
@@ -39,12 +39,7 @@ const Navbar = ({ user, logout }) => {
           <>
             <li><Link to='/profile'>Profile</Link></li>
             <li>
-              <button 
-                onClick={logout}
-                className="nav-button"
-              >
-                Logout
-              </button>
+              <button onClick={logout} className="nav-button">Logout</button>
             </li>
           </>
         ) : (
@@ -52,7 +47,7 @@ const Navbar = ({ user, logout }) => {
         )}
 
       </ul>
-      <img src={MenuIcon} alt="" className='menu-icon' onClick={toggleMenu}/>
+      <img src={MenuIcon} alt="Menu Icon" className='menu-icon' onClick={toggleMenu}/>
     </nav>
   );
 };

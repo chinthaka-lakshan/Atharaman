@@ -1,15 +1,14 @@
 import './HomePage.css';
 import AboutUs from '../../Components/AboutUs/AboutUs';
 import Guides from '../../Components/Guides/Guides';
-import Navbar from '../../Components/Navbar/Navbar';
 import Locations from '../../Components/Locations/Locations';
 import Shops from '../../Components/Shops/Shops';
 import Title from '../../Components/Title/Title';
+import Footer from '../../Components/Footer/Footer';
 
 function HomePage() {
   return (
     <div>
-      <Navbar/>
       <div className='homePlatter container'>
         <div className='homePlatter-text'>
           <h1>Camping Is All About Getting Lost In the Nature...</h1>
@@ -26,6 +25,7 @@ function HomePage() {
         <Shops/>
         <AboutUs/>
       </div>
+      <Footer/>
     </div>
   );
 }

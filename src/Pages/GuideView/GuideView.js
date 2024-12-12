@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./GuideView.css";
-import Navbar from "../../Components/Navbar/Navbar";
 import Narangala from "../../Assets/Narangala_1.jpg";
 import SachinthaJayaweera from '../../Assets/SachinthaJayaweera_1.jpg'
 import Lamborghini from '../../Assets/Lamborghini_1.jpg'
@@ -77,7 +76,6 @@ const GuideView = () => {
 
   return (
     <div>
-      <Navbar/>
       <div className="guideView">
         <div className="guidePlatter container">
           <div className="guidePlatter-text">

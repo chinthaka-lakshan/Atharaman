@@ -11,6 +11,8 @@ import ViewGuide from './Pages/ViewGuide/ViewGuide';
 import ManageShops from './Pages/ManageShops/ManageShops';
 import AddNewShop from './Pages/AddNewShop/AddNewShop';
 import ViewShop from './Pages/ViewShop/ViewShop';
+import AdminPage from './Pages/AdminPage/AdminPage.js';
+
 import HomePage from './Pages/HomePage/HomePage';
 import Login from './Components/LoginRegistration/Login';
 import Register from './Components/LoginRegistration/Register';
@@ -22,20 +24,18 @@ import LocationView from './Pages/LocationView/LocationView';
 import LocationReviewForm from './Pages/LocationReviewPage/LocationReviewForm.js';
 import GuidesPage from './Pages/GuidesPage/GuidesPage';
 import GuideView from './Pages/GuideView/GuideView.js';
-import ShopsPage from './Pages/ShopsPage/ShopsPage';
+import ItemsPage from './Pages/ItemsPage/ItemsPage.js';
 import ViewItem from './Pages/ViewItem/ViewItem';
 import ViewItemShop from './Pages/ViewItemShop/ViewItemShop';
 import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage';
 import ReviewForm from './Pages/ReviewFormPage/ReviewForm';
 import AllReview from './Pages/AllReviewPage/AllReview';
 import Navbar from './Components/Navbar/Navbar';
-import AdminPage from './Pages/AdminPage/AdminPage.js';
 import GuideForm from './Pages/GuideReg/GuideForm';
 
 const AppRoutes = ({ user, setUser, logout }) => {
-  const location = useLocation(); // Now safely inside Router context
+  const location = useLocation();
 
-  // List of admin routes where Navbar should be hidden
   const adminRoutes = [
     '/adminPanel',
     '/manageLocations',
@@ -47,14 +47,13 @@ const AppRoutes = ({ user, setUser, logout }) => {
     '/manageShops',
     '/manageShops/addNew',
     '/viewShop',
-    '/admin'
+    '/manageRequests'
   ];
 
   const isAdminRoute = adminRoutes.some(route => location.pathname.startsWith(route));
 
   const getRedirectProfile = () => {
     if (!user) return <Navigate to="/login" />;
-
     switch (user.role) {
       case 'GUIDE':
         return <GuideProfile user={user} />;
@@ -80,6 +79,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/manageShops" element={<ManageShops />} />
         <Route path="/manageShops/addNew" element={<AddNewShop />} />
         <Route path="/viewShop/:id" element={<ViewShop />} />
+        <Route path="/manageRequests" element={<AdminPage />} />
 
         {/* Website (User Side) */}
         <Route path="/" element={<HomePage />} />
@@ -91,7 +91,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/locationReview" element={<LocationReviewForm />} />
         <Route path="/guides" element={<GuidesPage />} />
         <Route path="/guideView/:id" element={<GuideView />} />
-        <Route path="/shops" element={<ShopsPage />} />
+        <Route path="/items" element={<ItemsPage />} />
         <Route path="/itemView/:id" element={<ViewItem />} />
         <Route path="/itemView/:id/shop/:id" element={<ViewItemShop />} />
         <Route path="/reviews" element={<SiteReviewPage />} />
