@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import {  useNavigate } from 'react-router-dom';
+import {  useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../../services/Api';
 import "./Register.css";
 const Register = () => {
@@ -57,6 +57,12 @@ const Register = () => {
                 Register
             </button>
             </form>
+            <div className="register-link-container">
+                            <p>Already have an account?</p>
+                            <Link to="/login" className="register-link">
+                            Login here
+                            </Link>
+                        </div>
         </div>
         </div>
     </div>
