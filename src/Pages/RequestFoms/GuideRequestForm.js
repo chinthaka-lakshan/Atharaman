@@ -3,6 +3,7 @@ import './RequestForms.css';
 
 const GuideRequestForm = ({ onSubmit, onCancel, availablePlaces = ["Beach", "Mountain", "City Tour", "Forest", "Waterfall", "Historical Sites", "Adventure Park"] }) => {
   const [formData, setFormData] = useState({
+    name:'',
     nic: '',
     email: '',
     contactNumber: '',
@@ -39,6 +40,19 @@ const GuideRequestForm = ({ onSubmit, onCancel, availablePlaces = ["Beach", "Mou
       <h3 className="form-title">Guide Request Form</h3>
 
       <div className="form-group">
+        <label htmlFor="name">Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          className="form-input"
+          required
+        />
+      </div>
+
+      <div className="form-group">
         <label htmlFor="nic">NIC:</label>
         <input
           type="text"
@@ -52,12 +66,12 @@ const GuideRequestForm = ({ onSubmit, onCancel, availablePlaces = ["Beach", "Mou
       </div>
 
       <div className="form-group">
-        <label htmlFor="guideNumber">E mail:</label>
+        <label htmlFor="email">E mail:</label>
         <input
           type="text"
-          id="guideNumber"
-          name="guideNumber"
-          value={formData.guideNumber}
+          id="email"
+          name="email"
+          value={formData.email}
           onChange={handleChange}
           className="form-input"
           required
@@ -78,11 +92,11 @@ const GuideRequestForm = ({ onSubmit, onCancel, availablePlaces = ["Beach", "Mou
       </div>
 
       <div className="form-group">
-        <label htmlFor="experience">Description:</label>
+        <label htmlFor="description">Description:</label>
         <textarea
-          id="experience"
-          name="experience"
-          value={formData.experience}
+          id="description"
+          name="description"
+          value={formData.description}
           onChange={handleChange}
           className="form-textarea"
           required

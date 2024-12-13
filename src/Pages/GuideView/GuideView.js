@@ -9,7 +9,7 @@ import axios from "axios";
 
 const GuideView = () => {
   const { id } = useParams();
-  const [guideName, setGuideName] = useState("");
+  const [name, setGuideName] = useState("");
   const [description, setDescription] = useState("");
   const [phoneNo, setPhoneNo] = useState('');
   const [email, setEmail] = useState('');
@@ -38,9 +38,9 @@ const GuideView = () => {
   useEffect(() => {
     async function fetchGuide() {
       try {
-        const response = await axios.get(`http://localhost:8080/guides/${id}`);
+        const response = await axios.get(`http://localhost:8080/api/id/guides/${id}`);
         const data = response.data;
-        setGuideName(data.guideName);
+        setGuideName(data.name);
         setDescription(data.description);
         setPhoneNo(data.phoneNo);
         setEmail(data.email);
@@ -79,7 +79,7 @@ const GuideView = () => {
       <div className="guideView">
         <div className="guidePlatter container">
           <div className="guidePlatter-text">
-            <h1>{guideName}</h1>
+            <h1>{name}</h1>
             <p>{description}</p>
           </div>
           <div className="photo-grid">

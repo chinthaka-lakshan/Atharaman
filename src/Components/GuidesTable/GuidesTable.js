@@ -23,9 +23,9 @@ const GuidesTable = () => {
 
   const guideColumns = [
     { field: "id", headerName: "Guide ID", width: 70 },
-    { field: "guideName", headerName: "Guide", width: 180 },
+    { field: "name", headerName: "Guide", width: 180 },
     { field: "description", headerName: "Description", width: 220 },
-    { field: "phoneNo", headerName: "Phone Number", width: 120 },
+    { field: "contactNumber", headerName: "Phone Number", width: 120 },
     { field: "email", headerName: "E-Mail", width: 180 },
     { field: "nic", headerName: "NIC", width: 140 },
   ];
