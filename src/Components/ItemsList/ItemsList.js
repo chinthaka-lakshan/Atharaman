@@ -43,7 +43,7 @@ const ItemsList = () => {
     return (
         <div className="itemList">
             {currentItems.map((item) => (
-                <Link key={item.id} to={`/ViewItem/${item.id}`}>
+                <Link key={item.id} to={`/itemView/${item.id}`}>
                     <div className="itemTile">
                         <img
                             src={`data:image/jpeg;base64,${item.image}`} // Display Base64 image

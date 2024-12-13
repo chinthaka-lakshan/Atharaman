@@ -251,7 +251,7 @@ const ShopProfile = () => {
   };
 
   const handleEditItem = (id) => {
-    navigate(`/edit-item/${id}`);
+    navigate(`/editItemForm/${id}`);
   };
 
   if (!shop) return <div>Loading...</div>;
@@ -317,7 +317,7 @@ const ShopProfile = () => {
           <p>
             <strong>Location:</strong> {shop.location}
           </p>
-          <Link to={`/add-item/${shop.id}`}>
+          <Link to={`/itemForm/${shop.id}`}>
             <button className="btn-add-item">Add Item</button>
           </Link>
           <button onClick={() => setIsEditing(true)} className="btn-edit">

@@ -20,6 +20,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ShopProfile from '../../Components/ShopProfile/ShopProfile';
 
 const ShopOwnerProfile = ({ user }) => {
   return (
@@ -31,13 +32,22 @@ const ShopOwnerProfile = ({ user }) => {
       <p>Role: {user.role}</p>
 
       <div style={{ marginTop: '20px' }}>
-        <Link to="/ShopDetails">
+        {/* <Link to="/ShopDetails">
           <button style={{ padding: '10px 20px', fontSize: '16px', marginRight: '10px' }}>Add Shop Details</button>
-        </Link>
-        <Link to="/AddShop">
+        </Link> */}
+        <Link to="/createShop">
           <button style={{ padding: '10px 20px', fontSize: '16px' }}>Add Shop</button>
         </Link>
+
+        {/* {user?.shopId ? (
+          <Link to={`/shopProfile/${user.shopId}`}>
+            <button style={{ padding: '10px 20px', fontSize: '16px' }}>View Shop</button>
+          </Link>
+        ) : (
+          <p>No shop available to view.</p>
+        )} */}
       </div>
+      {/* <ShopProfile /> */}
     </div>
   );
 };

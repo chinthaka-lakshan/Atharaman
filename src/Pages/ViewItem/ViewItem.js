@@ -69,7 +69,7 @@ const ViewItem = () => {
                                 <span className="itemValue">{item.rating || "N/A"} stars</span>
                             </div>
                         </div>
-                        <Link to={`/ViewItemShop/${item.shopId}`}>
+                        <Link to={`/itemViewShop/${item.shopId}`}>
                             <button className="shopbutton" >View Shop</button>
                         </Link>
                     </div>

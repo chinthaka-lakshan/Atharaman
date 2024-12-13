@@ -32,6 +32,10 @@ import ReviewForm from './Pages/ReviewFormPage/ReviewForm';
 import AllReview from './Pages/AllReviewPage/AllReview';
 import Navbar from './Components/Navbar/Navbar';
 import GuideForm from './Pages/GuideReg/GuideForm';
+import CreateShop from './Components/CreateShop/CreateShop.js';
+import ShopProfile from './Components/ShopProfile/ShopProfile.js';
+import ItemForm from './Components/ItemForm/ItemForm.js';
+import EditItemForm from './Pages/EditItemForm/EditItemForm.js';
 
 const AppRoutes = ({ user, setUser, logout }) => {
   const location = useLocation();
@@ -93,13 +97,17 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/guideView/:id" element={<GuideView />} />
         <Route path="/items" element={<ItemsPage />} />
         <Route path="/itemView/:id" element={<ViewItem />} />
-        <Route path="/itemView/:id/shop/:id" element={<ViewItemShop />} />
+        <Route path="/itemViewShop/:id" element={<ViewItemShop />} />
         <Route path="/reviews" element={<SiteReviewPage />} />
         <Route path="/addReview" element={<ReviewForm />} />
         <Route path="/allReviews" element={<AllReview />} />
-
         <Route path="/GuideReg" element={<GuideForm />} />
         <Route path="/admin" element={<AdminPage />} />
+
+        <Route path="/createShop" element={<CreateShop/>}/>
+        <Route path="/shopProfile/:id" element={<ShopProfile/>}/>
+        <Route path="/itemForm/:id" element={<ItemForm/>}/>
+        <Route path="/editItemForm/:id" element={<EditItemForm/>}/>
       </Routes>
     </>
   );

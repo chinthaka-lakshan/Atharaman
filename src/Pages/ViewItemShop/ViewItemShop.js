@@ -1,5 +1,5 @@
 import React, { useEffect, useSyncExternalStore, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import "./ViewItemShop.css";
 
@@ -97,8 +97,11 @@ const ViewItemShop = () => {
               <h2 className="item-name">{item.name}</h2>
               <p className="item-description">{item.description}</p>
               <p className="item-price">${item.price}</p>
-              <button className="buy-now-button">Buy Now</button>
+              <Link to={`/itemView/${item.id}`}>
+              <button className="buy-now-button">Item Details</button>
+              </Link>
             </div>
+
           ))
         ) : (
           <p>No items available in this shop.</p>

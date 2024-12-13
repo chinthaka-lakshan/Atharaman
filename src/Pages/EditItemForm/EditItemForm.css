@@ -1,0 +1,91 @@
+/* Container for the form */
+.item-form-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Heading styles */
+  .item-form-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  /* Form styles */
+  .item-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Input and textarea styles */
+  .item-form input[type="text"],
+  .item-form input[type="number"],
+  .item-form input[type="file"],
+  .item-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+  }
+  
+  .item-form textarea {
+    resize: vertical;
+    height: 100px;
+  }
+  
+  .item-form input:focus,
+  .item-form textarea:focus {
+    border-color: #4caf50;
+    outline: none;
+  }
+  
+  /* Submit button styles */
+  .item-form button[type="submit"] {
+    padding: 12px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .item-form button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  
+  /* Image preview styles */
+  .image-preview {
+    max-width: 100%;
+    max-height: 150px;
+    margin-top: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+  }
+  
+  /* Responsive design */
+  @media screen and (max-width: 768px) {
+    .item-form-container {
+      margin: 20px;
+      padding: 15px;
+    }
+  
+    .item-form-container h2 {
+      font-size: 20px;
+    }
+  
+    .item-form button[type="submit"] {
+      font-size: 14px;
+    }
+  }

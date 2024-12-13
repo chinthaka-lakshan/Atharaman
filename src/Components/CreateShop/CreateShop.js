@@ -163,7 +163,7 @@ const CreateShop = () => {
       );
       alert("Shop created successfully!");
       // Navigate to ShopProfile page with the new shop's ID
-      navigate(`/ShopProfile/${response.data.id}`);
+      navigate(`/shopProfile/${response.data.id}`);
     } catch (error) {
       console.error("Error creating shop:", error);
       alert("Failed to create the shop. Please try again.");
