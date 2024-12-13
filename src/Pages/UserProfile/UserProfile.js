@@ -180,6 +180,7 @@ import { getUserProfile, submitRequest, deleteUser } from '../../services/Api';
 import GuideRequestForm from '../../Pages/RequestFoms/GuideRequestForm';
 import ShopOwnerRequestForm from '../../Pages/RequestFoms/ShopOwnerRequestForm';
 import './UserProfile.css';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const UserProfile = ({ user }) => {
   const [profile, setProfile] = useState(null);
@@ -241,7 +242,12 @@ const UserProfile = ({ user }) => {
   return (
     <div className="user-page">
       <div className="user-profile-container">
-        <h1 className="user-welcome-message">Welcome, {profile.username}</h1>
+
+        <div className='profile-img'>
+          <AccountCircleIcon className='user-img'/>
+          <h1 className="user-welcome-message">Welcome, {profile.username}</h1>
+        </div>
+
         <div className="user-profile-details">
           <p>Email: <span>{profile.email}</span></p>
           <p>Role: <span>{profile.role || 'USER'}</span></p>
@@ -268,7 +274,6 @@ const UserProfile = ({ user }) => {
         )}
 
         <div className="user-delete-profile-section">
-          <h2>Delete Profile</h2>
           <button onClick={handleDeleteUser} className="btn delete-btn">Delete Profile</button>
         </div>
       </div>
