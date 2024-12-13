@@ -11,7 +11,7 @@ const GuidesTable = () => {
   useEffect(() => {
     const fetchGuides = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/guides");
+        const response = await axios.get("http://localhost:8080/api/guides");
         setData(response.data); // set the guides data
       } catch (error) {
         console.error("Error fetching guides data", error);
@@ -23,9 +23,9 @@ const GuidesTable = () => {
 
   const guideColumns = [
     { field: "id", headerName: "Guide ID", width: 70 },
-    { field: "guideName", headerName: "Guide", width: 180 },
+    { field: "name", headerName: "Guide", width: 180 },
     { field: "description", headerName: "Description", width: 220 },
-    { field: "phoneNo", headerName: "Phone Number", width: 120 },
+    { field: "contactNumber", headerName: "Phone Number", width: 120 },
     { field: "email", headerName: "E-Mail", width: 180 },
     { field: "nic", headerName: "NIC", width: 140 },
   ];
@@ -50,7 +50,7 @@ const GuidesTable = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/guides");
+      const response = await axios.get("http://localhost:8080/api/guides");
       setData(response.data);
     } catch (error) {
       console.error("Error fetching guide data", error);
@@ -62,13 +62,30 @@ const GuidesTable = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:8080/guides/${id}`);
-      setData(data.filter((item) => item.id !== id));
-    } catch (error) {
-      console.error("Error deleting guide", error);
+    const userConfirmed = window.confirm(
+        `Are you sure you want to delete the guide?`
+    );
+
+    if (!userConfirmed) {
+        alert("Deletion canceled.");
+        return;
     }
-  };
+
+    try {
+        await axios.delete(`http://localhost:8080/api/guides/${id}`);
+        // Update the state to remove the deleted guide
+        setData((prevData) => prevData.filter((item) => item.id !== id));
+        alert(`Guide with ID ${id} has been successfully deleted.`);
+    } catch (error) {
+        console.error("Error deleting guide:", error);
+        alert(
+            `Failed to delete guide with ID ${id}. ${
+                error.response?.data?.message || "Please try again later."
+            }`
+        );
+    }
+};
+
 
   return (
     <div className="guidesTable">

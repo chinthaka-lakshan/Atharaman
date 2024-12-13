@@ -22,7 +22,7 @@
 //     const fetchShop = async () => {
 //       try {
 //         const response = await axios.get(
-//           `http://localhost:8080/Shops/find-by-id/${id}`
+//           http://localhost:8080/Shops/find-by-id/${id}
 //         );
 //         console.log(id);
 
@@ -60,7 +60,7 @@
 //   const deleteShop = async () => {
 //     if (window.confirm("Are you sure you want to delete this shop?")) {
 //       try {
-//         await axios.delete(`http://localhost:8080/Shops/${shop.id}`);
+//         await axios.delete(http://localhost:8080/Shops/${shop.id});
 //         alert("Shop deleted!");
 //         navigate("/"); // Redirect to home or another page
 //       } catch (error) {
@@ -135,7 +135,7 @@
 //           <p>
 //             <strong>Location:</strong> {shop.location}
 //           </p>
-//           <Link to={`/add-item/${shop.id}`}>
+//           <Link to={/add-item/${shop.id}}>
 //             <button className="btn-add-item">Add Item</button>
 //           </Link>
 
@@ -170,7 +170,7 @@ const ShopProfile = () => {
     owner: "",
     contact: "",
     location: "",
-    photo: null,
+    image: null,
   });
   const { id } = useParams();
   // Fetch shop details
@@ -219,11 +219,41 @@ const ShopProfile = () => {
 
   const saveEdit = async () => {
     try {
-      await axios.put("http://localhost:8080/Shops/update", editedShop);
-      setShop(editedShop);
-      setIsEditing(false);
+      // Create FormData to send individual fields and the image file
+      const formData = new FormData();
+
+      // Append individual shop fields as string parameters
+      formData.append("id", editedShop.id);
+      formData.append("name", editedShop.name);
+      formData.append("owner", editedShop.owner);
+      formData.append("contact", editedShop.contact);
+      formData.append("location", editedShop.location);
+      
+      // Append the image file if available
+      if (editedShop.photo) {
+        const file = (e) => e.target.files[0]; // Ensure photo is File-like
+        if (file) {
+          formData.append("image", file);
+        }
+      }
+
+      // Send the FormData to the backend
+      const response = await axios.put(
+        "http://localhost:8080/Shops/update",
+        formData
+      );
+
+      // Handle response
+      if (response.status === 200) {
+        setShop(editedShop); // Update the shop details
+        setIsEditing(false); // Exit the editing mode
+        alert("Shop updated successfully!");
+      } else {
+        alert("Failed to update shop.");
+      }
     } catch (error) {
       console.error("Error saving shop details:", error);
+      alert("There was an error while saving the shop details.");
     }
   };
 
@@ -251,7 +281,7 @@ const ShopProfile = () => {
   };
 
   const handleEditItem = (id) => {
-    navigate(`/edit-item/${id}`);
+    navigate(`/editItemForm/${id}`);
   };
 
   if (!shop) return <div>Loading...</div>;
@@ -317,7 +347,7 @@ const ShopProfile = () => {
           <p>
             <strong>Location:</strong> {shop.location}
           </p>
-          <Link to={`/add-item/${shop.id}`}>
+          <Link to={`/itemForm/${shop.id}`}>
             <button className="btn-add-item">Add Item</button>
           </Link>
           <button onClick={() => setIsEditing(true)} className="btn-edit">

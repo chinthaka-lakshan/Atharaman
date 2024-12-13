@@ -26,7 +26,7 @@ const GuidesList = () => {
     useEffect(() => {
         const fetchGuides = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/guides");
+                const response = await axios.get("http://localhost:8080/api/guides");
                 setGuides(response.data);
                 setFilteredGuides(response.data); // Initially set all guides as filtered
             } catch (error) {
@@ -42,7 +42,7 @@ const GuidesList = () => {
         const query = event.target.value.toLowerCase();
         setSearchQuery(query);
         const filtered = guides.filter(guide =>
-            guide.guideName && guide.guideName.toLowerCase().includes(query) // Ensure guideName is defined
+            guide.name && guide.name.toLowerCase().includes(query) // Ensure guideName is defined
         );
         setFilteredGuides(filtered);
         setCurrentPage(1); // Reset to the first page after search
@@ -74,26 +74,26 @@ const GuidesList = () => {
             </div>
 
             <div className="guidesList">
-                {currentGuides.length > 0 ? (
-                    currentGuides.map((guide, index) => (
-                        <Link key={index} to={`/guideView/${guide.id}`}>
-                            <div className="guideTile">
-                                <img src={guide.image || SachinthaJayaweera} alt={guide.guideName} className="tile-img"/>
-                                <div className="tile-content">
-                                    <h3>{guide.guideName}</h3>
-                                    <p>{guide.description}</p>
-                                    {/* Render star rating */}
-                                    <div className="star-rating">
-                                        {renderStars(guide.rating || 3)} {/* Assuming rating is a number between 1-5 */}
-                                    </div>
-                                </div>
-                            </div>
-                        </Link>
-                    ))
-                ) : (
-                    <p>No Guides Found</p>
-                )}
-            </div>
+    {currentGuides.length > 0 ? (
+        currentGuides.map((guide, index) => (
+            <Link key={index} to={`/guideView/${guide.id}`}>
+                <div className="guideTile">
+                    <img src={guide.image || SachinthaJayaweera} alt={guide.name} className="tile-img" />
+                    <div className="tile-content">
+                        <h3>{guide.name}</h3>
+                        <p>{guide.description}</p>
+                        {/* Render star rating */}
+                        <div className="star-rating">
+                            {renderStars(guide.rating || 3)} {/* Assuming rating is a number between 1-5 */}
+                        </div>
+                    </div>
+                </div>
+            </Link>
+        ))
+    ) : (
+        <p>No Guides Found</p>
+    )}
+</div>
 
             {/* Pagination Controls */}
             {filteredGuides.length > itemsPerPage && (

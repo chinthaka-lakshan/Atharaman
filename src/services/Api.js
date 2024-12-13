@@ -33,8 +33,8 @@ export const updateRequestStatus = (id, payload) =>
   API.put(`/requests/${id}/status`, payload);
 
 // Fetch guide profile by userId
-export const getGuideProfile = (userId) => {
-  return axios.get(`/api/guides/${userId}`);
+export const getGuideProfile = (id) => {
+  return axios.get(`/api/guides/id/${id}`);
 };
 
 // Fetch shop owner profile by userId
