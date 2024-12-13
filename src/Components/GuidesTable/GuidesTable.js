@@ -63,7 +63,7 @@ const GuidesTable = () => {
 
   const handleDelete = async (id) => {
     const userConfirmed = window.confirm(
-        `Are you sure you want to delete the guide with ID ${id}?`
+        `Are you sure you want to delete the guide?`
     );
 
     if (!userConfirmed) {
