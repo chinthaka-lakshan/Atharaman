@@ -38,7 +38,7 @@ const GuideView = () => {
   useEffect(() => {
     async function fetchGuide() {
       try {
-        const response = await axios.get(`http://localhost:8080/api/id/guides/${id}`);
+        const response = await axios.get(`http://localhost:8080/api/guides/id/${id}`);
         const data = response.data;
         setGuideName(data.name);
         setDescription(data.description);
