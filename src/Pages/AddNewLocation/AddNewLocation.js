@@ -1,22 +1,34 @@
-import React, { useState } from 'react';
-import './AddNewLocation.css';
-import axios from 'axios';
-import AdminSidebar from '../../Components/AdminSidebar/AdminSidebar';
-import AdminNavbar from '../../Components/AdminNavbar/AdminNavbar';
-import { DriveFolderUploadOutlined, Close } from '@mui/icons-material';
-import LocationOnSharpIcon from '@mui/icons-material/LocationOnSharp';
+import React, { useState } from "react";
+import "./AddNewLocation.css";
+import axios from "axios";
+import AdminSidebar from "../../Components/AdminSidebar/AdminSidebar";
+import AdminNavbar from "../../Components/AdminNavbar/AdminNavbar";
+import { DriveFolderUploadOutlined, Close } from "@mui/icons-material";
+import LocationOnSharpIcon from "@mui/icons-material/LocationOnSharp";
 
 const AddNewLocation = () => {
   const [image1, setImage1] = useState(null);
   const [extraImages, setExtraImages] = useState([null, null, null, null]);
 
-  const provinces = ['Central', 'Western', 'Uva', 'North', 'Southern', 'Eastern'];
+  const provinces = [
+    "Central",
+    "Western",
+    "Uva",
+    "North",
+    "Southern",
+    "Eastern",
+    "Sabaragamuwa",
+    "North Western",
+    "North Central",
+  ];
 
   const handleImageChange = (setter, index, e) => {
     const file = e.target.files[0];
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
     if (file && !allowedTypes.includes(file.type)) {
-      alert(`Invalid file type: ${file.name}. Please upload JPEG or PNG images only.`);
+      alert(
+        `Invalid file type: ${file.name}. Please upload JPEG or PNG images only.`
+      );
       return;
     }
 
@@ -33,28 +45,35 @@ const AddNewLocation = () => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('location', e.target.locationName.value);
-    formData.append('shortDescription', e.target.locationShortDescription.value);
-    formData.append('longDescription', e.target.locationLongDescription.value);
-    formData.append('province', e.target.province.value);
+    formData.append("location", e.target.locationName.value);
+    formData.append(
+      "shortDescription",
+      e.target.locationShortDescription.value
+    );
+    formData.append("longDescription", e.target.locationLongDescription.value);
+    formData.append("province", e.target.province.value);
 
-    if (image1) formData.append('mainImage', image1);
+    if (image1) formData.append("mainImage", image1);
     extraImages.forEach((img, idx) => {
-      if (img) formData.append('extraImage', img); // Matches backend array handling
+      if (img) formData.append("extraImage", img); // Matches backend array handling
     });
 
     try {
-      const response = await axios.post('http://localhost:8080/locations', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      console.log('Location added:', response.data);
-      alert('Location added successfully!');
+      const response = await axios.post(
+        "http://localhost:8080/locations",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      console.log("Location added:", response.data);
+      alert("Location added successfully!");
       e.target.reset();
       setImage1(null);
       setExtraImages([null, null, null, null]);
     } catch (error) {
-      console.error('Error submitting the form:', error);
-      alert('Failed to add location. Please try again.');
+      console.error("Error submitting the form:", error);
+      alert("Failed to add location. Please try again.");
     }
   };
 
@@ -101,26 +120,31 @@ const AddNewLocation = () => {
           <div className="form">
             <form onSubmit={handleSubmit}>
               <div className="uploadButtons">
-                {['Main Image', 'Image 2', 'Image 3', 'Image 4', 'Image 5'].map((label, index) => (
-                  <div key={index} className="formInput">
-                    <label htmlFor={`fileInput${index}`} className="fileUploadLabel">
-                      <DriveFolderUploadOutlined className="uploadIcon" />
-                      <span>{label}</span>
-                    </label>
-                    <input
-                      type="file"
-                      id={`fileInput${index}`}
-                      onChange={(e) =>
-                        handleImageChange(
-                          index === 0 ? setImage1 : null,
-                          index === 0 ? -1 : index - 1,
-                          e
-                        )
-                      }
-                      style={{ display: 'none' }}
-                    />
-                  </div>
-                ))}
+                {["Main Image", "Image 2", "Image 3", "Image 4", "Image 5"].map(
+                  (label, index) => (
+                    <div key={index} className="formInput">
+                      <label
+                        htmlFor={`fileInput${index}`}
+                        className="fileUploadLabel"
+                      >
+                        <DriveFolderUploadOutlined className="uploadIcon" />
+                        <span>{label}</span>
+                      </label>
+                      <input
+                        type="file"
+                        id={`fileInput${index}`}
+                        onChange={(e) =>
+                          handleImageChange(
+                            index === 0 ? setImage1 : null,
+                            index === 0 ? -1 : index - 1,
+                            e
+                          )
+                        }
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                  )
+                )}
               </div>
               <div className="inputFields">
                 <div className="formInput">
