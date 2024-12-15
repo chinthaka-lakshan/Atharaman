@@ -32,7 +32,7 @@ const AddNewLocation = () => {
     }
   };
   const handleLocationSelect = async (place) => {
-    setLocation(place);
+    // setLocation(place);
 
     const geocodeApiKey = 'AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk';
 
