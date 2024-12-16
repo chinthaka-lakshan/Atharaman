@@ -52,7 +52,7 @@ const ReviewForm = () => {
       }
 
       // Navigate back to AllReview
-      navigate('/AllReview');
+      navigate('/AllReviews');
     } catch (err) {
       console.error(err.response?.data || "Error submitting review");
       setError('Failed to submit the review. Please try again.');

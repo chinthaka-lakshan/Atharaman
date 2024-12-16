@@ -21,7 +21,7 @@ function HomePage() {
         <Locations/>
         <Title subTitle='Meet With' title='Expert Guides' link='/guides' btn='All Guides'/>
         <Guides/>
-        <Title subTitle='Browse Through' title='Camping Gear Shops' link='/shops' btn='All Shops'/>
+        <Title subTitle='Browse Through' title='Camping Gears' link='/items' btn='All Items'/>
         <Shops/>
         <AboutUs/>
       </div>

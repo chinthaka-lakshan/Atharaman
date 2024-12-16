@@ -4,6 +4,7 @@ import axios from "axios";
 import "./ViewLocation.css";
 import AdminSidebar from "../../Components/AdminSidebar/AdminSidebar";
 import AdminNavbar from "../../Components/AdminNavbar/AdminNavbar";
+import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 
 const ViewLocation = () => {
     const { id } = useParams();
@@ -13,8 +14,9 @@ const ViewLocation = () => {
     const [province, setProvince] = useState("");
     const [mainImage, setMainImage] = useState(null);
     const [mainImagePreview, setMainImagePreview] = useState(null);
-    const [extraImages, setExtraImages] = useState([null, null, null, null]);  // Ensure only one declaration
-    const [extraImagePreviews, setExtraImagePreviews] = useState([null, null, null, null]);  // Ensure only one declaration
+    const [extraImages, setExtraImages] = useState([null, null, null, null]);
+    const [extraImagePreviews, setExtraImagePreviews] = useState([null, null, null, null]);
+    const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
 
     const provinces = ["Central", "Western", "Uva", "North", "Southern", "Eastern"];
 
@@ -32,6 +34,7 @@ const ViewLocation = () => {
             setProvince(data.province);
             setMainImagePreview(data.mainImage);
             setExtraImagePreviews([data.extraImage1, data.extraImage2, data.extraImage3, data.extraImage4]);
+            setCoordinates({ lat: data.latitude, lng: data.longitude });
         } catch (error) {
             console.error("Error fetching location details:", error.message);
             alert("Failed to fetch location details.");
@@ -43,11 +46,11 @@ const ViewLocation = () => {
             alert("Invalid file type. Please upload JPEG or PNG images.");
             return;
         }
-    
-        if (index === -1) { // Main image case
+
+        if (index === -1) {
             setMainImage(file);
             setMainImagePreview(URL.createObjectURL(file));
-        } else { // Extra images case
+        } else {
             const updatedImages = [...extraImages];
             const updatedPreviews = [...extraImagePreviews];
             updatedImages[index] = file;
@@ -57,37 +60,63 @@ const ViewLocation = () => {
         }
     };
 
+    const handleLocationSelect = async (selected) => {
+        const place = selected.value.description;
+        setLocation(place);
+
+        try {
+            const geocodeApiKey = "AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk";
+            const geocodeResponse = await axios.get(
+                `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+                    place
+                )}&key=${geocodeApiKey}`
+            );
+
+            const results = geocodeResponse.data.results;
+            if (results.length > 0) {
+                const { lat, lng } = results[0].geometry.location;
+                setCoordinates({ lat, lng });
+            } else {
+                alert("Unable to fetch coordinates for the selected location.");
+            }
+        } catch (error) {
+            console.error("Error fetching coordinates:", error.message);
+            alert("Failed to fetch coordinates for the selected location.");
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         const formData = new FormData();
         formData.append("location", location);
         formData.append("shortDescription", shortDescription);
         formData.append("longDescription", longDescription);
         formData.append("province", province);
-    
+        formData.append("latitude", coordinates.lat);
+        formData.append("longitude", coordinates.lng);
+
         if (mainImage) {
             formData.append("mainImage", mainImage);
         }
-    
-        extraImages.forEach((img, index) => {
+
+        extraImages.forEach((img) => {
             if (img) {
-                formData.append("extraImage", img); // Make sure to send all extra images
+                formData.append("extraImage", img);
             }
         });
-    
+
         try {
             const response = await axios.put(`http://localhost:8080/locations/${id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             alert("Location updated successfully!");
-            fetchLocation(); // Refresh data to reflect updated images
+            fetchLocation();
         } catch (error) {
             console.error("Error updating location:", error.response || error);
             alert("An error occurred while updating the location.");
         }
     };
-    
 
     return (
         <div className="viewLocation">
@@ -145,6 +174,17 @@ const ViewLocation = () => {
                             <div className="editFormInput">
                                 <label>Location Name:</label>
                                 <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
+                            </div>
+                            <div className="editFormInput">
+                                <label>Location:</label>
+                                <GooglePlacesAutocomplete
+                                    apiKey="AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk"
+                                    selectProps={{
+                                        onChange: handleLocationSelect,
+                                        placeholder: "Search for a location...",
+                                        defaultInputValue: location,
+                                    }}
+                                />
                             </div>
                             <div className="editFormInput">
                                 <label>Province:</label>

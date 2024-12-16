@@ -143,7 +143,7 @@ const GuideView = () => {
                 <p>No Reviews Found</p>
               )}
             </div>
-            <Link to="/guideReviewPage">
+            <Link to="/guideReviewForm">
               <button className="view-more-button">Add Guide Review</button>
             </Link>
           </div>

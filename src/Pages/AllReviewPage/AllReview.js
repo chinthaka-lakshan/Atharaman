@@ -42,7 +42,7 @@ const AllReview = () => {
 
   // Navigate to ReviewForm with data for updating
   const handleUpdate = (review) => {
-    navigate('/ReviewForm', { state: { review, isUpdate: true } });
+    navigate('/addReview', { state: { review, isUpdate: true } });
   };
 
   const handleDelete = async (id) => {

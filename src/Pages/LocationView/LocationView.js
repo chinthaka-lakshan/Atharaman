@@ -18,11 +18,15 @@ const LocationView = () => {
   const [weather, setWeather] = useState(null);
   const [modalImage, setModalImage] = useState(null);
   const [currentLocations, setLocations] = useState([])
-  const API_KEY = "YOUR_OPENWEATHERMAP_API_KEY"; // Replace with your OpenWeatherMap API Key
-  const latitude = 7.1167; // Latitude of Narangala
-  const longitude = 81.0333; // Longitude of Narangala
-
   const [reviews, setReviews] = useState([]);
+  // const API_KEY = "0c7967b080d377c47ea3e4eec45a9736"; // Replace with your OpenWeatherMap API Key
+  // const latitude = 7.291418; // Latitude of Narangala
+  // const longitude = 80.636696; // Longitude of Narangala
+  const [coordinates, setCoordinates] = useState(null);
+  const [currentWeather, setCurrentWeather] = useState(null);
+  const [hourlyForecast, setHourlyForecast] = useState([]);
+
+
 
   const renderStars = (rating) => {
     const stars = [];
@@ -46,6 +50,7 @@ const LocationView = () => {
         setLongDescription(data.longDescription);
         setMainImagePreview(data.mainImage);
         setExtraImagePreviews([data.extraImage1, data.extraImage2, data.extraImage3, data.extraImage4]);
+        setCoordinates({lat: data.latitude, lng:data.longitude});
       } catch (error) {
         console.error("Error fetching location details:", error.message);
         alert("Failed to fetch location details.");
@@ -67,13 +72,32 @@ const LocationView = () => {
 
   useEffect(() => {
     const fetchWeather = async () => {
-      try {
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`);
-        const data = await response.json();
-        setWeather(data);
-      } catch (error) {
-        console.error("Error fetching weather data:", error);
+      if(!coordinates) return;
+      const weatherApiKey = '0c7967b080d377c47ea3e4eec45a9736';
+      try{
+        const weatherResponse = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${coordinates.lat}&lon=${coordinates.lng}&appid=${weatherApiKey}&units=metric`
+          );
+          const weatherData = await weatherResponse.json();
+          setCurrentWeather(weatherData);
+  
+          // Fetch hourly forecast
+          const forecastResponse = await fetch(
+            `https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lng}&appid=${weatherApiKey}&units=metric`
+          );
+          const forecastData = await forecastResponse.json();
+          setHourlyForecast(forecastData.list.slice(0, 8)); // Next 8 time slots (24 hours)
+        } catch (error) {
+          console.error('Error fetching weather data:', error);
+  
       }
+      // try {
+      //   const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`);
+      //   const data = await response.json();
+      //   setWeather(data);
+      // } catch (error) {
+      //   console.error("Error fetching weather data:", error);
+      // }
     };
     fetchWeather();
   }, []);
@@ -109,38 +133,62 @@ const LocationView = () => {
           <div className="description-container">
             <p>{longDescription}</p>
           </div>
-          <div className="side-info">
-            <div className="map-view">
-              <h2>Location Map</h2>
-              <iframe
-                title="Narangala Map"
-                src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${latitude},${longitude}`}
-                width="100%"
-                height="300"
-                style={{ border: "0" }}
-                allowFullScreen
-              ></iframe>
-            </div>
-            <div className="weather-view">
-              <h2>Current Weather</h2>
-              {weather && weather.main && weather.weather ? (
-                <div>
-                  <p>
-                    <strong>Temperature:</strong> {weather.main.temp}°C
-                  </p>
-                  <p>
-                    <strong>Condition:</strong> {weather.weather[0].description}
-                  </p>
-                  <p>
-                    <strong>Humidity:</strong> {weather.main.humidity}%
-                  </p>
-                  <p>
-                    <strong>Wind Speed:</strong> {weather.wind.speed} m/s
-                  </p>
+          <div className="app-container">
+            {/* Left Section */}
+            <div className="left-section">
+              {/* Current Weather */}
+              <div className="boxed-frame">
+                <h2 className="header">Current Weather</h2>
+                {currentWeather ? (
+                  <div className="current-weather">
+                    <div className="weather-header">
+                      <img
+                        src={`https://openweathermap.org/img/wn/${currentWeather.weather[0].icon}@2x.png`}
+                        alt="Weather Icon"
+                      />
+                      <h1>{Math.round(currentWeather.main.temp)}°C</h1>
+                    </div>
+                    <p>{currentWeather.weather[0].description}</p>
+                    <p>Wind: {currentWeather.wind.speed} m/s</p>
+                    <p>Humidity: {currentWeather.main.humidity}%</p>
+                  </div>
+                ) : (
+                  <p className="info">No weather data available. Please select a location.</p>
+                )}
+              </div>
+
+              {/* Hourly Forecast */}
+              <div className="boxed-frame">
+                <h2 className="header">Hourly Forecast</h2>
+                <div className="hourly-forecast">
+                  {hourlyForecast.map((forecast, index) => (
+                    <div key={index} className="hour-card">
+                      <p>{new Date(forecast.dt_txt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                      <img
+                        src={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
+                        alt="Weather Icon"
+                      />
+                      <p>{Math.round(forecast.main.temp)}°C</p>
+                    </div>
+                  ))}
                 </div>
-              ) : (
-              <p>Loading weather information...</p>
-              )}
+              </div>
+            </div>
+
+            {/* Right Section */}
+            <div className="right-section">
+              <div className="boxed-frame">
+                <h2 className="header">Location Map</h2>
+                {coordinates ? (
+                  <iframe
+                    title="Google Map"
+                    className="map-preview"
+                    src={`https://www.google.com/maps/embed/v1/view?key=AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk&center=${coordinates.lat},${coordinates.lng}&zoom=12`}
+                  ></iframe>
+                ) : (
+                  <p className="info">No map available. Please provide location coordinates.</p>
+                )}
+              </div>
             </div>
           </div>
           <div className="guides-container">

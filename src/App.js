@@ -36,6 +36,7 @@ import CreateShop from './Components/CreateShop/CreateShop.js';
 import ShopProfile from './Components/ShopProfile/ShopProfile.js';
 import ItemForm from './Components/ItemForm/ItemForm.js';
 import EditItemForm from './Pages/EditItemForm/EditItemForm.js';
+import GuideReviewForm from './Pages/GuideReviewPage/GuideReviewForm.js';
 
 const AppRoutes = ({ user, setUser, logout }) => {
   const location = useLocation();
@@ -108,6 +109,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/shopProfile/:id" element={<ShopProfile/>}/>
         <Route path="/itemForm/:id" element={<ItemForm/>}/>
         <Route path="/editItemForm/:id" element={<EditItemForm/>}/>
+        <Route path="/guideReviewForm" element={<GuideReviewForm/>}/>
       </Routes>
     </>
   );
