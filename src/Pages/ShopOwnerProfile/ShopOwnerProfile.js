@@ -1,53 +1,147 @@
-// import React from 'react';
-// import { Link } from 'react-router-dom';
-
-
-// const ShopOwnerProfile = ({ user }) => {
-//   return (
-//     <div style={{ maxWidth: '600px', margin: 'auto', textAlign: 'center' }}>
-//       <h2>Shop Owner Profile</h2>
-//       <p>Name: {user.name}</p>
-//       <p>Email: {user.email}</p>
-//       <p>Role: {user.role}</p>
-//       <Link to="ShopDetails">
-//       <button>Add Shop Details</button></Link>
-
-//     </div>
-//   );
-// };
-
-// export default ShopOwnerProfile;
-
-import React from 'react';
-import { Link } from 'react-router-dom';
-import ShopProfile from '../../Components/ShopProfile/ShopProfile';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './ShopOwnerProfile.css';
 
 const ShopOwnerProfile = ({ user }) => {
+  const [shopOwnerDetails, setShopOwnerDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState({});
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchShopOwnerDetails = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/shopOwners/${user.id}`);
+        setShopOwnerDetails(response.data);
+        setFormData(response.data); // Pre-fill form for editing
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load shop owner details. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    if (user && user.role === 'SHOP_OWNER') {
+      fetchShopOwnerDetails();
+    }
+  }, [user]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.put(`http://localhost:8080/api/shopOwners/${user.id}`, formData);
+      setShopOwnerDetails(response.data); // Update details with server response
+      setEditing(false); // Exit editing mode
+      alert('Profile updated successfully.');
+    } catch (err) {
+      alert('Failed to update profile. Please try again later.');
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm('Are you sure you want to delete your profile?');
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:8080/api/shopOwners/${user.id}`);
+        alert('Profile deleted successfully.');
+        navigate('/'); // Redirect to home page after deletion
+      } catch (err) {
+        alert('Failed to delete profile. Please try again later.');
+      }
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
-    <div style={{ maxWidth: '600px', margin: 'auto', textAlign: 'center', padding: '20px' }}>
-      <h1>Hi, {user.name}!</h1>
-      <h2>Shop Owner Profile</h2>
-      <p>Name: {user.name}</p>
-      <p>Email: {user.email}</p>
-      <p>Role: {user.role}</p>
-
-      <div style={{ marginTop: '20px' }}>
-        {/* <Link to="/ShopDetails">
-          <button style={{ padding: '10px 20px', fontSize: '16px', marginRight: '10px' }}>Add Shop Details</button>
-        </Link> */}
-        <Link to="/createShop">
-          <button style={{ padding: '10px 20px', fontSize: '16px' }}>Add Shop</button>
-        </Link>
-
-        {/* {user?.shopId ? (
-          <Link to={`/shopProfile/${user.shopId}`}>
-            <button style={{ padding: '10px 20px', fontSize: '16px' }}>View Shop</button>
-          </Link>
+    <div className="shop-owner-profile">
+      <div className="shop-owner-container">
+        <h2>Shop Owner Profile</h2>
+        {shopOwnerDetails ? (
+          editing ? (
+            <div className="edit-form">
+              <label>
+                Name:
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                />
+              </label>
+              <label>
+                Email:
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+              </label>
+              <label>
+                NIC:
+                <input
+                  type="text"
+                  name="nic"
+                  value={formData.nic}
+                  onChange={handleInputChange}
+                />
+              </label>
+              <label>
+                Contact Number:
+                <input
+                  type="text"
+                  name="contactNumber"
+                  value={formData.contactNumber}
+                  onChange={handleInputChange}
+                />
+              </label>
+              <label>
+                Shop Details:
+                <textarea
+                  name="shopDetails"
+                  value={formData.shopDetails}
+                  onChange={handleInputChange}
+                />
+              </label>
+              <div className="shop-owner-actions">
+                <button onClick={handleSave} className="save-button">
+                  Save Changes
+                </button>
+                <button onClick={() => setEditing(false)} className="cancel-button">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="shop-owner-details">
+              <p><strong>Name:</strong> {shopOwnerDetails.name}</p>
+              <p><strong>Email:</strong> {shopOwnerDetails.email}</p>
+              <p><strong>NIC:</strong> {shopOwnerDetails.nic}</p>
+              <p><strong>Contact Number:</strong> {shopOwnerDetails.contactNumber}</p>
+              <p><strong>Shop Details:</strong> {shopOwnerDetails.shopDetails || 'No details available.'}</p>
+              <div className="shop-owner-actions">
+                <button onClick={() => setEditing(true)} className="edit-button">
+                  Update Profile
+                </button>
+                <button onClick={handleDelete} className="delete-button">
+                  Delete Profile
+                </button>
+              </div>
+            </div>
+          )
         ) : (
-          <p>No shop available to view.</p>
-        )} */}
+          <p>No details available.</p>
+        )}
       </div>
-      {/* <ShopProfile /> */}
     </div>
   );
 };

@@ -1,0 +1,210 @@
+/* Main container styles */
+.guide-profile {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+    padding: 2rem;
+    background: linear-gradient(rgba(8,0,58,0.7),rgba(8,0,58,0.7)), url('../../Assets/Background.jpg');
+    background-size: cover;
+}
+
+.gfb {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.guide-profile-container {
+    max-width: 800px;
+    width: 100%;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    margin: 2rem auto;
+}
+
+/* Header styles */
+.guide-profile-container h2 {
+    color: #00838f;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 2.5rem;
+    border-bottom: 3px solid #00acc1;
+    padding-bottom: 1rem;
+}
+
+/* Details display styles */
+.guide-details {
+    padding: 1rem;
+}
+
+.guide-details p {
+    margin: 1.2rem 0;
+    padding: 1rem;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    border-left: 4px solid #00acc1;
+    font-size: 1.1rem;
+}
+
+.guide-details strong {
+    color: #00838f;
+    margin-right: 0.5rem;
+    font-weight: 600;
+}
+
+/* Form styles */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.edit-form label {
+    display: flex;
+    flex-direction: column;
+    color: #00838f;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.edit-form input,
+.edit-form textarea {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.edit-form input:focus,
+.edit-form textarea:focus {
+    border-color: #00acc1;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.2);
+    background-color: white;
+}
+
+.edit-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Button styles */
+.guide-actions {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: 2rem;
+    justify-content: center;
+}
+
+.guide-actions button {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.edit-button {
+    background-color: #00acc1;
+    color: white;
+}
+
+.edit-button:hover {
+    background-color: #00838f;
+    transform: translateY(-2px);
+}
+
+.delete-button {
+    background-color: #ff5252;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+}
+
+.save-button {
+    background-color: #26a69a;
+    color: white;
+}
+
+.save-button:hover {
+    background-color: #00897b;
+    transform: translateY(-2px);
+}
+
+.cancel-button {
+    background-color: #78909c;
+    color: white;
+}
+
+.cancel-button:hover {
+    background-color: #546e7a;
+    transform: translateY(-2px);
+}
+
+/* Loading and error states */
+.guide-profile p:only-child {
+    text-align: center;
+    padding: 2rem;
+    color: #78909c;
+    font-size: 1.2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .guide-profile {
+        padding: 1rem;
+    }
+
+    .guide-profile-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .guide-actions {
+        flex-direction: column;
+    }
+
+    .guide-actions button {
+        width: 100%;
+    }
+
+    .guide-details p {
+        font-size: 1rem;
+        padding: 0.8rem;
+    }
+
+    .guide-profile-container h2 {
+        font-size: 2rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.guide-profile-container {
+    animation: fadeIn 0.5s ease-out;
+}
