@@ -39,8 +39,6 @@ import UserGuideReview from './Pages/UserReviewpages/UserGuideReview/UserGuideRe
 import UserItemReview from './Pages/UserReviewpages/UserItemReview/UserItemReview.js';
 import UserPlaceReview from './Pages/UserReviewpages/UserPlaceReview/UserPlaceReview.js';
 
-
-
 const AppRoutes = ({ user, setUser, logout }) => {
   const location = useLocation();
 
@@ -72,7 +70,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
 
   return (
     <>
-      {!isAdminRoute && <Navbar user={user} logout={logout} />}
+      {!isAdminRoute && <Navbar user={user} logout={logout}/>}
       <Routes>
         {/* Admin Routes */}
         <Route path="/adminPanel" element={<AdminDashboard />} />
@@ -105,7 +103,6 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path='/userPlaceReview' element={<UserPlaceReview/>}/>
         <Route path="/allReviews" element={<AllReview />} />
         <Route path="/GuideReg" element={<GuideForm />} />
-
         <Route path="/createShop" element={<CreateShop/>}/>
         <Route path="/shopProfile/:id" element={<ShopProfile/>}/>
         <Route path="/itemForm/:id" element={<ItemForm/>}/>
