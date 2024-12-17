@@ -1,6 +1,7 @@
 import React from 'react'
 import './LocationsPage.css'
 import LocationsList from '../../Components/LocationsList/LocationsList'
+import Footer from '../../Components/Footer/Footer'
 
 const LocationsPage = () => {
   return (
@@ -13,6 +14,7 @@ const LocationsPage = () => {
         </div>
       </div>
       <LocationsList/>
+      <Footer/>
     </div>
   )
 }

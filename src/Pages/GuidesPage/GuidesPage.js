@@ -1,6 +1,7 @@
 import React from 'react'
 import './GuidesPage.css'
 import GuidesList from '../../Components/GuidesList/GuidesList'
+import Footer from '../../Components/Footer/Footer'
 
 const GuidesPage = () => {
   return (
@@ -13,6 +14,7 @@ const GuidesPage = () => {
         </div>
       </div>
       <GuidesList/>
+      <Footer/>
     </div>
   )
 }
