@@ -3,6 +3,7 @@ import './RequestForms.css';
 
 const ShopOwnerRequestForm = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
+    name:'',
     nic: '',
     email: '',
     contactNumber: '',
@@ -43,6 +44,21 @@ const ShopOwnerRequestForm = ({ onSubmit, onCancel }) => {
   return (
     <form onSubmit={handleSubmit} className="guide-request-form">
       <h3 className="form-title">Shop Owner Request Form</h3>
+
+
+
+      <div className="form-group">
+        <label htmlFor="name">Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          className="form-input"
+          required
+        />
+      </div>
 
       <div className="form-group">
         <label htmlFor="nic">NIC:</label>
