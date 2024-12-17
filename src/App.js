@@ -6,10 +6,8 @@ import ManageLocations from './Pages/ManageLocations/ManageLocations';
 import AddNewLocation from './Pages/AddNewLocation/AddNewLocation';
 import ViewLocation from './Pages/ViewLocation/ViewLocation';
 import ManageGuides from './Pages/ManageGuides/ManageGuides';
-import AddNewGuide from './Pages/AddNewGuide/AddNewGuide';
 import ViewGuide from './Pages/ViewGuide/ViewGuide';
 import ManageShops from './Pages/ManageShops/ManageShops';
-import AddNewShop from './Pages/AddNewShop/AddNewShop';
 import ViewShop from './Pages/ViewShop/ViewShop';
 import ManageRequests from './Pages/ManageRequests/ManageRequests.js';
 
@@ -52,10 +50,8 @@ const AppRoutes = ({ user, setUser, logout }) => {
     '/manageLocations/addNew',
     '/viewLocation',
     '/manageGuides',
-    '/manageGuides/addNew',
     '/viewGuide',
     '/manageShops',
-    '/manageShops/addNew',
     '/viewShop',
     '/manageRequests'
   ];
@@ -84,10 +80,8 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/manageLocations/addNew" element={<AddNewLocation />} />
         <Route path="/viewLocation/:id" element={<ViewLocation />} />
         <Route path="/manageGuides" element={<ManageGuides />} />
-        <Route path="/manageGuides/addNew" element={<AddNewGuide />} />
         <Route path="/viewGuide/:id" element={<ViewGuide />} />
         <Route path="/manageShops" element={<ManageShops />} />
-        <Route path="/manageShops/addNew" element={<AddNewShop />} />
         <Route path="/viewShop/:id" element={<ViewShop />} />
         <Route path="/manageRequests" element={<ManageRequests />} />
 
