@@ -12,6 +12,7 @@ const AddNewLocation = () => {
   const [extraImages, setExtraImages] = useState([null, null, null, null]);
   const [location, setLocation] = useState(null);
   const [coordinates, setCoordinates] = useState(null);
+  const [error, setError] = useState('');
 
   const provinces = ['Central', 'Western', 'Uva', 'North', 'Southern', 'Eastern'];
 
@@ -31,13 +32,13 @@ const AddNewLocation = () => {
       setExtraImages(updatedImages);
     }
   };
+
   const handleLocationSelect = async (place) => {
-    // setLocation(place);
+    setLocation(place);
 
     const geocodeApiKey = 'AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk';
 
     try {
-      // Fetch coordinates
       const geocodeResponse = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?place_id=${place.value.place_id}&key=${geocodeApiKey}`
       );
@@ -46,6 +47,7 @@ const AddNewLocation = () => {
       setCoordinates({ lat, lng });
     } catch (error) {
       console.error('Error fetching coordinates:', error);
+      setError('Failed to fetch location coordinates. Please try again.');
     }
   };
 
@@ -64,13 +66,17 @@ const AddNewLocation = () => {
       formData.append('longitude', coordinates.lng);
     }
     if (image1) formData.append('mainImage', image1);
-    extraImages.forEach((img, idx) => {
-      if (img) formData.append('extraImage', img); // Matches backend array handling
+    extraImages.forEach((img) => {
+      if (img) formData.append('extraImage', img);
     });
 
     try {
+      const token = 'YOUR_ACCESS_TOKEN'; // Replace with a valid token
       const response = await axios.post('http://localhost:8080/locations', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`, // Pass the token for authentication
+        },
       });
       console.log('Location added:', response.data);
       alert('Location added successfully!');
@@ -79,9 +85,10 @@ const AddNewLocation = () => {
       setExtraImages([null, null, null, null]);
       setLocation(null);
       setCoordinates(null);
+      setError('');
     } catch (error) {
       console.error('Error submitting the form:', error);
-      alert('Failed to add location. Please try again.');
+      setError('Failed to add location. Please check your inputs and try again.');
     }
   };
 
@@ -138,7 +145,8 @@ const AddNewLocation = () => {
                 />
                 {location && <p>Selected Place: {location.label}</p>}
               </div>
-              
+
+              {/* Image Uploads */}
               <div className="uploadButtons">
                 {['Main Image', 'Image 2', 'Image 3', 'Image 4', 'Image 5'].map((label, index) => (
                   <div key={index} className="formInput">
@@ -161,6 +169,8 @@ const AddNewLocation = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Input Fields */}
               <div className="inputFields">
                 <div className="formInput">
                   <label>Location Name</label>
@@ -198,6 +208,7 @@ const AddNewLocation = () => {
                     required
                   />
                 </div>
+                {error && <p className="errorMessage">{error}</p>}
                 <button type="submit">Save</button>
               </div>
             </form>
