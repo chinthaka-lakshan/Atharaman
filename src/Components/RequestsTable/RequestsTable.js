@@ -64,8 +64,8 @@ const RequestsTable = () => {
   };
 
   return (
-    <div className="admin-dashboard">
-      <h1 className="admin-title">Admin Dashboard</h1>
+    <div className="requestsTable">
+      <h1 className="admin-title">Requests List</h1>
       <table className="admin-table">
         <thead className="admin-table-header">
           <tr>
