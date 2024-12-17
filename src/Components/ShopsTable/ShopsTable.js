@@ -60,9 +60,6 @@ const ShopsTable = () => {
     <div className="shopsTable">
       <div className="shopsTableTitle">
         <span>Shops List</span>
-        <Link to='/manageShops/addNew'>
-          <span className="link">Add New</span>
-        </Link>
       </div>
       <DataGrid
         className="dataGrid"

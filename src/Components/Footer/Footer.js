@@ -1,7 +1,7 @@
 import React, { useState} from 'react';
 import './Footer.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import Logo from '../../Assets/Logo.jpg'
+import Logo from '../../Assets/Logo.jpg';
 
 const Footer = () => {
   const [loading, setLoading] = useState(false);
@@ -24,10 +24,10 @@ const Footer = () => {
       <footer id="footer" className="footer">
         <div className="footer-col">
           <img src={Logo} alt='' className="footer-logo" />
-          
-          <p>atharaman@gmail.com</p>
-          <p>0771234564</p>
-          
+          <div className='info'>
+            <p>atharaman@gmail.com</p>
+            <p>0761234567</p>
+          </div>
           <div className="social-media-icons">
             <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-facebook"></i>
@@ -51,29 +51,10 @@ const Footer = () => {
           <div className="copyright">
             <p>&copy; {new Date().getFullYear()} ATHARAMAN. All rights reserved.</p>
           </div>
-        </div>
-        <div className="footer-col">
-          <h3>Total Places </h3>
-          <p id='realTimevalues'>100+</p>
-          
-        </div>
-        <div className="footer-col">
-        <h3>Total Guides </h3>
-        <p id='realTimevalues'>500+</p>
-        </div>
-        <div className="footer-col">
-          <h2>Contact Us</h2>
-          <form onSubmit={handleSubmit}>
-            <input type="email" id="inquiry-email" placeholder="Your email" required />
-            <textarea placeholder="Your message" required></textarea>
-            <button type="submit" disabled={loading}>
-              {loading ? 'Sending...' : 'Send'}
-            </button>
-          </form>
-        </div>
-        <button className="scroll-to-top" onClick={scrollToTop}>
+          <button className="scroll-to-top" onClick={scrollToTop}>
             <i className="fas fa-arrow-up"></i> {/* FontAwesome icon for the arrow */}
-        </button>
+          </button>
+        </div>
       </footer>
     </div>
   );

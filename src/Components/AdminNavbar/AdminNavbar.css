@@ -17,21 +17,5 @@
             font-weight: bold;
             color: #616161;
         }
-
-        .item{
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin: 0 20px;
-
-            .profileImg{
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 1px solid #425060;
-                cursor: pointer;
-            }
-        }
     }
 }

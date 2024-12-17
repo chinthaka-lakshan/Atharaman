@@ -26,6 +26,10 @@
     line-height: 1.4;
 }
 
+.btn:hover{
+    background-color: #27ae60;
+  }
+
 /* ----- media query ----- */
 
 @media (max-width: 850px){

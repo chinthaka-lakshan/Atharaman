@@ -27,23 +27,6 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-
-        .link{
-            color: #fff;
-            font-size: 16px;
-            font-weight: 400;
-            border: 1px solid #000;
-            background-color: green;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            width: 100px;
-            height: 30px;
-        }
-
-        .link:hover{
-            transform: scale(1.05);
-        }
     }
 
     .datagrid{

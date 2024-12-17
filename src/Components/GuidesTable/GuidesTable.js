@@ -91,9 +91,6 @@ const GuidesTable = () => {
     <div className="guidesTable">
       <div className="guidesTableTitle">
         <span>Guides List</span>
-        <Link to='/manageGuides/addNew'>
-          <button className="link">Add New</button>
-        </Link>
       </div>
       <DataGrid
         className="dataGrid"

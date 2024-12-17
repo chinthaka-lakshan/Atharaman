@@ -6,12 +6,10 @@ import ManageLocations from './Pages/ManageLocations/ManageLocations';
 import AddNewLocation from './Pages/AddNewLocation/AddNewLocation';
 import ViewLocation from './Pages/ViewLocation/ViewLocation';
 import ManageGuides from './Pages/ManageGuides/ManageGuides';
-import AddNewGuide from './Pages/AddNewGuide/AddNewGuide';
 import ViewGuide from './Pages/ViewGuide/ViewGuide';
 import ManageShops from './Pages/ManageShops/ManageShops';
-import AddNewShop from './Pages/AddNewShop/AddNewShop';
 import ViewShop from './Pages/ViewShop/ViewShop';
-import AdminPage from './Pages/AdminPage/AdminPage.js';
+import ManageRequests from './Pages/ManageRequests/ManageRequests.js';
 
 import HomePage from './Pages/HomePage/HomePage';
 import Login from './Components/LoginRegistration/Login';
@@ -41,8 +39,6 @@ import UserGuideReview from './Pages/UserReviewpages/UserGuideReview/UserGuideRe
 import UserItemReview from './Pages/UserReviewpages/UserItemReview/UserItemReview.js';
 import UserPlaceReview from './Pages/UserReviewpages/UserPlaceReview/UserPlaceReview.js';
 
-
-
 const AppRoutes = ({ user, setUser, logout }) => {
   const location = useLocation();
 
@@ -52,10 +48,8 @@ const AppRoutes = ({ user, setUser, logout }) => {
     '/manageLocations/addNew',
     '/viewLocation',
     '/manageGuides',
-    '/manageGuides/addNew',
     '/viewGuide',
     '/manageShops',
-    '/manageShops/addNew',
     '/viewShop',
     '/manageRequests'
   ];
@@ -76,7 +70,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
 
   return (
     <>
-      {!isAdminRoute && <Navbar user={user} logout={logout} />}
+      {!isAdminRoute && <Navbar user={user} logout={logout}/>}
       <Routes>
         {/* Admin Routes */}
         <Route path="/adminPanel" element={<AdminDashboard />} />
@@ -84,12 +78,10 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/manageLocations/addNew" element={<AddNewLocation />} />
         <Route path="/viewLocation/:id" element={<ViewLocation />} />
         <Route path="/manageGuides" element={<ManageGuides />} />
-        <Route path="/manageGuides/addNew" element={<AddNewGuide />} />
         <Route path="/viewGuide/:id" element={<ViewGuide />} />
         <Route path="/manageShops" element={<ManageShops />} />
-        <Route path="/manageShops/addNew" element={<AddNewShop />} />
         <Route path="/viewShop/:id" element={<ViewShop />} />
-        <Route path="/manageRequests" element={<AdminPage />} />
+        <Route path="/manageRequests" element={<ManageRequests />} />
 
         {/* Website (User Side) */}
         <Route path="/" element={<HomePage />} />
@@ -111,8 +103,6 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path='/userPlaceReview' element={<UserPlaceReview/>}/>
         <Route path="/allReviews" element={<AllReview />} />
         <Route path="/GuideReg" element={<GuideForm />} />
-        <Route path="/admin" element={<AdminPage />} />
-
         <Route path="/createShop" element={<CreateShop/>}/>
         <Route path="/shopProfile/:id" element={<ShopProfile/>}/>
         <Route path="/itemForm/:id" element={<ItemForm/>}/>

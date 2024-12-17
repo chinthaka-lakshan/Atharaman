@@ -17,10 +17,12 @@ const SiteReviewPage =() => {
     <div>
       <div className='review container'>
         <div className='review-text'>
-          <h1>What Is Your Review? </h1>
-          <p>Welcome To Review Page! You Can See All The Review In Here</p>
-          <button className='btn' onClick={handleAddReviews}>Add Review</button>
-          <button className='btn3' onClick={handleSeeAllReviews}>See All Review</button>
+          <h1>Share Your Thoughts</h1>
+          <p>Welcome To Review Page! You Can See All The Reviews In Here</p>
+          <div className='buttons'>
+            <button className='btn' onClick={handleAddReviews}>Add Review</button>
+            <button className='btn' onClick={handleSeeAllReviews}>See All Review</button>
+          </div>
         </div>
       </div>
     </div>

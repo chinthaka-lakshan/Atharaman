@@ -72,7 +72,7 @@ const Navbar = ({ user, logout }) => {
       <ul className={`menu ${mobileMenu ? 'show-mobile-menu' : 'hide-mobile-menu'}`}>
         <li onClick={handleHomeClick} className="link-button">Home</li>
         <li><Link to='/locations'>Locations</Link></li>
-        <li><Link to='/guides'>Guide</Link></li>
+        <li><Link to='/guides'>Guides</Link></li>
         <li><Link to='/items'>Items</Link></li>
         <li onClick={handleAboutUsClick} className="link-button">About Us</li>
         <li onClick={handleContactUsClick} className="link-button">Contact Us</li>

@@ -1,6 +1,7 @@
 import React from 'react'
 import './ItemsPage.css'
 import ItemsList from '../../Components/ItemsList/ItemsList';
+import Footer from '../../Components/Footer/Footer';
 
 const ItemsPage = () => {
   return (
@@ -13,6 +14,7 @@ const ItemsPage = () => {
         </div>
       </div>
       <ItemsList/>
+      <Footer/>
     </div>
   )
 }
