@@ -81,9 +81,7 @@ const Navbar = ({ user, logout }) => {
         {user ? (
           <>
             <li><Link to='/profile'>Profile</Link></li>
-            <li>
-              <button onClick={logout} className="nav-button">Logout</button>
-            </li>
+            <li onClick={logout} className="nav-button">Logout</li>
           </>
         ) : (
           <li><Link to='/login'>Login</Link></li>

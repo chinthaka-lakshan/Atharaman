@@ -37,6 +37,11 @@ import ShopProfile from './Components/ShopProfile/ShopProfile.js';
 import ItemForm from './Components/ItemForm/ItemForm.js';
 import EditItemForm from './Pages/EditItemForm/EditItemForm.js';
 import GuideReviewForm from './Pages/GuideReviewPage/GuideReviewForm.js';
+import UserGuideReview from './Pages/UserReviewpages/UserGuideReview/UserGuideReview.js';
+import UserItemReview from './Pages/UserReviewpages/UserItemReview/UserItemReview.js';
+import UserPlaceReview from './Pages/UserReviewpages/UserPlaceReview/UserPlaceReview.js';
+
+
 
 const AppRoutes = ({ user, setUser, logout }) => {
   const location = useLocation();
@@ -101,6 +106,9 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/itemViewShop/:id" element={<ViewItemShop />} />
         <Route path="/reviews" element={<SiteReviewPage />} />
         <Route path="/addReview" element={<ReviewForm />} />
+        <Route path='/userGuideReview' element={<UserGuideReview/>}/>
+        <Route path='/userItemReview' element={<UserItemReview/>}/>
+        <Route path='/userPlaceReview' element={<UserPlaceReview/>}/>
         <Route path="/allReviews" element={<AllReview />} />
         <Route path="/GuideReg" element={<GuideForm />} />
         <Route path="/admin" element={<AdminPage />} />

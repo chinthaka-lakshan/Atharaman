@@ -35,6 +35,10 @@ nav ul li{
     cursor: pointer;
 }
 
+.nav-button{
+    cursor: pointer;
+}
+
 /* ----- media query ----- */
 
 @media (max-width: 1000px){
