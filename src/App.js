@@ -11,7 +11,7 @@ import ViewGuide from './Pages/ViewGuide/ViewGuide';
 import ManageShops from './Pages/ManageShops/ManageShops';
 import AddNewShop from './Pages/AddNewShop/AddNewShop';
 import ViewShop from './Pages/ViewShop/ViewShop';
-import AdminPage from './Pages/AdminPage/AdminPage.js';
+import ManageRequests from './Pages/ManageRequests/ManageRequests.js';
 
 import HomePage from './Pages/HomePage/HomePage';
 import Login from './Components/LoginRegistration/Login';
@@ -89,7 +89,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/manageShops" element={<ManageShops />} />
         <Route path="/manageShops/addNew" element={<AddNewShop />} />
         <Route path="/viewShop/:id" element={<ViewShop />} />
-        <Route path="/manageRequests" element={<AdminPage />} />
+        <Route path="/manageRequests" element={<ManageRequests />} />
 
         {/* Website (User Side) */}
         <Route path="/" element={<HomePage />} />
@@ -111,7 +111,6 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path='/userPlaceReview' element={<UserPlaceReview/>}/>
         <Route path="/allReviews" element={<AllReview />} />
         <Route path="/GuideReg" element={<GuideForm />} />
-        <Route path="/admin" element={<AdminPage />} />
 
         <Route path="/createShop" element={<CreateShop/>}/>
         <Route path="/shopProfile/:id" element={<ShopProfile/>}/>
