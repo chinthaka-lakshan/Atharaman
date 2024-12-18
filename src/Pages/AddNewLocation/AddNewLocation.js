@@ -134,18 +134,6 @@ const AddNewLocation = () => {
           </div>
           <div className="form">
             <form onSubmit={handleSubmit}>
-              {/* Location Search */}
-              <div className="formInput">
-                <label>Search Location</label>
-                <GooglePlacesAutocomplete
-                  apiKey="AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk"
-                  selectProps={{
-                    onChange: handleLocationSelect,
-                  }}
-                />
-                {location && <p>Selected Place: {location.label}</p>}
-              </div>
-
               {/* Image Uploads */}
               <div className="uploadButtons">
                 {['Main Image', 'Image 2', 'Image 3', 'Image 4', 'Image 5'].map((label, index) => (
@@ -169,9 +157,19 @@ const AddNewLocation = () => {
                   </div>
                 ))}
               </div>
-
               {/* Input Fields */}
               <div className="inputFields">
+                {/* Location Search */}
+                <div className="formInput">
+                  <label>Search Location</label>
+                  <GooglePlacesAutocomplete
+                    apiKey="AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk"
+                    selectProps={{
+                      onChange: handleLocationSelect,
+                    }}
+                  />
+                  {location && <p>Selected Place: {location.label}</p>}
+                </div>
                 <div className="formInput">
                   <label>Location Name</label>
                   <input
