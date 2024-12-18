@@ -1,27 +1,42 @@
 import React, { useState, useEffect } from "react";
 import "./UserGuideReview.css";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const UserGuideReview = () => {
   const [reviews, setReviews] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 3;
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const queryParams = new URLSearchParams(location.search);
+  const guideId = queryParams.get("guideId");
+  const userId = queryParams.get("userId");
 
   useEffect(() => {
-    loadReview();
-  }, []);
+    if (guideId && userId) {
+      loadReviews(guideId, userId);
+    }
+  }, [guideId, userId]);
 
   // Load reviews from the backend
-  async function loadReview() {
+  const loadReviews = async (guideId, userId) => {
     try {
-      const response = await axios.get("http://localhost:8080/review");
+      const response = await axios.get(
+        `http://localhost:8080/getGuideReviewsByGuideIdAndUserId/`,
+        {
+          params: {
+            guideId: guideId,
+            userId: userId,
+          },
+        }
+      );
       setReviews(response.data);
     } catch (error) {
       console.error("Error loading reviews:", error);
     }
-  }
+  };
 
   const totalPages = Math.ceil(reviews.length / reviewsPerPage);
   const startIndex = (currentPage - 1) * reviewsPerPage;
@@ -62,54 +77,60 @@ const UserGuideReview = () => {
     <div className="all-review-page">
       <div className="all-review-container">
         <h1>My Reviews</h1>
-        <div className="reviews-list">
-          {currentReviews.map((review) => (
-            <div className="review-card" key={review.id}>
-              <h3>{review.name}</h3>
-              <div className="rating">
-                {Array.from({ length: review.rating }, (_, i) => (
-                  <span key={i} className="star">
-                    ★
-                  </span>
-                ))}
-              </div>
-              <p>{review.comment}</p>
-              <div className="review-actions">
-                <button
-                  className="update-btn"
-                  onClick={() => handleUpdate(review)}
-                >
-                  Update
-                </button>
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDelete(review.id)}
-                >
-                  Delete
-                </button>
-              </div>
+        {reviews.length === 0 ? (
+          <p>No reviews found for this guide and user.</p>
+        ) : (
+          <>
+            <div className="reviews-list">
+              {currentReviews.map((review) => (
+                <div className="review-card" key={review.id}>
+                  <h3>{review.name}</h3>
+                  <div className="rating">
+                    {Array.from({ length: review.rating }, (_, i) => (
+                      <span key={i} className="star">
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <p>{review.comment}</p>
+                  <div className="review-actions">
+                    <button
+                      className="update-btn"
+                      onClick={() => handleUpdate(review)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(review.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="pagination">
-          <button
-            className="pagination-btn"
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <span className="page-info">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            className="pagination-btn"
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
+            <div className="pagination">
+              <button
+                className="pagination-btn"
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span className="page-info">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                className="pagination-btn"
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

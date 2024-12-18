@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import './RequestForms.css';
 
-const GuideRequestForm = ({ onSubmit, onCancel, availablePlaces = ["Beach", "Mountain", "City Tour", "Forest", "Waterfall", "Historical Sites", "Adventure Park"] }) => {
+const GuideRequestForm = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
-    name:'',
+    name: '',
     nic: '',
     email: '',
     contactNumber: '',
     description: '',
     selectedPlaces: [],
   });
+
+  const [availablePlaces, setAvailablePlaces] = useState([]);
+
+  useEffect(() => {
+    // Fetch places from the API
+    fetch("http://localhost:8080/locations")
+      .then((response) => response.json())
+      .then((data) => setAvailablePlaces(data))
+      .catch((error) => console.error("Error fetching places:", error));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,6 +49,7 @@ const GuideRequestForm = ({ onSubmit, onCancel, availablePlaces = ["Beach", "Mou
     <form onSubmit={handleSubmit} className="guide-request-form">
       <h3 className="form-title">Guide Request Form</h3>
 
+      {/* Other Input Fields */}
       <div className="form-group">
         <label htmlFor="name">Name:</label>
         <input
@@ -51,6 +62,7 @@ const GuideRequestForm = ({ onSubmit, onCancel, availablePlaces = ["Beach", "Mou
           required
         />
       </div>
+
 
       <div className="form-group">
         <label htmlFor="nic">NIC:</label>
@@ -66,9 +78,9 @@ const GuideRequestForm = ({ onSubmit, onCancel, availablePlaces = ["Beach", "Mou
       </div>
 
       <div className="form-group">
-        <label htmlFor="email">E mail:</label>
+        <label htmlFor="email">Email:</label>
         <input
-          type="text"
+          type="email"
           id="email"
           name="email"
           value={formData.email}
@@ -103,24 +115,34 @@ const GuideRequestForm = ({ onSubmit, onCancel, availablePlaces = ["Beach", "Mou
         />
       </div>
 
+
+
+
+
+
+
+      
+      {/* Add fields for NIC, email, etc. */}
+
+      {/* Place Selection */}
       <div className="form-group">
         <label>Guide Places:</label>
         <div className="checkbox-group">
-          {availablePlaces && availablePlaces.length > 0 ? (
+          {availablePlaces.length > 0 ? (
             availablePlaces.map((place) => (
-              <div key={place} className="checkbox-item">
+              <div key={place.id} className="checkbox-item">
                 <input
                   type="checkbox"
-                  id={place}
+                  id={`place-${place.id}`}
                   name="selectedPlaces"
-                  value={place}
+                  value={place.id}
                   onChange={handlePlaceSelection}
                 />
-                <label htmlFor={place}>{place}</label>
+                <label htmlFor={`place-${place.id}`}>{place.location}</label>
               </div>
             ))
           ) : (
-            <p>No places available.</p>
+            <p>Loading places...</p>
           )}
         </div>
       </div>

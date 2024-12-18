@@ -28,6 +28,7 @@ import ViewItemShop from './Pages/ViewItemShop/ViewItemShop';
 import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage';
 import ReviewForm from './Pages/ReviewFormPage/ReviewForm';
 import AllReview from './Pages/AllReviewPage/AllReview';
+import EditReview from './Pages/AllReviewPage/EditReview';
 import Navbar from './Components/Navbar/Navbar';
 import GuideForm from './Pages/GuideReg/GuideForm';
 import CreateShop from './Components/CreateShop/CreateShop.js';
@@ -38,6 +39,7 @@ import GuideReviewForm from './Pages/GuideReviewPage/GuideReviewForm.js';
 import UserGuideReview from './Pages/UserReviewpages/UserGuideReview/UserGuideReview.js';
 import UserItemReview from './Pages/UserReviewpages/UserItemReview/UserItemReview.js';
 import UserPlaceReview from './Pages/UserReviewpages/UserPlaceReview/UserPlaceReview.js';
+import UserSiteReview from './Pages/UserReviewpages/UserSiteReview/UserSiteReview.js';
 
 const AppRoutes = ({ user, setUser, logout }) => {
   const location = useLocation();
@@ -101,6 +103,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path='/userGuideReview' element={<UserGuideReview/>}/>
         <Route path='/userItemReview' element={<UserItemReview/>}/>
         <Route path='/userPlaceReview' element={<UserPlaceReview/>}/>
+        <Route path='/userSiteReview' element={<UserSiteReview/>}/>
         <Route path="/allReviews" element={<AllReview />} />
         <Route path="/GuideReg" element={<GuideForm />} />
         <Route path="/createShop" element={<CreateShop/>}/>
@@ -108,6 +111,8 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/itemForm/:id" element={<ItemForm/>}/>
         <Route path="/editItemForm/:id" element={<EditItemForm/>}/>
         <Route path="/guideReviewForm" element={<GuideReviewForm/>}/>
+        <Route path="/edit/:id" element={<EditReview />} />
+
       </Routes>
     </>
   );

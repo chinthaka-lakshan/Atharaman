@@ -311,3 +311,85 @@
     font-size: 15px;
   }
 }
+
+.left-section {
+  flex: 2; /* Take up more space than the right section */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.boxed-frame {
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.boxed-frame:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Current weather styling */
+.current-weather {
+  text-align: center;
+}
+
+.weather-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.current-weather-icon {
+  width: 60px;
+}
+
+/* Hourly forecast grid */
+.hourly-forecast {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 10px;
+}
+
+.hour-card {
+  background: #f0f4ff;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+
+.hour-card img {
+  width: 40px;
+}
+
+/* Right section containing the map */
+.right-section {
+  flex: 1; /* Take up less space than the left section */
+}
+
+.map-preview {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  border: none;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .left-section, .right-section {
+    flex: 1;
+    width: 100%;
+  }
+
+  .map-preview {
+    height: 300px;
+  }
+}
