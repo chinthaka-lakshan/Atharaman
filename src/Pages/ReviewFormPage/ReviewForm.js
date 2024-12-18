@@ -180,7 +180,7 @@ const ReviewForm = () => {
 
       if (isUpdate) {
         // Update an existing review
-        await axios.put(`http://localhost:8080/review`, payload);
+        await axios.put(`http://localhost:8080/review/${loggedInUser?.id}`, payload);
         alert('Review updated successfully!');
       } else {
         // Create a new review

@@ -28,6 +28,7 @@ import ViewItemShop from './Pages/ViewItemShop/ViewItemShop';
 import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage';
 import ReviewForm from './Pages/ReviewFormPage/ReviewForm';
 import AllReview from './Pages/AllReviewPage/AllReview';
+import EditReview from './Pages/AllReviewPage/EditReview';
 import Navbar from './Components/Navbar/Navbar';
 import GuideForm from './Pages/GuideReg/GuideForm';
 import CreateShop from './Components/CreateShop/CreateShop.js';
@@ -108,6 +109,8 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/itemForm/:id" element={<ItemForm/>}/>
         <Route path="/editItemForm/:id" element={<EditItemForm/>}/>
         <Route path="/guideReviewForm" element={<GuideReviewForm/>}/>
+        <Route path="/edit/:id" element={<EditReview />} />
+
       </Routes>
     </>
   );
