@@ -60,6 +60,13 @@ const ShopOwnerProfile = ({ user }) => {
   const handleCreateShop = () => {
     navigate("/createshop"); 
   }
+  const handleViewShop = () => {
+    if (shopOwnerDetails && shopOwnerDetails.id) {
+      navigate(`/shopProfile/${shopOwnerDetails.id}`); 
+    } else {
+      alert("Shop details are unavailable.");
+    }
+  };
 
 
   if (loading) return <p>Loading...</p>;
@@ -138,6 +145,9 @@ const ShopOwnerProfile = ({ user }) => {
                 </button>
                 <button onClick={handleCreateShop} className="create-shop">
                   CreateShop
+                </button>
+                <button onClick={handleViewShop} className="create-shop">
+                  ViewShop
                 </button>
                   <button onClick={handleDelete} className="delete-button">
                     Delete Profile
