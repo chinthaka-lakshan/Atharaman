@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios"; // Import axios;
+import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import "./LocationsTable.css";
 import { Link } from "react-router-dom";
@@ -26,7 +26,12 @@ const LocationsTable = () => {
             <Link to={`/viewLocation/${params.row.id}`}>
               <button className="viewButton">View</button>
             </Link>
-              <button className="deleteButton" onClick={() => handleDelete(params.row.id)}>Delete</button>
+            <button
+              className="deleteButton"
+              onClick={() => confirmDelete(params.row.id)}
+            >
+              Delete
+            </button>
           </div>
         );
       },
@@ -52,6 +57,15 @@ const LocationsTable = () => {
       setData(data.filter((item) => item.id !== id));
     } catch (error) {
       console.error("Error deleting location", error);
+    }
+  };
+
+  const confirmDelete = (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this location?"
+    );
+    if (confirmed) {
+      handleDelete(id);
     }
   };
 
