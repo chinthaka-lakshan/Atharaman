@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './ShopOwnerProfile.css';
 
@@ -57,6 +57,10 @@ const ShopOwnerProfile = ({ user }) => {
       }
     }
   };
+  const handleCreateShop = () => {
+    navigate("/createshop"); 
+  }
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -132,9 +136,12 @@ const ShopOwnerProfile = ({ user }) => {
                 <button onClick={() => setEditing(true)} className="edit-button">
                   Update Profile
                 </button>
-                <button onClick={handleDelete} className="delete-button">
-                  Delete Profile
+                <button onClick={handleCreateShop} className="create-shop">
+                  CreateShop
                 </button>
+                  <button onClick={handleDelete} className="delete-button">
+                    Delete Profile
+                  </button>
               </div>
             </div>
           )
