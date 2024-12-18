@@ -1,0 +1,259 @@
+.Fullpage2{
+    height: 100vh; 
+    background: linear-gradient(rgba(8, 0, 58, 0.7), rgba(8, 0, 58, 0.7)), url('../../Assets/Wangedigala_1.jpg');
+    background-size: cover; 
+    background-position: center; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  
+  }
+
+  .itemreview-form {
+    width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f4f4f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    margin-top: 110px;
+    height: auto;
+    margin-top: 75px;
+  }
+
+  .itemreview-form h2 {
+    text-align: center;
+    color: #333;
+    font-size: 36px;
+    margin-top: -10px;
+  }
+
+  .itemreview-form label {
+    font-weight: bold;
+    display: block;
+    margin-top: 8px;
+    font-size: 18px;
+    
+  }
+  .itemreview-form label1 {
+    font-weight: bold;
+    display: block;
+    margin-top: -5px;
+    font-size: 18px;
+    
+  }
+  .itemreview-form input{
+    width: 100%;
+    height: 30px;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .itemreview-form textarea {
+    width: 100%;
+    height: 75px;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    
+  }
+
+  .itemreview-form .rating {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: -10px 0;
+  
+  }
+.itemreview-form .star {
+    font-size: 50px;
+    cursor: pointer;
+    color: #ddd;
+  } 
+  
+  .itemreview-form .star.selected {
+    color: #ffd700;
+  }
+  
+  .itemreview-form .error {
+    color: red;
+    font-size: 12px;
+  }
+  
+  .itemreview-form .popup {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 6px;
+    text-align: center;
+    margin-top: 7.5px;
+    border-radius: 5px;
+    font-size: 12px;
+  }
+  
+  .itemreview-form button {
+    width: 100%;
+    padding: 7.5px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    font-size: 15px;
+    
+  }
+  
+  .itemreview-form button:hover {
+    background-color: #555;
+  } 
+  /* textarea,
+    input[type="text"],
+    input[type="file"] {
+    width: 100%;
+    height: 35px;
+    margin-top: 2.5px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    }
+.photo-thumb {
+    width: 60px;
+    height: 50px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  } */
+
+/*   
+  .photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+  } */
+
+  /* new */
+  .uploadButtons{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    margin-top: -7px;
+
+    .fileUploadLabel{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        cursor: pointer;
+        background-color: white;
+        padding: 4px 4px;
+        border: 1px dotted #616161;
+        border-radius: 5px;
+        width: 105px;
+        font-size: 11px;
+        transition: background-color 0.3s;
+
+        .uploadIcon{
+            color: #616161;
+            font-size: 18px;
+        }
+    }
+
+    .fileUploadLabel:hover{
+        -webkit-box-shadow: 2px 2px 5px 1px #425060;
+        box-shadow: 2px 2px 5px 1px #a0afc1;
+        background-color: #f0f0f0;
+        border: none;
+        width: 120px;
+        font-size: 13px;
+    }
+}
+
+.inputFields{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 20px;
+    color: #616161;
+
+    .formInput{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        label{
+            display: flex;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        input, select{
+            border: none;
+            border-bottom: 1px solid #616161;
+            font-size: 18px;
+            outline: none;
+            width: 100%;
+            background-color: transparent;
+
+            &::placeholder{
+                font-size: 15px;
+            }
+        }
+
+        textarea{
+            width: 100%;
+            font-weight: 400;
+            height: auto;
+            padding: 10px;
+            font-size: 18px;
+
+            &::placeholder{
+                font-size: 15px;
+            }
+        }
+
+        select{
+            cursor: pointer;
+
+            option{
+                font-size: 15px;
+            }
+        }
+    }
+
+    button{
+        width: 150px;
+        padding: 10px;
+        margin: 10px 0;
+        align-self: center;
+        border: none;
+        border-radius: 5px;
+        background-color: #425060;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    
+
+
+}
+.image-preview {
+  width: 100px; /* Adjust width as needed */
+  height: 75px; /* Adjust height as needed */
+  margin-top: 7px;
+  border-radius: 5px;
+  object-fit: cover; /* Ensures the image is scaled to fit within the box */
+}
+
+
+
+
+

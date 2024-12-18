@@ -39,6 +39,8 @@ import UserGuideReview from './Pages/UserReviewpages/UserGuideReview/UserGuideRe
 import UserItemReview from './Pages/UserReviewpages/UserItemReview/UserItemReview.js';
 import UserPlaceReview from './Pages/UserReviewpages/UserPlaceReview/UserPlaceReview.js';
 
+import ItemReviewPage from './Pages/ViewItem/ItemReviewPage.js';
+
 const AppRoutes = ({ user, setUser, logout }) => {
   const location = useLocation();
 
@@ -108,6 +110,8 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/itemForm/:id" element={<ItemForm/>}/>
         <Route path="/editItemForm/:id" element={<EditItemForm/>}/>
         <Route path="/guideReviewForm" element={<GuideReviewForm/>}/>
+        {/* new add */}
+        <Route path="/itemReviewPage" element={<ItemReviewPage/>}/>
       </Routes>
     </>
   );

@@ -3,12 +3,30 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "./ViewItem.css";
 
+
+
+
+
 const ViewItem = () => {
     const { id } = useParams(); // Get the item ID from the URL
     const [item, setItem] = useState(null); // State to hold item details
    // const [shopId, setShopId] = useState();
     //const [setShopDetails] = useState([]);
     const navigate = useNavigate();
+
+    
+    const [reviews, setReviews] = useState([]);
+    const renderStars = (rating) => {
+        const stars = [];
+        for (let i = 0; i < 5; i++) {
+          if (i < rating) {
+            stars.push(<span key={i} className="star filled">★</span>); // filled star
+          } else {
+            stars.push(<span key={i} className="star">☆</span>); // empty star
+          }
+        }
+        return stars;
+      };
 
     useEffect(() => {
         const fetchItem = async () => {
@@ -37,6 +55,7 @@ const ViewItem = () => {
     // }
     if (!item) return <p>Loading...</p>;
 
+
     return (
         <div className="viewItem">
             <div className="viewItemContainer">
@@ -64,10 +83,6 @@ const ViewItem = () => {
                                 <span className="itemValue">{item.contact}</span>
                             </div>
                             
-                            <div className="detailItem">
-                                <span className="itemKey">Rating:</span>
-                                <span className="itemValue">{item.rating || "N/A"} stars</span>
-                            </div>
                         </div>
                         <Link to={`/itemViewShop/${item.shopId}`}>
                             <button className="shopbutton" >View Shop</button>
@@ -75,8 +90,78 @@ const ViewItem = () => {
                     </div>
                 </div>
             </div>
-        </div>
+            {/* new add */}
+            <div className="reviews-container">
+                <h2>Item Reviews</h2> 
+                <div>
+                <Link to="/ItemReviewPage">
+                    <button className="view-more-button">Add Item Review</button>
+                </Link>
+
+                <div className="review-table">
+                 <table>
+                     <thead>
+                         <tr>
+                          <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Photos</th>
+                            <th>View</th>
+                       </tr>
+                      </thead>
+                      <tbody>
+                        {reviews.length > 0 ? (
+                            reviews.map((review, index) => (
+                                <tr key={index}>
+                                    <td>{review.rating}</td>
+                                    <td>{review.comment}</td>
+                                    <td>
+                                        {review.mainImage && (
+                                            <img
+                                                src={`http://localhost/8080`}
+                                                alt="Main"
+                                                className="reviewImage"
+                                            />
+                                        )}
+                                        {[review.extraImage1,review.extraImage2,review.extraImage3,review.extraImage4]
+                                        .filter((img)=> img)
+                                        .map((img, idx) => (
+                                            <img
+                                                key={idx}
+                                                src={``}
+                                                alt={`Extra ${idx+1}`}
+                                                className="reviewImage"
+                                            />
+                                        ))}
+                                           
+                                    </td>
+                                    <td>
+                                        <button
+                                            className="my-review"
+                                        >
+                                            My Review
+                                        </button>
+                                    </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="4">No reviews submitted yet.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+            
+        </div>                   
+        
     );
 };
 
 export default ViewItem;
+
+
+
+
+
