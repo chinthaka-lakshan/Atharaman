@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import './RequestForms.css';
 
 const GuideRequestForm = ({ onSubmit, onCancel }) => {
+  const provinces = ['Western', 'Central', 'North-Western', 'Sabaragamuwa', 'Uva', 'North', 'North-Central', 'Southern', 'Eastern'];
   const [formData, setFormData] = useState({
     name: '',
     nic: '',
     email: '',
     contactNumber: '',
     description: '',
+    province: '',
     selectedPlaces: [],
   });
 
@@ -49,7 +51,7 @@ const GuideRequestForm = ({ onSubmit, onCancel }) => {
     <form onSubmit={handleSubmit} className="guide-request-form">
       <h3 className="form-title">Guide Request Form</h3>
 
-      {/* Other Input Fields */}
+      {/* Name Field */}
       <div className="form-group">
         <label htmlFor="name">Name:</label>
         <input
@@ -63,7 +65,7 @@ const GuideRequestForm = ({ onSubmit, onCancel }) => {
         />
       </div>
 
-
+      {/* NIC Field */}
       <div className="form-group">
         <label htmlFor="nic">NIC:</label>
         <input
@@ -77,6 +79,7 @@ const GuideRequestForm = ({ onSubmit, onCancel }) => {
         />
       </div>
 
+      {/* Email Field */}
       <div className="form-group">
         <label htmlFor="email">Email:</label>
         <input
@@ -90,6 +93,7 @@ const GuideRequestForm = ({ onSubmit, onCancel }) => {
         />
       </div>
 
+      {/* Contact Number Field */}
       <div className="form-group">
         <label htmlFor="contactNumber">Contact Number:</label>
         <input
@@ -103,6 +107,7 @@ const GuideRequestForm = ({ onSubmit, onCancel }) => {
         />
       </div>
 
+      {/* Description Field */}
       <div className="form-group">
         <label htmlFor="description">Description:</label>
         <textarea
@@ -115,16 +120,28 @@ const GuideRequestForm = ({ onSubmit, onCancel }) => {
         />
       </div>
 
+      {/* Province Field */}
+      <div className="formInput">
+        <label htmlFor="province">Province:</label>
+        <select
+          id="province"
+          name="province"
+          value={formData.province}
+          onChange={handleChange}
+          required
+        >
+          <option value="" disabled>
+            Select a province
+          </option>
+          {provinces.map((province, index) => (
+            <option key={index} value={province}>
+              {province}
+            </option>
+          ))}
+        </select>
+      </div>
 
-
-
-
-
-
-      
-      {/* Add fields for NIC, email, etc. */}
-
-      {/* Place Selection */}
+      {/* Guide Places Field */}
       <div className="form-group">
         <label>Guide Places:</label>
         <div className="checkbox-group">
@@ -147,9 +164,14 @@ const GuideRequestForm = ({ onSubmit, onCancel }) => {
         </div>
       </div>
 
+      {/* Form Actions */}
       <div className="form-actions">
-        <button type="submit" className="btn btn-submit">Submit</button>
-        <button type="button" onClick={onCancel} className="btn btn-cancel">Cancel</button>
+        <button type="submit" className="btn btn-submit">
+          Submit
+        </button>
+        <button type="button" onClick={onCancel} className="btn btn-cancel">
+          Cancel
+        </button>
       </div>
     </form>
   );
