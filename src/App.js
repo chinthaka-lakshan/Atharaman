@@ -30,7 +30,7 @@ import ReviewForm from './Pages/ReviewFormPage/ReviewForm';
 import AllReview from './Pages/AllReviewPage/AllReview';
 import EditReview from './Pages/AllReviewPage/EditReview';
 import Navbar from './Components/Navbar/Navbar';
-import GuideForm from './Pages/GuideReg/GuideForm';
+// import GuideForm from './Pages/GuideReg/GuideForm';
 import CreateShop from './Components/CreateShop/CreateShop.js';
 import ShopProfile from './Components/ShopProfile/ShopProfile.js';
 import ItemForm from './Components/ItemForm/ItemForm.js';
@@ -105,7 +105,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path='/userPlaceReview' element={<UserPlaceReview/>}/>
         <Route path='/userSiteReview/:id' element={<UserSiteReview/>}/>
         <Route path="/allReviews" element={<AllReview />} />
-        <Route path="/GuideReg" element={<GuideForm />} />
+        {/* <Route path="/GuideReg" element={<GuideForm />} /> */}
         <Route path="/createShop" element={<CreateShop/>}/>
         <Route path="/shopProfile/:id" element={<ShopProfile/>}/>
         <Route path="/itemForm/:id" element={<ItemForm/>}/>

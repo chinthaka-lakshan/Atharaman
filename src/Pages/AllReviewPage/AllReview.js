@@ -218,7 +218,7 @@ const AllReview = () => {
               {/* Show Update/Delete buttons only for the logged-in user's reviews */}
               {review.userId === loggedInUserId && (
                 <div className="review-actions">
-                  <button
+                  {/* <button
                     className="update-btn"
                     onClick={() => handleUpdate(review)}
                   >
@@ -229,7 +229,7 @@ const AllReview = () => {
                     onClick={() => handleDelete(review.id, review.userId)}
                   >
                     Delete
-                  </button>
+                  </button> */}
                 </div>
               )}
             </div>
