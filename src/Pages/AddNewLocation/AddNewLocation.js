@@ -14,7 +14,7 @@ const AddNewLocation = () => {
   const [coordinates, setCoordinates] = useState(null);
   const [error, setError] = useState('');
 
-  const provinces = ['Central', 'Western', 'Uva', 'North', 'Southern', 'Eastern'];
+  const provinces = ['Western','Central', 'North-Western','Sabaragamuva', 'Uva', 'North','North-Central', 'Southern', 'Eastern'];
 
   const handleImageChange = (setter, index, e) => {
     const file = e.target.files[0];
