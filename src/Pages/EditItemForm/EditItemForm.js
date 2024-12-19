@@ -258,61 +258,63 @@ const ItemEditForm = () => {
   };
 
   return (
-    <div className="item-form-container">
-      <h2>Edit Item</h2>
-      <form className="item-form" onSubmit={handleSubmit}>
-        <input
-          name="name"
-          placeholder="Item Name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="price"
-          type="number"
-          placeholder="Price"
-          value={formData.price}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="contact"
-          placeholder="Contact"
-          value={formData.contact}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="location"
-          placeholder="Location"
-          value={formData.location}
-          onChange={handleChange}
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="shopId"
-          type="number"
-          placeholder="Shop ID"
-          value={formData.shopId}
-          onChange={handleChange}
-          required
-        />
-        <input type="file" accept="image/*" onChange={handleImageChange} />
-        {preview && (
-          <img src={preview} alt="Preview" className="image-preview" />
-        )}
-        <button type="submit" disabled={loading}>
-          {loading ? "Updating..." : "Update"}
-        </button>
-      </form>
+    <div className="editItemForm1">
+      <div className="item-form-container">
+        <h2>Edit Item</h2>
+        <form className="item-form" onSubmit={handleSubmit}>
+          <input
+            name="name"
+            placeholder="Item Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+          <input
+            name="price"
+            type="number"
+            placeholder="Price"
+            value={formData.price}
+            onChange={handleChange}
+            required
+          />
+          <input
+            name="contact"
+            placeholder="Contact"
+            value={formData.contact}
+            onChange={handleChange}
+            required
+          />
+          <input
+            name="location"
+            placeholder="Location"
+            value={formData.location}
+            onChange={handleChange}
+            required
+          />
+          <textarea
+            name="description"
+            placeholder="Description"
+            value={formData.description}
+            onChange={handleChange}
+            required
+          />
+          <input
+            name="shopId"
+            type="number"
+            placeholder="Shop ID"
+            value={formData.shopId}
+            onChange={handleChange}
+            required
+          />
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+          {preview && (
+            <img src={preview} alt="Preview" className="image-preview" />
+          )}
+          <button type="submit" disabled={loading}>
+            {loading ? "Updating..." : "Update"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

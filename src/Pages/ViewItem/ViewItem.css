@@ -2,15 +2,15 @@
 
 .viewItem {
     font-family: 'Arial', sans-serif;
-    background-color: #745f5f;
+    background: linear-gradient(rgba(8, 0, 58, 0.7), rgba(8, 0, 58, 0.7)), url('../../Assets/Background.jpg');
     padding: 20px;
     min-height: 100vh;
     align-items: center;
     justify-content: center;
 
     .viewItemContainer {
-        max-width: 1200px;
-        margin: 0 auto;
+        max-width: 600px;
+        margin: 20px auto;
         background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);

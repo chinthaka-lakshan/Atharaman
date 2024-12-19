@@ -1,5 +1,13 @@
+.shopProfile {
+  font-family: 'Arial', sans-serif;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(rgba(8, 0, 58, 0.7), rgba(8, 0, 58, 0.7)), url('../../Assets/HarithaKanda_1.jpg');
+  min-height: 100vh;
+}
+
 .shop-profile-container {
-  margin: 50px auto;
   padding: 20px;
   max-width: 600px;
   background-color: #f9f9f9;
@@ -90,6 +98,7 @@ h2 {
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
+  margin-top: 80px;
 }
 
 .shop-photo {
