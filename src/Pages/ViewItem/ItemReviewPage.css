@@ -176,75 +176,7 @@
     }
 }
 
-.inputFields{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 20px;
-    color: #616161;
 
-    .formInput{
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-        label{
-            display: flex;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        input, select{
-            border: none;
-            border-bottom: 1px solid #616161;
-            font-size: 18px;
-            outline: none;
-            width: 100%;
-            background-color: transparent;
-
-            &::placeholder{
-                font-size: 15px;
-            }
-        }
-
-        textarea{
-            width: 100%;
-            font-weight: 400;
-            height: auto;
-            padding: 10px;
-            font-size: 18px;
-
-            &::placeholder{
-                font-size: 15px;
-            }
-        }
-
-        select{
-            cursor: pointer;
-
-            option{
-                font-size: 15px;
-            }
-        }
-    }
-
-    button{
-        width: 150px;
-        padding: 10px;
-        margin: 10px 0;
-        align-self: center;
-        border: none;
-        border-radius: 5px;
-        background-color: #425060;
-        color: white;
-        font-size: 18px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    
-
-
-}
 .image-preview {
   width: 100px; /* Adjust width as needed */
   height: 75px; /* Adjust height as needed */
