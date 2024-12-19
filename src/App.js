@@ -103,7 +103,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path='/userGuideReview' element={<UserGuideReview/>}/>
         <Route path='/userItemReview' element={<UserItemReview/>}/>
         <Route path='/userPlaceReview' element={<UserPlaceReview/>}/>
-        <Route path='/userSiteReview' element={<UserSiteReview/>}/>
+        <Route path='/userSiteReview/:id' element={<UserSiteReview/>}/>
         <Route path="/allReviews" element={<AllReview />} />
         <Route path="/GuideReg" element={<GuideForm />} />
         <Route path="/createShop" element={<CreateShop/>}/>
