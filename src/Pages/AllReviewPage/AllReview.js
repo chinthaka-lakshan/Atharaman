@@ -193,6 +193,10 @@ const AllReview = () => {
     } else {
       alert('You are not allowed to delete this review.');
     }
+
+  };
+  const handlemyReview = () => {
+    navigate(`/userSiteReview/${loggedInUserId}`); 
   };
 
   return (
@@ -250,6 +254,11 @@ const AllReview = () => {
             disabled={currentPage === totalPages}
           >
             Next
+          </button>
+          <button
+            className='pagination-btn'
+            onClick={handlemyReview}>
+            My Review
           </button>
         </div>
       </div>
