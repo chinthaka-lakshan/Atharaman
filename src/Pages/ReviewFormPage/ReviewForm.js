@@ -491,6 +491,7 @@ const ReviewForm = () => {
       // Payload with logged-in user's userId
       const payload = {
         id: review?.id || null, // Include id if required
+        userName,
         rating,
         comment,
         userId: user?.id, // Pass logged-in user's id

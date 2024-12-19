@@ -207,7 +207,11 @@ const AllReview = () => {
         <div className="reviews-list">
           {currentReviews.map((review) => (
             <div className="review-card" key={review.id}>
-              <h3>{review.name}</h3> {/* Display the name field */}
+              {/* <h3>{review.name}</h3> Display the name field */}
+
+              <div className="userName">
+                <p>{review.userName}</p>
+              </div>
               <div className="rating">
                 {Array.from({ length: review.rating }, (_, i) => (
                   <span key={i} className="star">★</span>
