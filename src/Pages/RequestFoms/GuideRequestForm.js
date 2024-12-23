@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './RequestForms.css';
+import { DriveFolderUploadOutlined, Close } from '@mui/icons-material';
 
 const GuideRequestForm = ({ onSubmit, onCancel }) => {
   const provinces = ['Western', 'Central', 'North-Western', 'Sabaragamuwa', 'Uva', 'North', 'North-Central', 'Southern', 'Eastern'];
@@ -14,6 +15,8 @@ const GuideRequestForm = ({ onSubmit, onCancel }) => {
   });
 
   const [availablePlaces, setAvailablePlaces] = useState([]);
+  const [image1, setImage1] = useState(null);
+  const [extraImages, setExtraImages] = useState([null, null, null, null]);
 
   useEffect(() => {
     // Fetch places from the API
@@ -42,9 +45,27 @@ const GuideRequestForm = ({ onSubmit, onCancel }) => {
     });
   };
 
+  const handleImageChange = (setter, index, e) => {
+    const file = e.target.files[0];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (file && !allowedTypes.includes(file.type)) {
+      alert(`Invalid file type: ${file.name}. Please upload JPEG or PNG images only.`);
+      return;
+    }
+
+    if (index === -1) {
+      setter(file ? file : null); // Main image
+    } else {
+      const updatedImages = [...extraImages];
+      updatedImages[index] = file ? file : null; // Extra images
+      setExtraImages(updatedImages);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    const formDataWithImages = { ...formData, mainImage: image1, extraImages };
+    onSubmit(formDataWithImages);
   };
 
   return (
@@ -161,6 +182,50 @@ const GuideRequestForm = ({ onSubmit, onCancel }) => {
           ) : (
             <p>Loading places...</p>
           )}
+        </div>
+      </div>
+
+      {/* Image Upload Fields */}
+      <div className="images">
+        <div className="imageGrid">
+          {[image1, ...extraImages].map((image, index) => (
+            <div key={index} className="imageContainer">
+              {image ? (
+                <div className="imageWrapper">
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt={`Preview ${index + 1}`}
+                    className="imagePreview"
+                  />
+                  <Close
+                    className="removeIcon"
+                    onClick={() => {
+                      if (index === 0) setImage1(null);
+                      else {
+                        const updatedImages = [...extraImages];
+                        updatedImages[index - 1] = null;
+                        setExtraImages(updatedImages);
+                      }
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="placeholder">
+                  <label htmlFor={`image-${index}`}>
+                    <DriveFolderUploadOutlined className="uploadIcon" />
+                    <input
+                      type="file"
+                      id={`image-${index}`}
+                      onChange={(e) =>
+                        handleImageChange(index === 0 ? setImage1 : null, index - 1, e)
+                      }
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
