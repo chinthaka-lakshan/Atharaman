@@ -556,110 +556,112 @@ const ShopProfile = () => {
   if (!shop) return <div>Loading...</div>;
 
   return (
-    <div className="shop-profile-container">
-      {isEditing ? (
-        <div>
-          <h2>Edit Shop Profile</h2>
-          <input
-            name="name"
-            placeholder="Shop Name"
-            value={editedShop.name}
-            onChange={handleEditChange}
-          />
-          <input
-            name="owner"
-            placeholder="Owner Name"
-            value={editedShop.owner}
-            onChange={handleEditChange}
-          />
-          <input
-            name="contact"
-            placeholder="Contact"
-            value={editedShop.contact}
-            onChange={handleEditChange}
-          />
-          <input
-            name="location"
-            placeholder="Location"
-            value={editedShop.location}
-            onChange={handleEditChange}
-          />
-          <input type="file" accept="image/*" onChange={handlePhotoChange} />
-          {editedShop.photo && (
-            <img
-              src={editedShop.photo}
-              alt="Shop Preview"
-              className="shop-photo-preview"
+    <div className="shopProfile">
+      <div className="shop-profile-container">
+        {isEditing ? (
+          <div>
+            <h2>Edit Shop Profile</h2>
+            <input
+              name="name"
+              placeholder="Shop Name"
+              value={editedShop.name}
+              onChange={handleEditChange}
             />
-          )}
-          <button onClick={saveEdit} className="btn-save">
-            Save
-          </button>
-          <button onClick={() => setIsEditing(false)} className="btn-cancel">
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <div>
-          <h1>{shop.name}</h1>
-          <img
-            src={shop.photo || "https://via.placeholder.com/150"}
-            alt="Shop"
-            className="shop-photo"
-          />
-          <p>
-            <strong>Owner:</strong> {shop.owner}
-          </p>
-          <p>
-            <strong>Contact:</strong> {shop.contact}
-          </p>
-          <p>
-            <strong>Location:</strong> {shop.location}
-          </p>
-          <Link to={`/itemForm/${shop.id}`}>
-            <button className="btn-add-item">Add Item</button>
-          </Link>
-          <button onClick={() => setIsEditing(true)} className="btn-edit">
-            Edit Profile
-          </button>
-          <button onClick={deleteShop} className="btn-delete">
-            Delete Shop
-          </button>
-        </div>
-      )}
-
-      <h2>Items</h2>
-      {items.length === 0 ? (
-        <p>No items available.</p>
-      ) : (
-        <div className="items-container">
-          {items.map((item) => (
-            <div className="item-card" key={item.id}>
+            <input
+              name="owner"
+              placeholder="Owner Name"
+              value={editedShop.owner}
+              onChange={handleEditChange}
+            />
+            <input
+              name="contact"
+              placeholder="Contact"
+              value={editedShop.contact}
+              onChange={handleEditChange}
+            />
+            <input
+              name="location"
+              placeholder="Location"
+              value={editedShop.location}
+              onChange={handleEditChange}
+            />
+            <input type="file" accept="image/*" onChange={handlePhotoChange} />
+            {editedShop.photo && (
               <img
-                src={item.image || "https://via.placeholder.com/100"}
-                alt={item.name}
-                className="item-image"
+                src={editedShop.photo}
+                alt="Shop Preview"
+                className="shop-photo-preview"
               />
-              <h3>{item.name}</h3>
-              <p>
-                <strong>Price:</strong> ${item.price}
-              </p>
-              <button
-                className="btn-edit-item"
-                onClick={() => handleEditItem(item.id)}
-              >
-                Edit
-              </button>
-              <button
-                className="btn-delete-item"
-                onClick={() => handleDeleteItem(item.id)}
-              >
-                Delete
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+            )}
+            <button onClick={saveEdit} className="btn-save">
+              Save
+            </button>
+            <button onClick={() => setIsEditing(false)} className="btn-cancel">
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <div>
+            <h1>{shop.name}</h1>
+            <img
+              src={shop.photo || "https://via.placeholder.com/150"}
+              alt="Shop"
+              className="shop-photo"
+            />
+            <p>
+              <strong>Owner:</strong> {shop.owner}
+            </p>
+            <p>
+              <strong>Contact:</strong> {shop.contact}
+            </p>
+            <p>
+              <strong>Location:</strong> {shop.location}
+            </p>
+            <Link to={`/itemForm/${shop.id}`}>
+              <button className="btn-add-item">Add Item</button>
+            </Link>
+            <button onClick={() => setIsEditing(true)} className="btn-edit">
+              Edit Profile
+            </button>
+            <button onClick={deleteShop} className="btn-delete">
+              Delete Shop
+            </button>
+          </div>
+        )}
+
+        <h2>Items</h2>
+        {items.length === 0 ? (
+          <p>No items available.</p>
+        ) : (
+          <div className="items-container">
+            {items.map((item) => (
+              <div className="item-card" key={item.id}>
+                <img
+                  src={item.image || "https://via.placeholder.com/100"}
+                  alt={item.name}
+                  className="item-image"
+                />
+                <h3>{item.name}</h3>
+                <p>
+                  <strong>Price:</strong> ${item.price}
+                </p>
+                <button
+                  className="btn-edit-item"
+                  onClick={() => handleEditItem(item.id)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="btn-delete-item"
+                  onClick={() => handleDeleteItem(item.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

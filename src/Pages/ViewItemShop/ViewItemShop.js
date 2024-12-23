@@ -82,30 +82,32 @@ const ViewItemShop = () => {
 
   //---------items card
   return (
-    <div className="shop-container">
-      <h1 className="shop-title">{shop?.name}</h1> {/* Optional chaining to avoid errors if shop is null */}
-      <p className="shop-description">{shop?.description}</p>
-      <div className="items-grid">
-        {items && items.length > 0 ? (
-          items.map((item) => (
-            <div key={item.id} className="item-card">
-              <img
-                src={`data:image/jpeg;base64,${item.image}`} // Display Base64 image
-                alt={item.name}
-                className="item-image"
-              />
-              <h2 className="item-name">{item.name}</h2>
-              <p className="item-description">{item.description}</p>
-              <p className="item-price">${item.price}</p>
-              <Link to={`/itemView/${item.id}`}>
-              <button className="buy-now-button">Item Details</button>
-              </Link>
-            </div>
+    <div className="viewItemShop">
+      <div className="shop-container">
+        <h1 className="shop-title">{shop?.name}</h1> {/* Optional chaining to avoid errors if shop is null */}
+        <p className="shop-description">{shop?.description}</p>
+        <div className="items-grid">
+          {items && items.length > 0 ? (
+            items.map((item) => (
+              <div key={item.id} className="item-card">
+                <img
+                  src={`data:image/jpeg;base64,${item.image}`} // Display Base64 image
+                  alt={item.name}
+                  className="item-image"
+                />
+                <h2 className="item-name">{item.name}</h2>
+                <p className="item-description">{item.description}</p>
+                <p className="item-price">${item.price}</p>
+                <Link to={`/itemView/${item.id}`}>
+                <button className="buy-now-button">Item Details</button>
+                </Link>
+              </div>
 
-          ))
-        ) : (
-          <p>No items available in this shop.</p>
-        )}
+            ))
+          ) : (
+            <p>No items available in this shop.</p>
+          )}
+        </div>
       </div>
     </div>
   );

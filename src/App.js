@@ -22,6 +22,7 @@ import LocationView from './Pages/LocationView/LocationView';
 import LocationReviewForm from './Pages/LocationReviewPage/LocationReviewForm.js';
 import GuidesPage from './Pages/GuidesPage/GuidesPage';
 import GuideView from './Pages/GuideView/GuideView.js';
+import GuideReviewForm from './Pages/GuideReviewPage/GuideReviewForm.js';
 import ItemsPage from './Pages/ItemsPage/ItemsPage.js';
 import ViewItem from './Pages/ViewItem/ViewItem';
 import ViewItemShop from './Pages/ViewItemShop/ViewItemShop';
@@ -35,7 +36,6 @@ import CreateShop from './Components/CreateShop/CreateShop.js';
 import ShopProfile from './Components/ShopProfile/ShopProfile.js';
 import ItemForm from './Components/ItemForm/ItemForm.js';
 import EditItemForm from './Pages/EditItemForm/EditItemForm.js';
-import GuideReviewForm from './Pages/GuideReviewPage/GuideReviewForm.js';
 import UserGuideReview from './Pages/UserReviewpages/UserGuideReview/UserGuideReview.js';
 import UserItemReview from './Pages/UserReviewpages/UserItemReview/UserItemReview.js';
 import UserPlaceReview from './Pages/UserReviewpages/UserPlaceReview/UserPlaceReview.js';
@@ -92,9 +92,10 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/profile" element={getRedirectProfile()} />
         <Route path="/locations" element={<LocationsPage />} />
         <Route path="/locationView/:id" element={<LocationView />} />
-        <Route path="/locationReview" element={<LocationReviewForm />} />
+        <Route path="/locationReview/:id" element={<LocationReviewForm />} />
         <Route path="/guides" element={<GuidesPage />} />
         <Route path="/guideView/:id" element={<GuideView />} />
+        <Route path="/guideReview/:id" element={<GuideReviewForm />} />
         <Route path="/items" element={<ItemsPage />} />
         <Route path="/itemView/:id" element={<ViewItem />} />
         <Route path="/itemViewShop/:id" element={<ViewItemShop />} />
@@ -110,7 +111,6 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/shopProfile/:id" element={<ShopProfile/>}/>
         <Route path="/itemForm/:id" element={<ItemForm/>}/>
         <Route path="/editItemForm/:id" element={<EditItemForm/>}/>
-        <Route path="/guideReviewForm" element={<GuideReviewForm/>}/>
         <Route path="/edit/:id" element={<EditReview />} />
 
       </Routes>
