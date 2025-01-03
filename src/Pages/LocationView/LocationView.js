@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./LocationView.css";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import axios from "axios";
+import { ShoppingCartSharp } from "@mui/icons-material";
 
 const LocationView = () => {
   const { id } = useParams();
@@ -12,7 +13,9 @@ const LocationView = () => {
   const [mainImagePreview, setMainImagePreview] = useState(null);
   const [extraImagePreviews, setExtraImagePreviews] = useState([null, null, null, null]);
   const [modalImage, setModalImage] = useState(null);
-  const [currentLocations, setLocations] = useState([])
+  const [currentLocations, setLocations] = useState([]);
+  const [sameProvinceShops, setSameProvinceShops] = useState([]);
+  const [sameProvinceGuides, setSameProvinceGuides] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [coordinates, setCoordinates] = useState(null);
   const [currentWeather, setCurrentWeather] = useState(null);
@@ -35,27 +38,41 @@ const LocationView = () => {
       try {
         const response = await axios.get(`http://localhost:8080/locations/${id}`);
         const data = response.data;
+  
         setLocation(data.location);
         setShortDescription(data.shortDescription);
         setLongDescription(data.longDescription);
         setMainImagePreview(data.mainImage);
         setExtraImagePreviews([data.extraImage1, data.extraImage2, data.extraImage3, data.extraImage4]);
         setCoordinates({ lat: data.latitude, lng: data.longitude });
+  
+        // Fetch shops from the same province
+        const province = data.province; // Assuming API provides `province`
+        const shopsResponse = await axios.get(
+          `http://localhost:8080/Shops/searchByProvince?province=${province}`
+        );
+        setSameProvinceShops(shopsResponse.data);
+  
+        // Fetch guides from the same province
+        const guidesResponse = await axios.get(
+          `http://localhost:8080/api/guides/searchByProvince?province=${province}`
+        );
+        setSameProvinceGuides(guidesResponse.data);
       } catch (error) {
         console.error("Error fetching location details:", error.message);
         alert("Failed to fetch location details.");
       }
     }
-
+  
     async function fetchReviews() {
       try {
-        const response = await axios.get('http://localhost:8080/placereview');
+        const response = await axios.get("http://localhost:8080/placereview");
         setReviews(response.data);
       } catch (error) {
-        console.error('Error loading reviews:', error);
+        console.error("Error loading reviews:", error);
       }
     }
-
+  
     fetchLocation();
     fetchReviews();
   }, [id]);
@@ -63,7 +80,7 @@ const LocationView = () => {
   useEffect(() => {
     const fetchWeather = async () => {
       if (!coordinates) return;
-      const weatherApiKey = '0c7967b080d377c47ea3e4eec45a9736';
+      const weatherApiKey = "0c7967b080d377c47ea3e4eec45a9736";
 
       try {
         // Fetch current weather
@@ -80,7 +97,7 @@ const LocationView = () => {
         const forecastData = await forecastResponse.json();
         setHourlyForecast(forecastData.list.slice(0, 8)); // Next 8 time slots (24 hours)
       } catch (error) {
-        console.error('Error fetching weather data:', error);
+        console.error("Error fetching weather data:", error);
       }
     };
 
@@ -105,11 +122,11 @@ const LocationView = () => {
           </div>
           <div className="photo-grid">
             <div className="main-image">
-              {mainImagePreview && <img src={mainImagePreview} alt="Main" onClick={() => openImage(mainImagePreview) }/>}
+              {mainImagePreview && <img src={mainImagePreview} alt="Main" onClick={() => openImage(mainImagePreview)} />}
             </div>
             <div className="side-images">
               {extraImagePreviews.map((img, index) =>
-                img ? <img key={index} src={img} alt={`Extra ${index + 1}`} onClick={() => openImage(img) }/> : null
+                img ? <img key={index} src={img} alt={`Extra ${index + 1}`} onClick={() => openImage(img)} /> : null
               )}
             </div>
           </div>
@@ -155,7 +172,7 @@ const LocationView = () => {
               <div className="hourly-forecast">
                 {hourlyForecast.map((forecast, index) => (
                   <div key={index} className="hour-card">
-                    <p>{new Date(forecast.dt_txt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p>{new Date(forecast.dt_txt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>
                     <img
                       src={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
                       alt="Weather Icon"
@@ -166,54 +183,49 @@ const LocationView = () => {
               </div>
             </div>
           </div>
-          <div className="guides-container">
-            <h2>Top Guides Nearby</h2>
-            <div className="guides-list">
-              {currentLocations.length > 0 ? (
-                currentLocations.slice(0, 4).map((location, index) => (
-                  <Link key={index} to={`/locationView/${location.id}`}>
-                    <div className="guideTile">
-                      <img src={location.image} alt={location.name} className="tile-img" />
-                        <div className="tile-content">
-                          <h3>{location.location}</h3>
-                          <p>{location.shortDescription}</p>
-                          <div className="star-rating">
-                            {renderStars(location.rating || 3)}
-                          </div>
-                        </div>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-              <p>No Guides Found</p>
-              )}
-            </div>
-            <button className="view-more-button">View More Guides</button>
-          </div>
           <div className="shops-container">
             <h2>Top Shops Nearby</h2>
             <div className="shops-list">
-              {currentLocations.length > 0 ? (
-                currentLocations.slice(0, 4).map((location, index) => (
-                  <Link key={index} to={`/locationView/${location.id}`}>
+              {sameProvinceShops.length > 0 ? (
+                sameProvinceShops.slice(0, 4).map((shop, index) => (
+                  <Link key={index} to={`/locationView/${shop.id}`}>
                     <div className="shopTile">
-                      <img src={location.image} alt={location.name} className="tile-img" />
-                        <div className="tile-content">
-                          <h3>{location.location}</h3>
-                          <p>{location.shortDescription}</p>
-                          <div className="star-rating">
-                            {renderStars(location.rating || 3)}
-                          </div>
-                        </div>
+                      <ShoppingCartSharp alt={shop.name} className="tile-img" />
+                      <div className="tile-content">
+                        <h3>{shop.location}</h3>
+                        <p>{shop.shortDescription}</p>
+                        <div className="star-rating">{renderStars(shop.rating || 3)}</div>
+                      </div>
                     </div>
                   </Link>
                 ))
               ) : (
-              <p>No Shops Found</p>
+                <p>No Shops Found</p>
               )}
             </div>
-            <button className="view-more-button">View More Shops</button>
           </div>
+          <div className="guides-container">
+            <h2>Top Guides Nearby</h2>
+            <div className="guides-list">
+              {sameProvinceGuides.length > 0 ? (
+                sameProvinceGuides.slice(0, 4).map((guide, index) => (
+                  <Link key={index} to={`/locationView/${guide.id}`}>
+                    <div className="guideTile">
+                      <ShoppingCartSharp alt={guide.name} className="tile-img" />
+                      <div className="tile-content">
+                        <h3>{guide.location}</h3>
+                        <p>{guide.shortDescription}</p>
+                        <div className="star-rating">{renderStars(guide.rating || 3)}</div>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <p>No Guides Found</p>
+              )}
+            </div>
+          </div>
+
           <div className="reviews-container">
             <h2>Location Reviews</h2>
             <div className="reviews-list">
@@ -241,7 +253,7 @@ const LocationView = () => {
                 <button className="close-button" onClick={closeModal}>
                   &times;
                 </button>
-                <img src={modalImage} alt="Enlarged view" />
+                <img src={modalImage} alt="Modal View" />
               </div>
             </div>
           )}
