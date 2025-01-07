@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import "./LocationView.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { ShoppingCartSharp } from "@mui/icons-material";
 
 const LocationView = () => {
   const { id } = useParams();
@@ -13,7 +12,6 @@ const LocationView = () => {
   const [mainImagePreview, setMainImagePreview] = useState(null);
   const [extraImagePreviews, setExtraImagePreviews] = useState([null, null, null, null]);
   const [modalImage, setModalImage] = useState(null);
-  const [currentLocations, setLocations] = useState([]);
   const [sameProvinceShops, setSameProvinceShops] = useState([]);
   const [sameProvinceGuides, setSameProvinceGuides] = useState([]);
   const [reviews, setReviews] = useState([]);
@@ -24,11 +22,11 @@ const LocationView = () => {
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
-      if (i < rating) {
-        stars.push(<span key={i} className="star filled">★</span>); // filled star
-      } else {
-        stars.push(<span key={i} className="star">☆</span>); // empty star
-      }
+      stars.push(
+        <span key={i} className={i < rating ? "star filled" : "star"}>
+          {i < rating ? "★" : "☆"}
+        </span>
+      );
     }
     return stars;
   };
@@ -38,21 +36,21 @@ const LocationView = () => {
       try {
         const response = await axios.get(`http://localhost:8080/locations/${id}`);
         const data = response.data;
-  
+
         setLocation(data.location);
         setShortDescription(data.shortDescription);
         setLongDescription(data.longDescription);
         setMainImagePreview(data.mainImage);
         setExtraImagePreviews([data.extraImage1, data.extraImage2, data.extraImage3, data.extraImage4]);
         setCoordinates({ lat: data.latitude, lng: data.longitude });
-  
+
         // Fetch shops from the same province
-        const province = data.province; // Assuming API provides `province`
+        const province = data.province;
         const shopsResponse = await axios.get(
           `http://localhost:8080/Shops/searchByProvince?province=${province}`
         );
         setSameProvinceShops(shopsResponse.data);
-  
+
         // Fetch guides from the same province
         const guidesResponse = await axios.get(
           `http://localhost:8080/api/guides/searchByProvince?province=${province}`
@@ -63,17 +61,45 @@ const LocationView = () => {
         alert("Failed to fetch location details.");
       }
     }
+
+    fetchLocation();
+  }, [id]);
+
+  // Fetch usernames for reviews
+  const fetchUsernames = async (reviews) => {
+    try {
+      const userIds = reviews.map((review) => review.userId); // Extract user IDs
+      const response = await axios.post("http://localhost:8080/api/users/getUsernames", userIds, {
+        headers: { "Content-Type": "application/json" },
+      });
+      const userMap = response.data; // { userId: username }
+      return reviews.map((review) => ({
+        ...review,
+        username: userMap[review.userId] || "Anonymous", // Map usernames
+      }));
+    } catch (error) {
+      console.error("Error fetching usernames:", error.message);
+      return reviews; // Fallback to reviews without usernames
+    }
+  };
   
+
+  useEffect(() => {
     async function fetchReviews() {
       try {
-        const response = await axios.get("http://localhost:8080/placereview");
-        setReviews(response.data);
+        const response = await axios.get(`http://localhost:8080/locations/${id}`);
+        let reviewsData = response.data.placeReviewList;
+
+        // Fetch usernames and update the reviews
+        reviewsData = await fetchUsernames(reviewsData);
+
+        setReviews(reviewsData);
       } catch (error) {
-        console.error("Error loading reviews:", error);
+        console.error("Error loading reviews:", error.message);
+        alert("Failed to load reviews.");
       }
     }
-  
-    fetchLocation();
+
     fetchReviews();
   }, [id]);
 
@@ -83,19 +109,17 @@ const LocationView = () => {
       const weatherApiKey = "0c7967b080d377c47ea3e4eec45a9736";
 
       try {
-        // Fetch current weather
         const weatherResponse = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?lat=${coordinates.lat}&lon=${coordinates.lng}&appid=${weatherApiKey}&units=metric`
         );
         const weatherData = await weatherResponse.json();
         setCurrentWeather(weatherData);
 
-        // Fetch hourly forecast
         const forecastResponse = await fetch(
           `https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lng}&appid=${weatherApiKey}&units=metric`
         );
         const forecastData = await forecastResponse.json();
-        setHourlyForecast(forecastData.list.slice(0, 8)); // Next 8 time slots (24 hours)
+        setHourlyForecast(forecastData.list.slice(0, 8));
       } catch (error) {
         console.error("Error fetching weather data:", error);
       }
@@ -104,13 +128,8 @@ const LocationView = () => {
     fetchWeather();
   }, [coordinates]);
 
-  const openImage = (image) => {
-    setModalImage(image);
-  };
-
-  const closeModal = () => {
-    setModalImage(null);
-  };
+  const openImage = (image) => setModalImage(image);
+  const closeModal = () => setModalImage(null);
 
   return (
     <div>
@@ -167,65 +186,7 @@ const LocationView = () => {
                 <p className="info">No weather data available. Please select a location.</p>
               )}
             </div>
-            <div className="forecast">
-              <h2 className="header">Hourly Forecast</h2>
-              <div className="hourly-forecast">
-                {hourlyForecast.map((forecast, index) => (
-                  <div key={index} className="hour-card">
-                    <p>{new Date(forecast.dt_txt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>
-                    <img
-                      src={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
-                      alt="Weather Icon"
-                    />
-                    <p>{Math.round(forecast.main.temp)}°C</p>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
-          <div className="shops-container">
-            <h2>Top Shops Nearby</h2>
-            <div className="shops-list">
-              {sameProvinceShops.length > 0 ? (
-                sameProvinceShops.slice(0, 4).map((shop, index) => (
-                  <Link key={index} to={`/locationView/${shop.id}`}>
-                    <div className="shopTile">
-                      <ShoppingCartSharp alt={shop.name} className="tile-img" />
-                      <div className="tile-content">
-                        <h3>{shop.location}</h3>
-                        <p>{shop.shortDescription}</p>
-                        <div className="star-rating">{renderStars(shop.rating || 3)}</div>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <p>No Shops Found</p>
-              )}
-            </div>
-          </div>
-          <div className="guides-container">
-            <h2>Top Guides Nearby</h2>
-            <div className="guides-list">
-              {sameProvinceGuides.length > 0 ? (
-                sameProvinceGuides.slice(0, 4).map((guide, index) => (
-                  <Link key={index} to={`/locationView/${guide.id}`}>
-                    <div className="guideTile">
-                      <ShoppingCartSharp alt={guide.name} className="tile-img" />
-                      <div className="tile-content">
-                        <h3>{guide.location}</h3>
-                        <p>{guide.shortDescription}</p>
-                        <div className="star-rating">{renderStars(guide.rating || 3)}</div>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <p>No Guides Found</p>
-              )}
-            </div>
-          </div>
-
           <div className="reviews-container">
             <h2>Location Reviews</h2>
             <div className="reviews-list">
@@ -233,7 +194,7 @@ const LocationView = () => {
                 reviews.map((review, index) => (
                   <div key={index} className="reviewTile">
                     <div className="review-header">
-                      <h3>Sachintha</h3>
+                      <h3>{review.username || "Anonymous"}</h3>
                       <div className="star-rating">{renderStars(review.rating)}</div>
                     </div>
                     <p className="review-comment">{review.comment}</p>
@@ -247,6 +208,7 @@ const LocationView = () => {
               <button className="view-more-button">Add Location Review</button>
             </Link>
           </div>
+
           {modalImage && (
             <div className="modal">
               <div className="modal-content">
