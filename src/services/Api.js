@@ -5,6 +5,22 @@ const API = axios.create({
   baseURL: 'http://localhost:8080/api', // Base URL of the backend
 });
 
+async function fetchUsernames(reviews) {
+  try {
+    const userIds = reviews.map((review) => review.userId);
+    const response = await axios.post("http://localhost:8080/api/users/getUsernames", { userIds });
+    const userMap = response.data; // Assume this is an object like { 123: "JohnDoe", 456: "JaneSmith" }
+    return reviews.map((review) => ({
+      ...review,
+      username: userMap[review.userId] || "Anonymous", // Add username to each review
+    }));
+  } catch (error) {
+    console.error("Error fetching usernames:", error.message);
+    return reviews; // Return original reviews if error occurs
+  }
+}
+
+
 // User Registration
 export const registerUser = (userData) => API.post('/users/register', userData);
 
