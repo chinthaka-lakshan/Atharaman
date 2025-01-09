@@ -9,7 +9,6 @@ import { Link } from 'react-router-dom';
 const AdminWidget = ({ type }) => {
 
   let data;
-  const amount = 500;
 
   switch (type) {
     case "locations":
@@ -76,7 +75,6 @@ const AdminWidget = ({ type }) => {
     <div className='widget'>
       <div className='left'>
         <span className='title'>{data.title}</span>
-        <span className='counter'>{data.isMoney ? `LKR. ${amount}` : amount}</span>
       </div>
       <div className='right'>
         {data.icon}

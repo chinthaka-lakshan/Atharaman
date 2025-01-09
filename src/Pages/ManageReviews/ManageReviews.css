@@ -1,0 +1,10 @@
+.manageReviews{
+    display: flex;
+    width: 100%;
+    background-color: whitesmoke;
+    color: #616161;
+
+    .manageReviewsContainer{
+        flex: 6;
+    }
+}
