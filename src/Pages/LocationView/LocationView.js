@@ -89,10 +89,6 @@ const LocationView = () => {
       try {
         const response = await axios.get(`http://localhost:8080/locations/${id}`);
         let reviewsData = response.data.placeReviewList;
-
-        // Fetch usernames and update the reviews
-        reviewsData = await fetchUsernames(reviewsData);
-
         setReviews(reviewsData);
       } catch (error) {
         console.error("Error loading reviews:", error.message);
@@ -194,7 +190,7 @@ const LocationView = () => {
                 reviews.map((review, index) => (
                   <div key={index} className="reviewTile">
                     <div className="review-header">
-                      <h3>{review.username || "Anonymous"}</h3>
+                      <h3>{review.userName || "Anonymous"}</h3>
                       <div className="star-rating">{renderStars(review.rating)}</div>
                     </div>
                     <p className="review-comment">{review.comment}</p>
