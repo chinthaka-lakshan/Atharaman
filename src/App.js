@@ -95,7 +95,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/profile" element={getRedirectProfile()} />
         <Route path="/locations" element={<LocationsPage />} />
         <Route path="/locationView/:id" element={<LocationView />} />
-        <Route path="/locationReview" element={<LocationReviewForm />} />
+        <Route path="/locationReview/:id" element={<LocationReviewForm />} />
         <Route path="/guides" element={<GuidesPage />} />
         <Route path="/guideView/:id" element={<GuideView />} />
         <Route path="/items" element={<ItemsPage />} />
