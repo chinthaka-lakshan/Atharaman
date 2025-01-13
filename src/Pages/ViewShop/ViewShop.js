@@ -10,11 +10,11 @@ import { DriveFolderUploadOutlined, Close } from "@mui/icons-material";
 const ViewShop = () => {
     const [image, setImage] = useState(null);
     const { id } = useParams(); // Get the shop ID from the URL parameters
-    const [shopName, setShopName] = useState('');
+    const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [location, setLocation] = useState('');
-    const [phoneNo, setPhoneNo] = useState('');
-    const [email, setEmail] = useState('');
+    const [contact, setPhoneNo] = useState('');
+    // const [email, setEmail] = useState('');
     const [province, setProvince] = useState('');
 
     const handleImageChange = (setImage, e) => {
@@ -32,13 +32,13 @@ const ViewShop = () => {
     // Fetch shop data based on the guide ID
     const fetchShop = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/shops/${id}`);
-            const { shopName, location, description, phoneNo, email, province } = response.data;
-            setShopName(shopName);
+            const response = await axios.get(`http://localhost:8080/Shops/find-by-id/${id}`);
+            const { name, location, description, contact,  province } = response.data;
+            setName(name);
             setDescription(description);
             setLocation(location);
-            setPhoneNo(phoneNo);
-            setEmail(email);
+            setPhoneNo(contact);
+            // setEmail(email);
             setProvince(province);
         } catch (error) {
             console.error("Error fetching shop data", error);
@@ -47,10 +47,10 @@ const ViewShop = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const updatedShop = { shopName, description, location, phoneNo, email, province };
+        const updatedShop = { name, description, location, contact, province };
 
         try {
-            await axios.put(`http://localhost:8080/shops/${id}`, updatedShop); // Update with your API URL
+            await axios.put(`http://localhost:8080/Shops/update/${id}`, updatedShop); // Update with your API URL
             alert("Shop updated successfully!");
         } catch (error) {
             console.error("Error updating shop", error);
@@ -82,16 +82,16 @@ const ViewShop = () => {
                         </div>
                         <div className='detailItem'>
                             <span className='itemKey'>Shop: </span>
-                            <span className='itemValue'>{shopName}</span>
+                            <span className='itemValue'>{name}</span>
                         </div>
                         <div className='detailItem'>
                             <span className='itemKey'>Phone No: </span>
-                            <span className='itemValue'>{phoneNo}</span>
+                            <span className='itemValue'>{contact}</span>
                         </div>
-                        <div className='detailItem'>
+                        {/* <div className='detailItem'>
                             <span className='itemKey'>E-Mail: </span>
                             <span className='itemValue'>{email}</span>
-                        </div>
+                        </div> */}
                         <div className='detailItem'>
                             <span className='itemKey'>Province: </span>
                             <span className='itemValue'>{province}</span>
@@ -157,7 +157,7 @@ const ViewShop = () => {
                                 <input
                                 type="text"
                                 id="SHOP_NAME"
-                                name="shopName"
+                                name="name"
                                 placeholder="Enter Shop Name"
                                 required
                                 />
@@ -172,7 +172,7 @@ const ViewShop = () => {
                                 required
                                 />
                             </div>
-                            <div className="formInput">
+                            {/* <div className="formInput">
                                 <label>E-Mail</label>
                                 <input
                                 type="text"
@@ -181,7 +181,7 @@ const ViewShop = () => {
                                 placeholder="Enter E-Mail"
                                 required
                                 />
-                            </div>
+                            </div> */}
                             <div className="formInput">
                                 <label>Province</label>
                                 <select id="SHOP_PROVINCE" name="province" required>

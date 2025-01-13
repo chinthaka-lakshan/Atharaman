@@ -7,7 +7,7 @@ import AdminNavbar from "../../Components/AdminNavbar/AdminNavbar";
 
 const ViewGuide = () => {
     const { id } = useParams();
-    const [guideName, setGuideName] = useState("");
+    const [name, setGuideName] = useState("");
     const [description, setDescription] = useState("");
     const [contactNo, setContactNo] = useState("");
     const [email, setEmail] = useState("");
@@ -21,9 +21,9 @@ const ViewGuide = () => {
 
     async function fetchGuide() {
         try {
-            const response = await axios.get(`http://localhost:8080/guides/${id}`);
+            const response = await axios.get(`http://localhost:8080/api/guides/id/${id}`);
             const data = response.data;
-            setGuideName(data.guideName);
+            setGuideName(data.name);
             setDescription(data.description);
             setContactNo(data.contactNo);
             setEmail(data.email);
@@ -51,7 +51,7 @@ const ViewGuide = () => {
                     </div>
                     <div className="details">
                         <p><strong>Guide ID:</strong> {id}</p>
-                        <p><strong>Guide Name:</strong> {guideName}</p>
+                        <p><strong>Guide Name:</strong> {name}</p>
                         <p><strong>Description:</strong> {description}</p>
                         <p><strong>Phone No:</strong> {contactNo}</p>
                         <p><strong>E-Mail:</strong> {email}</p>

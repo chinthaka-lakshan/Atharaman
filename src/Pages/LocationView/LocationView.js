@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./LocationView.css";
 import { Link } from "react-router-dom";
+import SachinthaJayaweera from '../../Assets/SachinthaJayaweera_1.jpg'
+import Lamborghini from '../../Assets/Lamborghini_1.jpg'
 import axios from "axios";
 
 const LocationView = () => {
@@ -17,6 +19,7 @@ const LocationView = () => {
   const [reviews, setReviews] = useState([]);
   const [coordinates, setCoordinates] = useState(null);
   const [currentWeather, setCurrentWeather] = useState(null);
+  const [currentLocations, setLocations] = useState([])
   const [hourlyForecast, setHourlyForecast] = useState([]);
 
   const renderStars = (rating) => {
@@ -183,6 +186,57 @@ const LocationView = () => {
               )}
             </div>
           </div>
+          <div className="guides-container">
+            <h2>Top Guides Nearby</h2>
+            <div className="guides-list">
+              {currentLocations.length > 0 ? (
+                currentLocations.slice(0, 4).map((location, index) => (
+                  <Link key={index} to={`/locationView/${location.id}`}>
+                    <div className="guideTile">
+                      <img src={location.image || SachinthaJayaweera} alt={location.name} className="tile-img" />
+                        <div className="tile-content">
+                          <h3>{location.location}</h3>
+                          <p>{location.shortDescription}</p>
+                          <div className="star-rating">
+                            {renderStars(location.rating || 3)}
+                          </div>
+                        </div>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+              <p>No Guides Found</p>
+              )}
+            </div>
+            <button className="view-more-button">View More Guides</button>
+          </div>
+
+          <div className="shops-container">
+            <h2>Top Shops Nearby</h2>
+            <div className="shops-list">
+              {sameProvinceShops.length > 0 ? (
+                sameProvinceShops.slice(0, 4).map((shop, index) => (
+                  <Link key={index} to={`/shopView/${shop.id}`}>
+                    <div className="shopTile">
+                      <img src={shop.image || Lamborghini} alt={shop.name} className="tile-img" />
+                      <div className="tile-content">
+                        <h3>{shop.name}</h3>
+                        <p>{shop.description || "No description available."}</p>
+                        <div className="star-rating">{renderStars(shop.rating || 3)}</div>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <p>No Shops Found</p>
+              )}
+            </div>
+            {sameProvinceShops.length > 4 && (
+              <button className="view-more-button">View More Shops</button>
+            )}
+          </div>
+
+
           <div className="reviews-container">
             <h2>Location Reviews</h2>
             <div className="reviews-list">
