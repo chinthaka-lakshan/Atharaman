@@ -4,18 +4,6 @@ import SachinthaJayaweera from "../../Assets/SachinthaJayaweera_1.jpg";
 import axios from "axios";
 import { Link } from 'react-router-dom';
 
-const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-        if (i < rating) {
-            stars.push(<span key={i} className="star filled">★</span>);
-        } else {
-            stars.push(<span key={i} className="star">☆</span>);
-        }
-    }
-    return stars;
-};
-
 const GuidesList = () => {
     const itemsPerPage = 15;
     const [guides, setGuides] = useState([]);
@@ -73,27 +61,27 @@ const GuidesList = () => {
                 />
             </div>
 
-            <div className="guidesList">
-    {currentGuides.length > 0 ? (
-        currentGuides.map((guide, index) => (
-            <Link key={index} to={`/guideView/${guide.id}`}>
-                <div className="guideTile">
-                    <img src={guide.image || SachinthaJayaweera} alt={guide.name} className="tile-img" />
-                    <div className="tile-content">
-                        <h3>{guide.name}</h3>
-                        <p>{guide.description}</p>
-                        {/* Render star rating */}
-                        <div className="star-rating">
-                            {renderStars(guide.rating || 3)} {/* Assuming rating is a number between 1-5 */}
-                        </div>
-                    </div>
-                </div>
-            </Link>
-        ))
-    ) : (
-        <p>No Guides Found</p>
-    )}
-</div>
+            <div className="itemsList">
+                {currentGuides.length > 0 ? (
+                    currentGuides.map((guide, index) => (
+                        <Link key={index} to={`/itemView/${guide.id}`}>
+                            <div className="itemTile">
+                                <img
+                                    src={guide.image || SachinthaJayaweera}
+                                    alt={guide.name}
+                                    className="tile-img"
+                                />
+                                <div className="tile-content">
+                                    <h3>{guide.name}</h3>
+                                    <p>{guide.description}</p>
+                                </div>
+                            </div>
+                        </Link>
+                    ))
+                ) : (
+                    <p>No Items Found</p>
+                )}
+            </div>
 
             {/* Pagination Controls */}
             {filteredGuides.length > itemsPerPage && (

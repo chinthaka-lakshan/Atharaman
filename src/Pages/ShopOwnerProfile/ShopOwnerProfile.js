@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './ShopOwnerProfile.css';
 
@@ -58,7 +58,7 @@ const ShopOwnerProfile = ({ user }) => {
     }
   };
   const handleCreateShop = () => {
-    navigate("/createshop"); 
+    navigate(`/createShop/${user.id}`); 
   }
   const handleViewShop = () => {
     if (shopOwnerDetails && shopOwnerDetails.id) {
