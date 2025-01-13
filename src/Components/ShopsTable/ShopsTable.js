@@ -9,11 +9,11 @@ const ShopsTable = () => {
 
   const shopColumns = [
     { field: "id", headerName: "Shop ID", width: 70 },
-    { field: "shop", headerName: "Shop", width: 180 },
+    { field: "name", headerName: "Shop", width: 180 },
     { field: "description", headerName: "Description", width: 180 },
-    { field: "shopLocation", headerName: "Location", width: 100 },
-    { field: "phoneNo", headerName: "Phone Number", width: 100 },
-    { field: "email", headerName: "E-Mail", width: 100 },
+    { field: "location", headerName: "Location", width: 100 },
+    { field: "contact", headerName: "Phone Number", width: 100 },
+    // { field: "email", headerName: "E-Mail", width: 100 },
   ];
 
   const actionColumn = [
@@ -36,7 +36,7 @@ const ShopsTable = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/shops");
+      const response = await axios.get("http://localhost:8080/Shops/get-all");
       setData(response.data);
     } catch (error) {
       console.error("Error fetching shop data", error);
