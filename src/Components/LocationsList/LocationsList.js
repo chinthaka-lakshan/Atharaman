@@ -4,18 +4,6 @@ import NarangalaImage from "../../Assets/Narangala_1.jpg";
 import axios from "axios";
 import { Link } from 'react-router-dom';
 
-const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-        if (i < rating) {
-            stars.push(<span key={i} className="star filled">★</span>); // filled star
-        } else {
-            stars.push(<span key={i} className="star">☆</span>); // empty star
-        }
-    }
-    return stars;
-};
-
 const LocationsList = () => {
     const itemsPerPage = 15;
     const [locations, setLocations] = useState([]);
@@ -81,10 +69,6 @@ const LocationsList = () => {
                                 <div className="tile-content">
                                     <h3>{location.location}</h3>
                                     <p>{location.shortDescription}</p>
-                                    {/* Render star rating */}
-                                    <div className="star-rating">
-                                        {renderStars(location.rating || 3)} {/* Assuming rating is a number between 1-5 */}
-                                    </div>
                                 </div>
                             </div>
                         </Link>

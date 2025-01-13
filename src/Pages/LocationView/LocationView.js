@@ -257,6 +257,9 @@ const LocationView = () => {
             <Link to={`/locationReview/${id}`}>
               <button className="view-more-button">Add Location Review</button>
             </Link>
+            <Link to={`/userLocationReview/${id}`}>
+              <button className="view-more-button">My Location Reviews</button>
+            </Link>
           </div>
 
           {modalImage && (

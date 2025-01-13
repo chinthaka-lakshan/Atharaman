@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import "./UserPlaceReview.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const UserPlaceReview = () => {
   const [reviews, setReviews] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 3;
   const navigate = useNavigate();
+  const { locationId } = useParams();
 
   useEffect(() => {
     loadReview();
@@ -16,7 +18,7 @@ const UserPlaceReview = () => {
   // Load reviews from the backend
   async function loadReview() {
     try {
-      const response = await axios.get("http://localhost:8080/review");
+      const response = await axios.get("http://localhost:8080/placereview");
       setReviews(response.data);
     } catch (error) {
       console.error("Error loading reviews:", error);
@@ -50,7 +52,7 @@ const UserPlaceReview = () => {
     );
     if (confirmed) {
       try {
-        await axios.delete(`http://localhost:8080/review/${id}`);
+        await axios.delete(`http://localhost:8080/placereview/${id}`);
         setReviews(reviews.filter((review) => review.id !== id));
       } catch (error) {
         console.error("Error deleting review:", error);
