@@ -11,6 +11,8 @@ import ManageShops from './Pages/ManageShops/ManageShops';
 import ViewShop from './Pages/ViewShop/ViewShop';
 import ManageRequests from './Pages/ManageRequests/ManageRequests.js';
 import ManageReviews from './Pages/ManageReviews/ManageReviews.js';
+import ForgotPassword from './Components/LoginRegistration/ForgotPassword';
+
 
 import HomePage from './Pages/HomePage/HomePage';
 import Login from './Components/LoginRegistration/Login';
@@ -115,6 +117,9 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/editItemForm/:id" element={<EditItemForm/>}/>
         <Route path="/guideReviewForm" element={<GuideReviewForm/>}/>
         <Route path="/edit/:id" element={<EditReview />} />
+
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
       </Routes>
     </>
   );

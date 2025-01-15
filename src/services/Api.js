@@ -27,6 +27,7 @@ export const registerUser = (userData) => API.post('/users/register', userData);
 
 // User Login
 export const loginUser = (loginData) => API.post('/users/login', loginData);
+export const sendVerificationCode = (loginData) => API.post('/users/forgot-password', loginData);
 
 // Get User Profile
 export const getUserProfile = (id) => API.get(`/users/${id}`);
@@ -64,3 +65,9 @@ export const deleteUser = (userId) => API.delete(`users/${userId}`);
 // New API functions for fetching guides and shop owners
 export const getGuides = () => API.get('/guides');
 export const getShopOwners = () => API.get('shop-owners');
+
+// Forgot Password - Send OTP
+export const sendOTP = (emailData) => API.post('/users/forgot-password', emailData);
+
+// Reset Password
+export const resetPassword = (resetData) => API.post('/users/reset-password', resetData);
