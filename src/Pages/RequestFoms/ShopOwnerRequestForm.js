@@ -21,7 +21,6 @@ const ShopOwnerRequestForm = ({ onSubmit, onCancel }) => {
     contactNumber: '',
     description: '',
     province: '',
-    shopCategories: [],
   });
 
   const handleChange = (e) => {
@@ -29,30 +28,10 @@ const ShopOwnerRequestForm = ({ onSubmit, onCancel }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleCheckboxChange = (e) => {
-    const { value, checked } = e.target;
-    setFormData((prevData) => {
-      const updatedCategories = checked
-        ? [...prevData.shopCategories, value]
-        : prevData.shopCategories.filter((category) => category !== value);
-      return { ...prevData, shopCategories: updatedCategories };
-    });
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
   };
-
-  const shopCategoryOptions = [
-    'Grocery',
-    'Clothing',
-    'Electronics',
-    'Books',
-    'Home Goods',
-    'Beauty Products',
-    'Sports Equipment',
-  ];
 
   return (
     <form onSubmit={handleSubmit} className="guide-request-form">
@@ -146,26 +125,6 @@ const ShopOwnerRequestForm = ({ onSubmit, onCancel }) => {
             </option>
           ))}
         </select>
-      </div>
-
-      {/* Shop Categories Field */}
-      <div className="form-group">
-        <label>Shop Categories:</label>
-        <div className="checkbox-group">
-          {shopCategoryOptions.map((category) => (
-            <div key={category} className="checkbox-item">
-              <input
-                type="checkbox"
-                id={category}
-                name="shopCategories"
-                value={category}
-                checked={formData.shopCategories.includes(category)}
-                onChange={handleCheckboxChange}
-              />
-              <label htmlFor={category}>{category}</label>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Form Actions */}

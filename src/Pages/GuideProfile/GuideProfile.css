@@ -206,6 +206,31 @@
                     }
                 }
 
+                .formSelect{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 5px;
+                    color: #425060;
+                    width: 100%;
+                    font-size: 20px;
+
+                    label{
+                        font-weight: bold;
+                    }
+
+                    select{
+                        width: 100%;
+                        font-weight: 400;
+                        height: auto;
+                        padding: 10px;
+                        font-size: 18px;
+                        border: 1px solid #dcdcdc;
+                        border-radius: 5px;
+                        outline: none;
+                    }
+
+                }
+
                 .formRadio{
                     display: flex;
                     flex-direction: row;

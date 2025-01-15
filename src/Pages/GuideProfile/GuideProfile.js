@@ -16,14 +16,27 @@ const GuideProfile = ({ user }) => {
     nic: "",
     contactNumber: "",
     description: "",
+    province: "",
     selectedPlaces: [],
   });
   const [mainImage, setMainImage] = useState(null);
   const [mainImagePreview, setMainImagePreview] = useState(null);
-  const [extraImages, setExtraImages] = useState([null, null, null, null]);
-  const [extraImagePreviews, setExtraImagePreviews] = useState([null, null, null, null]);
   const navigate = useNavigate();
+
+  const provinces = [
+    'Western',
+    'Central',
+    'North-Western',
+    'Sabaragamuwa',
+    'Uva',
+    'North',
+    'North-Central',
+    'Southern',
+    'Eastern',
+  ];
+
   const [gId, setGId] = useState(0);
+
   useEffect(() => {
     // Fetch guide details
     const fetchGuideDetails = async () => {
@@ -40,11 +53,8 @@ const GuideProfile = ({ user }) => {
           nic: data.nic || "",
           contactNumber: data.contactNumber || "",
           description: data.description || "",
+          province: data.province || "",
           mainImage: data.mainImage || ElderlySharpIcon,
-          extraImage1: data.extraImage1 || ElderlySharpIcon,
-          extraImage2: data.extraImage2 || ElderlySharpIcon,
-          extraImage3: data.extraImage3 || ElderlySharpIcon,
-          extraImage4: data.extraImage4 || ElderlySharpIcon,
           selectedPlaces: data.places?.map((place) => place.id) || [],
         });
         setLoading(false);
@@ -80,17 +90,10 @@ const GuideProfile = ({ user }) => {
       alert("Invalid file type. Please upload JPEG or PNG images.");
       return;
     }
-
+  
     if (index === -1) {
       setMainImage(file);
       setMainImagePreview(URL.createObjectURL(file));
-    } else {
-      const updatedImages = [...extraImages];
-      const updatedPreviews = [...extraImagePreviews];
-      updatedImages[index] = file;
-      updatedPreviews[index] = URL.createObjectURL(file);
-      setExtraImages(updatedImages);
-      setExtraImagePreviews(updatedPreviews);
     }
   };
 
@@ -134,13 +137,11 @@ const GuideProfile = ({ user }) => {
       updateData.append("nic", formData.nic);
       updateData.append("contactNumber", formData.contactNumber);
       updateData.append("description", formData.description);
+      updateData.append("province", formData.province);
       //updateData.append("placeIds", JSON.stringify(formData.selectedPlaces));
       updateData.append("placeIds", formData.selectedPlaces);
 
       if (mainImage) updateData.append("mainImage", mainImage);
-      extraImages.forEach((img, index) => {
-        if (img) updateData.append(`extraImage${index + 1}`, img);
-      });
 
       const response = await axios.put(
         `http://localhost:8080/api/guides/${gId}`,
@@ -178,9 +179,6 @@ const GuideProfile = ({ user }) => {
               <h1>Guide Profile</h1>
               <div className="imageGallery">
                 {mainImagePreview && <img src={mainImagePreview} alt="Main" />}
-                {extraImagePreviews.map((img, index) =>
-                  img ? <img key={index} src={img} alt={`Extra ${index + 1}`} /> : null
-                )}
               </div>
               <div className="guide-details">
                 <p><strong>Name:</strong> {guideDetails.name}</p>
@@ -188,6 +186,7 @@ const GuideProfile = ({ user }) => {
                 <p><strong>NIC:</strong> {guideDetails.nic}</p>
                 <p><strong>Contact Number:</strong> {guideDetails.contactNumber}</p>
                 <p><strong>Description:</strong> {guideDetails.description}</p>
+                <p><strong>Province:</strong> {guideDetails.province}</p>
                 <p><strong>Places:</strong> {guideDetails.places?.map((p) => p.location).join(", ") || "None"}</p>
               </div>
               <div className="guide-actions">
@@ -215,22 +214,6 @@ const GuideProfile = ({ user }) => {
                       <label htmlFor="mainImageInput">Main Image</label>
                       {mainImagePreview && <img src={mainImagePreview} alt="Main Preview" />}
                     </div>
-                    {extraImages.map((_, index) => (
-                      <div key={index} className="extraImages">
-                        <div className="extraImage">
-                          <input
-                            id={`extraImageInput${index}`}
-                            type="file"
-                            className="extraImg"
-                            onChange={(e) => handleImageChange(index, e.target.files[0])}
-                          />
-                          <label htmlFor={`extraImageInput${index}`}>Image {index + 2}</label>
-                          {extraImagePreviews[index] && (
-                            <img src={extraImagePreviews[index]} alt={`Extra Preview ${index + 1}`} />
-                          )}
-                        </div>
-                      </div>
-                    ))}
                   </div>
                   <div className="formDetails">
                     <div className="editFormInput">
@@ -282,6 +265,25 @@ const GuideProfile = ({ user }) => {
                         placeholder="Contact Number"
                       />
                     </div>
+                  </div>
+                  <div className="formSelect">
+                    <label htmlFor="province">Province:</label>
+                    <select
+                      id="province"
+                      name="province"
+                      value={formData.province}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="" disabled>
+                        Select a province
+                      </option>
+                      {provinces.map((province, index) => (
+                        <option key={index} value={province}>
+                          {province}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="formRadio">
                     <label>Guiding Places:</label>
