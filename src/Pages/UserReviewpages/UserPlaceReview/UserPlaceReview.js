@@ -9,26 +9,38 @@ const UserPlaceReview = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 3;
   const navigate = useNavigate();
-  const { locationId } = useParams();
-
+  const user = JSON.parse(localStorage.getItem("user")); // Retrieve user from localStorage
+  const { id: placeId } = useParams(); // Assuming 'id' is the placeId from the route
+  
+  // Load reviews on component mount
   useEffect(() => {
-    loadReview();
-  }, []);
-
-  // Load reviews from the backend
-  async function loadReview() {
+    if (user && user.id) {
+      loadReview(user.id, placeId);
+    }
+  }, [user?.id, placeId]);
+  
+  // Function to load reviews from the API
+  async function loadReview(userId, placeId) {
+    console.log("Fetching reviews with userId:", userId, "and placeId:", placeId);
     try {
-      const response = await axios.get("http://localhost:8080/placereview");
-      setReviews(response.data);
+      const response = await axios.get(
+        `http://localhost:8080/placereview/getPlaceReviewsByPlaceIdAndUserId/?userId=${userId}&placeId=${placeId}`
+      );
+      console.log("API Response:", response.data);
+      if (response.data) {
+        setReviews(response.data); // Update state with retrieved reviews
+      }
     } catch (error) {
       console.error("Error loading reviews:", error);
     }
   }
 
+  // Pagination variables
   const totalPages = Math.ceil(reviews.length / reviewsPerPage);
   const startIndex = (currentPage - 1) * reviewsPerPage;
   const currentReviews = reviews.slice(startIndex, startIndex + reviewsPerPage);
 
+  // Pagination handlers
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -43,17 +55,20 @@ const UserPlaceReview = () => {
 
   // Navigate to ReviewForm with data for updating
   const handleUpdate = (review) => {
-    navigate("/addReview", { state: { review, isUpdate: true } });
+    if (review.userId === user.id) {
+      navigate(`/locationReview/${placeId}`, { state: { review, isUpdate: true } });
+    } else {
+      alert("You are not allowed to update this review.");
+    }
   };
 
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this review?"
-    );
+  // Delete review handler with confirmation pop-up
+  const handleDelete = async (reviewId) => {
+    const confirmed = window.confirm("Do you want to delete this review?");
     if (confirmed) {
       try {
-        await axios.delete(`http://localhost:8080/placereview/${id}`);
-        setReviews(reviews.filter((review) => review.id !== id));
+        await axios.delete(`http://localhost:8080/placereview/${reviewId}`);
+        setReviews(reviews.filter((review) => review.id !== reviewId)); // Update state to remove the deleted review
       } catch (error) {
         console.error("Error deleting review:", error);
       }
@@ -85,7 +100,7 @@ const UserPlaceReview = () => {
                 </button>
                 <button
                   className="delete-btn"
-                  onClick={() => handleDelete(review.id)}
+                  onClick={() => handleDelete(review.id)} // Pass review id to handleDelete
                 >
                   Delete
                 </button>

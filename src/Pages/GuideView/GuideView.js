@@ -53,12 +53,16 @@ const GuideView = () => {
       }
     }
 
+    
+
     async function fetchReviews() {
       try {
-        const response = await axios.get('http://localhost:8080/placereview');
-        setReviews(response.data);
+        const response = await axios.get(`http://localhost:8080/api/guides/id/${id}`);
+        let reviewsData = response.data.guideReviewList;
+        setReviews(reviewsData);
       } catch (error) {
-        console.error('Error loading reviews:', error);
+        console.error("Error loading reviews:", error.message);
+        alert("Failed to load reviews.");
       }
     }
 
@@ -126,27 +130,30 @@ const GuideView = () => {
             </div>
             <button className="view-more-button">View More Locations</button>
           </div>
-          <div className="reviews-container">
-            <h2>Guide Reviews</h2>
-            <div className="reviews-list">
-              {reviews.length > 0 ? (
-                reviews.map((review, index) => (
-                  <div key={index} className="reviewTile">
-                    <div className="review-header">
-                      <h3>Sachintha</h3>
-                      <div className="star-rating">{renderStars(review.rating)}</div>
+         <div className="reviews-container">
+                    <h2>Guide Reviews</h2>
+                    <div className="reviews-list">
+                      {reviews.length > 0 ? (
+                        reviews.map((review, index) => (
+                          <div key={index} className="reviewTile">
+                            <div className="review-header">
+                              <h3>{review.userName || "Anonymous"}</h3>
+                              <div className="star-rating">{renderStars(review.rating)}</div>
+                            </div>
+                            <p className="review-comment">{review.comment}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p>No Reviews Found</p>
+                      )}
                     </div>
-                    <p className="review-comment">{review.comment}</p>
+                    <Link to={`/guideReviewForm/${id}`}>
+                      <button className="view-more-button">Add Guide Review</button>
+                    </Link>
+                    <Link to={`/userGuideReview/${id}`}>
+                      <button className="view-more-button">My Guide Reviews</button>
+                    </Link>
                   </div>
-                ))
-              ) : (
-                <p>No Reviews Found</p>
-              )}
-            </div>
-            <Link to="/guideReviewForm">
-              <button className="view-more-button">Add Guide Review</button>
-            </Link>
-          </div>
           {modalImage && (
             <div className="modal">
               <div className="modal-content">

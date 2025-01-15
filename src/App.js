@@ -107,7 +107,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/itemShopView/:id" element={<ItemShopView />} />
         <Route path="/reviews" element={<SiteReviewPage />} />
         <Route path="/addReview" element={<ReviewForm />} />
-        <Route path='/userGuideReview' element={<UserGuideReview/>}/>
+        <Route path='/userGuideReview/:id' element={<UserGuideReview/>}/>
         <Route path='/userItemReview' element={<UserItemReview/>}/>
         <Route path='/userLocationReview/:id' element={<UserPlaceReview/>}/>
         <Route path='/userSiteReview/:id' element={<UserSiteReview/>}/>
@@ -117,7 +117,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/shopProfile/:id" element={<ShopProfile/>}/>
         <Route path="/itemForm/:id" element={<ItemForm/>}/>
         <Route path="/editItemForm/:id" element={<EditItemForm/>}/>
-        <Route path="/guideReviewForm" element={<GuideReviewForm/>}/>
+        <Route path="/guideReviewForm/:id" element={<GuideReviewForm/>}/>
         <Route path="/edit/:id" element={<EditReview />} />
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
