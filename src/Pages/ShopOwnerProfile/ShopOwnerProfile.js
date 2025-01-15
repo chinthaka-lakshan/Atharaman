@@ -58,7 +58,7 @@ const ShopOwnerProfile = ({ user }) => {
     }
   };
   const handleCreateShop = () => {
-    navigate(`/createShop/${user.id}`); 
+    navigate(`/createShop/${user.id}`);
   }
   const handleViewShop = () => {
     if (shopOwnerDetails && shopOwnerDetails.id) {
@@ -67,7 +67,6 @@ const ShopOwnerProfile = ({ user }) => {
       alert("Shop details are unavailable.");
     }
   };
-
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -85,6 +84,15 @@ const ShopOwnerProfile = ({ user }) => {
                   type="text"
                   name="name"
                   value={formData.name}
+                  onChange={handleInputChange}
+                />
+              </label>
+              <label>
+                Description:
+                <input
+                  type="text"
+                  name="description"
+                  value={formData.description}
                   onChange={handleInputChange}
                 />
               </label>

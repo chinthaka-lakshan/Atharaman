@@ -22,6 +22,7 @@ const CreateShop = () => {
   const [formData, setFormData] = useState({
     name: "",
     owner: "",
+    description: "",
     contact: "",
     location: "",
     province: "", // Added province field
@@ -55,6 +56,7 @@ const CreateShop = () => {
     const data = {
       name: formData.name,
       owner: formData.owner,
+      description: formData.description,
       contact: formData.contact,
       location: formData.location,
       province: formData.province, // Include province in the submitted data
@@ -100,6 +102,14 @@ const CreateShop = () => {
           name="owner"
           placeholder="Owner Name"
           value={formData.owner}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
+          name="description"
+          placeholder="Description"
+          value={formData.description}
           onChange={handleChange}
           required
         />

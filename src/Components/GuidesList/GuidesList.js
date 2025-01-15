@@ -64,7 +64,7 @@ const GuidesList = () => {
             <div className="itemsList">
                 {currentGuides.length > 0 ? (
                     currentGuides.map((guide, index) => (
-                        <Link key={index} to={`/itemView/${guide.id}`}>
+                        <Link key={index} to={`/guideView/${guide.id}`}>
                             <div className="itemTile">
                                 <img
                                     src={guide.image || SachinthaJayaweera}
