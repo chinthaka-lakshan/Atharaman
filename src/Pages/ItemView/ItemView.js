@@ -57,6 +57,9 @@ const ItemView = () => {
                 <Link to={`/itemShopView/${item.shopId}`}>
                     <button className="shopButton" >Go To Shop</button>
                 </Link>
+                <Link to={`/itemReview/${id}`}>
+                        <button className="view-more-button">Add Item Review</button>
+                </Link>
             </div>
         </div>
     );

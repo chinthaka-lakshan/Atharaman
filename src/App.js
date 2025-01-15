@@ -33,6 +33,7 @@ import ReviewForm from './Pages/ReviewFormPage/ReviewForm';
 import AllReview from './Pages/AllReviewPage/AllReview';
 import EditReview from './Pages/AllReviewPage/EditReview';
 import Navbar from './Components/Navbar/Navbar';
+import ItemReviewForm from './Pages/ItemReviewPage/ItemReviewForm.js';
 // import GuideForm from './Pages/GuideReg/GuideForm';
 import CreateShop from './Components/CreateShop/CreateShop.js';
 import ShopProfile from './Components/ShopProfile/ShopProfile.js';
@@ -98,6 +99,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/locations" element={<LocationsPage />} />
         <Route path="/locationView/:id" element={<LocationView />} />
         <Route path="/locationReview/:id" element={<LocationReviewForm />} />
+        <Route path="/itemReview/:id" element={<ItemReviewForm />} />
         <Route path="/guides" element={<GuidesPage />} />
         <Route path="/guideView/:id" element={<GuideView />} />
         <Route path="/items" element={<ItemsPage />} />
