@@ -24,8 +24,8 @@ import LocationReviewForm from './Pages/LocationReviewPage/LocationReviewForm.js
 import GuidesPage from './Pages/GuidesPage/GuidesPage';
 import GuideView from './Pages/GuideView/GuideView.js';
 import ItemsPage from './Pages/ItemsPage/ItemsPage.js';
-import ViewItem from './Pages/ViewItem/ViewItem';
-import ViewItemShop from './Pages/ViewItemShop/ViewItemShop';
+import ItemView from './Pages/ItemView/ItemView.js';
+import ItemShopView from './Pages/ItemShopView/ItemShopView';
 import SiteReviewPage from './Pages/SiteReviewPage/SiteReviewPage';
 import ReviewForm from './Pages/ReviewFormPage/ReviewForm';
 import AllReview from './Pages/AllReviewPage/AllReview';
@@ -99,8 +99,8 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/guides" element={<GuidesPage />} />
         <Route path="/guideView/:id" element={<GuideView />} />
         <Route path="/items" element={<ItemsPage />} />
-        <Route path="/itemView/:id" element={<ViewItem />} />
-        <Route path="/itemViewShop/:id" element={<ViewItemShop />} />
+        <Route path="/itemView/:id" element={<ItemView />} />
+        <Route path="/itemShopView/:id" element={<ItemShopView />} />
         <Route path="/reviews" element={<SiteReviewPage />} />
         <Route path="/addReview" element={<ReviewForm />} />
         <Route path='/userGuideReview' element={<UserGuideReview/>}/>
@@ -115,7 +115,6 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/editItemForm/:id" element={<EditItemForm/>}/>
         <Route path="/guideReviewForm" element={<GuideReviewForm/>}/>
         <Route path="/edit/:id" element={<EditReview />} />
-
       </Routes>
     </>
   );
