@@ -2,21 +2,21 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./CreateShop.css";
+import ShoppingCartSharpIcon from '@mui/icons-material/ShoppingCartSharp';
 
 const CreateShop = () => {
   const navigate = useNavigate();
 
-  // List of provinces
   const provinces = [
-    "Western",
     "Central",
-    "North-Western",
-    "Sabaragamuwa",
-    "Uva",
-    "North",
-    "North-Central",
-    "Southern",
     "Eastern",
+    "Northern",
+    "North Central",
+    "North Western",
+    "Sabaragamuwa",
+    "Southern",
+    "Uva",
+    "Western",
   ];
 
   const [formData, setFormData] = useState({
@@ -24,13 +24,10 @@ const CreateShop = () => {
     owner: "",
     description: "",
     contact: "",
-    location: "",
-    province: "", // Added province field
-    photo: null,
-    itemList: [], // Default as an empty array
+    address: "",
+    province: "",
+    itemList: [],
   });
-
-  const [preview, setPreview] = useState(null);
 
   const loggedUser = JSON.parse(localStorage.getItem("user"));
   const userId = loggedUser?.id;
@@ -41,26 +38,16 @@ const CreateShop = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, photo: file });
-      setPreview(URL.createObjectURL(file));
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare data to send to the backend
     const data = {
       name: formData.name,
       owner: formData.owner,
       description: formData.description,
       contact: formData.contact,
-      location: formData.location,
-      province: formData.province, // Include province in the submitted data
-      image: formData.photo || null, // Include photo if exists, otherwise null
+      address: formData.address,
+      province: formData.province,
       itemList: formData.itemList,
       userId: userId,
     };
@@ -86,76 +73,95 @@ const CreateShop = () => {
   };
 
   return (
-    <div className="create-shop-container">
-      <h2>Create Shop</h2>
-      <form className="create-shop-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Shop Name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="owner"
-          placeholder="Owner Name"
-          value={formData.owner}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="contact"
-          placeholder="Contact"
-          value={formData.contact}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="location"
-          placeholder="Location"
-          value={formData.location}
-          onChange={handleChange}
-          required
-        />
-        <div className="form-group">
-          <label htmlFor="province">Province:</label>
-          <select
-            id="province"
-            name="province"
-            value={formData.province}
-            onChange={handleChange}
-            required
-          >
-            <option value="" disabled>
-              Select a province
-            </option>
-            {provinces.map((province, index) => (
-              <option key={index} value={province}>
-                {province}
-              </option>
-            ))}
-          </select>
+    <div className="createShop">
+      <div className="create-shop-container">
+        <div className="top">
+          <h1>Create Your Shop</h1>
+          <div className="imageGallery">
+            <ShoppingCartSharpIcon className='img'/>
+          </div>
+          <form className="sForm" onSubmit={handleSubmit}>
+            <div className="formDetails">
+              <div className="formInput">
+                <label>Shop Name:</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Enter Shop Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="formInput">
+                <label>Shop Owner Name:</label>
+                <input
+                  type="text"
+                  name="owner"
+                  placeholder="Enter Shop Owner's Name"
+                  value={formData.owner}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="formInput">
+                <label>Description:</label>
+                <textarea
+                  name="description"
+                  placeholder="Enter Shop Description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="formInput">
+                <label>Contact No:</label>
+                <input
+                  type="text"
+                  name="contact"
+                  placeholder="Enter Contact No"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="formInput">
+                <label>Address:</label>
+                <input
+                  type="text"
+                  name="address"
+                  placeholder="Enter Shop Address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+            <div className="formGroup">
+              <label htmlFor="province">Province:</label>
+              <select
+                id="province"
+                name="province"
+                value={formData.province}
+                onChange={handleChange}
+                required
+              >
+                <option value="" disabled>
+                  Select The Province
+                </option>
+                {provinces.map((province, index) => (
+                  <option key={index} value={province}>
+                    {province}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button type="submit" className="create-shop-button">
+              Create Shop
+            </button>
+          </form>
         </div>
-        <input type="file" accept="image/*" onChange={handlePhotoChange} />
-        {preview && (
-          <img src={preview} alt="Preview" className="photo-preview" />
-        )}
-        <button type="submit" className="btn-create">
-          Create Shop
-        </button>
-      </form>
+      </div>
     </div>
   );
 };
