@@ -55,7 +55,7 @@ const GuideView = () => {
 
     async function fetchReviews() {
       try {
-        const response = await axios.get('http://localhost:8080/placereview');
+        const response = await axios.get('http://localhost:8080/guidereview');
         setReviews(response.data);
       } catch (error) {
         console.error('Error loading reviews:', error);
