@@ -38,12 +38,19 @@ const ItemReviewForm = () => {
     setError('');
 
     try {
+      console.log(itemId+'llp');
+      
       const response = await axios.post('http://localhost:8080/itemReview/save', {
-        userId: user.id, // user id from local storage
-        username: user.username, // username from local storage
-        itemId: itemId, // placeId from URL params
+        
         rating,
         comment,
+        
+        itemId: itemId,
+        userId: user.id, // user id from local storage
+        //username: user.username, // username from local storage
+         // placeId from URL params
+        
+       
       });
 
       if (response.data) {

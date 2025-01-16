@@ -21,6 +21,7 @@ const LocationView = () => {
   const [currentWeather, setCurrentWeather] = useState(null);
   const [currentLocations, setLocations] = useState([])
   const [hourlyForecast, setHourlyForecast] = useState([]);
+  const [places,setPlaces] =useState([]);
 
   const renderStars = (rating) => {
     const stars = [];
