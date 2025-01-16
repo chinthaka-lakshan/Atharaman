@@ -24,9 +24,9 @@ const ReviewsTable = () => {
   }, []);
 
   const reviewColumns = [
-    { field: "id", headerName: "Review ID", width: 100 },
-    { field: "username", headerName: "Username", width: 200 }, // Username column
-    { field: "comment", headerName: "Comment", width: 400 },
+    { field: "id", headerName: "Review ID", width: 70 },
+    { field: "userName", headerName: "Username", width: 200 }, // Username column
+    { field: "comment", headerName: "Comment", width: 460 },
     { field: "rating", headerName: "Rating", width: 140 },
   ];
 
@@ -37,9 +37,6 @@ const ReviewsTable = () => {
       width: 150,
       renderCell: (params) => (
         <div className="cellAction">
-          <Link to={`/viewReview/${params.row.id}`}>
-            <button className="viewButton">View</button>
-          </Link>
           <button
             className="deleteButton"
             onClick={() => handleDelete(params.row.id)}
