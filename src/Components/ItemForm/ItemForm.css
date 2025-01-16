@@ -1,77 +1,105 @@
-/* Container for the form */
-.item-form-container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Heading styles */
-.item-form-container h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 24px;
-}
-
-/* Form styles */
 .item-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ff 100%);
+    padding: 2rem;
+    background: linear-gradient(rgba(8,0,58,0.7),rgba(8,0,58,0.7)), url('../../Assets/Background.jpg');
+    background-size: cover;
+    align-items: center;
+    justify-content: center;
 
-/* Input and textarea styles */
-.item-form input[type="text"],
-.item-form input[type="number"],
-.item-form input[type="file"],
-.item-form textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: #fff;
-  transition: border-color 0.3s ease;
-}
+    .item-form-container {
+        display: flex;
+        flex-direction: column;
+        width: 600px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        margin-top: 80px;
 
-.item-form textarea {
-  resize: vertical;
-  height: 100px;
-}
+        .top {
+            display: flex;
+            flex: 2;
+            flex-direction: column;
+            height: auto;
+            align-items: center;
+            justify-content: center;
+            -webkit-box-shadow: 2px 2px 5px 1px #425060;
+            box-shadow: 2px 2px 5px 1px #a0afc1;
+            border-radius: 5px;
+            margin: 20px;
+            padding: 20px;
+            gap: 20px;
 
-.item-form input:focus,
-.item-form textarea:focus {
-  border-color: #4caf50;
-  outline: none;
-}
+            h1{
+                font-size: 30px;
+                color: #425060;
+            }
 
-/* Submit button styles */
-.item-form button[type="submit"] {
-  padding: 12px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+            .iForm{
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
 
-.item-form button[type="submit"]:hover {
-  background-color: #45a049;
-}
+                .formDetails{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 25px;
+                    color: #425060;
+                    width: 100%;
 
-/* Image preview styles */
-.image-preview {
-  max-width: 100%;
-  max-height: 150px;
-  margin-top: 10px;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  object-fit: cover;
+                    .formInput{
+                        display: flex;
+                        flex-direction: column;
+                        gap: 5px;
+                        font-size: 20px;
+
+                        label{
+                            font-weight: bold;
+                        }
+
+                        input, textarea{
+                            width: 100%;
+                            font-weight: 400;
+                            height: auto;
+                            padding: 10px;
+                            font-size: 18px;
+                            border: 1px solid #dcdcdc;
+                            border-radius: 5px;
+                            outline: none;
+                        }
+
+                        .image-preview{
+                          width: 120px;
+                          height: 120px;
+                          border-radius: 4px;
+                          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                          object-fit: cover;
+                        }
+                    }
+                }
+
+                .addItemButton{
+                    width: 150px;
+                    padding: 10px;
+                    margin-top: 10px;
+                    background-color: #425060;
+                    color: white;
+                    font-size: 16px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    align-self: center;
+                }
+            }
+        }
+    }
 }
 
 /* Responsive design */
