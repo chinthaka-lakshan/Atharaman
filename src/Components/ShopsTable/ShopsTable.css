@@ -1,10 +1,13 @@
 .shopsTable{
     height: 550px;
     padding: 20px;
+    align-items: center;
+    justify-content: center;
 
     .cellWithImg{
         display: flex;
         align-items: center;
+        justify-content: center;
 
         .cellImg{
             width: 32px;
@@ -32,29 +35,34 @@
     }
 
     .cellAction{
-        align-items: center;
         display: flex;
-        gap: 15px;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 15px;
+        text-decoration: none;
+        margin-top: 10px;
 
         .viewButton{
-            padding: 2px 5px;
+            width: 50px;
+            height: 30px;
             border-radius: 5px;
-            color: darkblue;
-            border: 1px dotted rgba(0,0,139,0.596);
+            color: #fff;
             cursor: pointer;
+            background-color: #1a1f24;
         }
 
         .deleteButton{
-            padding: 2px 5px;
+            width: 60px;
+            height: 30px;
             border-radius: 5px;
-            color: crimson;
-            border: 1px dotted rgba(220,20,60,0.6);
+            color: #fff;
             cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
-            display: inline-block;
-            box-sizing: border-box;
-            white-space: nowrap;
+            background-color: crimson;
+        }
+
+        .viewButton:hover, .deleteButton:hover{
+            transform: scale(1.05);
         }
     }
 }

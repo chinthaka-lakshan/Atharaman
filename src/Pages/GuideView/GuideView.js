@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./GuideView.css";
-import Narangala from "../../Assets/Narangala_1.jpg";
-import SachinthaJayaweera from '../../Assets/SachinthaJayaweera_1.jpg'
-import Lamborghini from '../../Assets/Lamborghini_1.jpg'
 import { Link } from 'react-router-dom';
 import axios from "axios";
 
@@ -14,9 +11,7 @@ const GuideView = () => {
   const [phoneNo, setPhoneNo] = useState('');
   const [email, setEmail] = useState('');
   const [nic, setNic] = useState('');
-  const guideLocations = ["Central", "Western", "Uva", "North", "Southern", "Eastern"];
   const [mainImagePreview, setMainImagePreview] = useState(null);
-  const [extraImagePreviews, setExtraImagePreviews] = useState([null, null, null, null]);
 
   const [modalImage, setModalImage] = useState(null);
   const [currentLocations, setLocations] = useState([])
@@ -45,8 +40,7 @@ const GuideView = () => {
         setPhoneNo(data.phoneNo);
         setEmail(data.email);
         setNic(data.nic);
-        setMainImagePreview(SachinthaJayaweera);
-        setExtraImagePreviews([SachinthaJayaweera, SachinthaJayaweera, SachinthaJayaweera, SachinthaJayaweera]);
+        setMainImagePreview(data.mainImagePreview);
       } catch (error) {
         console.error("Error fetching guide details:", error.message);
         alert("Failed to fetch guide details.");
@@ -86,11 +80,6 @@ const GuideView = () => {
             <div className="main-image">
               {mainImagePreview && <img src={mainImagePreview} alt="Main" onClick={() => openImage(mainImagePreview) }/>}
             </div>
-            <div className="side-images">
-              {extraImagePreviews.map((img, index) =>
-                img ? <img key={index} src={img} alt={`Extra ${index + 1}`} onClick={() => openImage(img) }/> : null
-              )}
-            </div>
           </div>
         </div>
         <div className="main-container">
@@ -109,7 +98,7 @@ const GuideView = () => {
                 currentLocations.slice(0, 4).map((location, index) => (
                   <Link key={index} to={`/locationView/${location.id}`}>
                     <div className="locationTile">
-                      <img src={location.image || Narangala} alt={location.name} className="tile-img" />
+                      <img src={location.image} alt={location.name} className="tile-img" />
                         <div className="tile-content">
                           <h3>{location.location}</h3>
                           <p>{location.shortDescription}</p>

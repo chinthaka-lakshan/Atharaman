@@ -10,24 +10,24 @@ const ShopsTable = () => {
   const shopColumns = [
     { field: "id", headerName: "Shop ID", width: 70 },
     { field: "name", headerName: "Shop", width: 180 },
-    { field: "description", headerName: "Description", width: 180 },
-    { field: "location", headerName: "Location", width: 100 },
-    { field: "contact", headerName: "Phone Number", width: 100 },
-    // { field: "email", headerName: "E-Mail", width: 100 },
+    { field: "description", headerName: "Description", width: 220 },
+    { field: "contact", headerName: "Phone Number", width: 120 },
+    { field: "location", headerName: "Location", width: 180 },
+    { field: "province", headerName: "Province", width: 140 },
   ];
 
   const actionColumn = [
     {
       field: "action",
       headerName: "Action",
-      width: 200,
+      width: 150,
       renderCell: (params) => {
         return (
           <div className="cellAction">
             <Link to={`/viewShop/${params.row.id}`}>
-              <span className="viewButton">View</span>
+              <button className="viewButton">View</button>
             </Link>
-            <div className="deleteButton" onClick={() => handleDelete(params.row.id)}>Delete</div>
+            <button className="deleteButton" onClick={() => handleDelete(params.row.id)}>Delete</button>
           </div>
         );
       },

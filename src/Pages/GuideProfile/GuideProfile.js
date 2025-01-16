@@ -35,12 +35,17 @@ const GuideProfile = ({ user }) => {
     'Eastern',
   ];
 
+  const [gId, setGId] = useState(0);
+
   useEffect(() => {
     // Fetch guide details
     const fetchGuideDetails = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/guides/${user.id}`);
         const data = response.data;
+        setGId(data.id);
+        
+        console.log(gId+"jiii");
         setGuideDetails(data);
         setFormData({
           name: data.name || "",
@@ -92,15 +97,37 @@ const GuideProfile = ({ user }) => {
     }
   };
 
+  // const handlePlaceSelection = (e) => {
+  //   const { value, checked } = e.target;
+  //   setFormData((prevState) => ({
+  //     ...prevState,
+  //     selectedPlaces: checked
+  //       ? [...prevState.selectedPlaces, parseInt(value)]
+  //       : prevState.selectedPlaces.filter((id) => id !== parseInt(value)),
+  //   }));
+  //   console.log(prevState.selectedPlaces[0].id+"place");
+    
+  // };
+
+
   const handlePlaceSelection = (e) => {
     const { value, checked } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      selectedPlaces: checked
+  
+    setFormData((prevState) => {
+      const updatedPlaces = checked
         ? [...prevState.selectedPlaces, parseInt(value)]
-        : prevState.selectedPlaces.filter((id) => id !== parseInt(value)),
-    }));
+        : prevState.selectedPlaces.filter((id) => id !== parseInt(value));
+  
+      // Logging the updated places array
+      console.log(updatedPlaces, "updated selected places");
+  
+      return {
+        ...prevState,
+        selectedPlaces: updatedPlaces,
+      };
+    });
   };
+  
 
   const handleSave = async () => {
     try {
@@ -111,16 +138,16 @@ const GuideProfile = ({ user }) => {
       updateData.append("contactNumber", formData.contactNumber);
       updateData.append("description", formData.description);
       updateData.append("province", formData.province);
-      updateData.append("placeIds", JSON.stringify(formData.selectedPlaces));
+      //updateData.append("placeIds", JSON.stringify(formData.selectedPlaces));
+      updateData.append("placeIds", formData.selectedPlaces);
+
       if (mainImage) updateData.append("mainImage", mainImage);
 
-      const response = await axios.put(
-        `http://localhost:8080/api/guides/${user.id}`,
-        updateData
-      );
+      const response = await axios.put(`http://localhost:8080/api/guides/${gId}`, updateData);
       setGuideDetails(response.data);
       setEditing(false);
       alert("Profile updated successfully.");
+      navigate("/");
     } catch (err) {
       alert("Failed to update profile. Please try again later.");
     }
