@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./CreateShop.css";
-import ShoppingCartSharpIcon from '@mui/icons-material/ShoppingCartSharp';
 
 const CreateShop = () => {
   const navigate = useNavigate();
@@ -77,9 +76,6 @@ const CreateShop = () => {
       <div className="create-shop-container">
         <div className="top">
           <h1>Create Your Shop</h1>
-          <div className="imageGallery">
-            <ShoppingCartSharpIcon className='img'/>
-          </div>
           <form className="sForm" onSubmit={handleSubmit}>
             <div className="formDetails">
               <div className="formInput">
