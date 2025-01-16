@@ -52,7 +52,7 @@ const ItemReviewForm = () => {
           setShowPopup(false);
           setRating(0);
           setComment('');
-          navigate('/locations'); // Navigate to locations page
+          navigate('/items'); // Navigate to locations page
         }, 2000);
       } else {
         setError('Failed to submit the review. Please try again.');

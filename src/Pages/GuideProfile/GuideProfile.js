@@ -144,6 +144,7 @@ const GuideProfile = ({ user }) => {
       if (mainImage) updateData.append("mainImage", mainImage);
 
       const response = await axios.put(`http://localhost:8080/api/guides/${gId}`, updateData);
+
       setGuideDetails(response.data);
       setEditing(false);
       alert("Profile updated successfully.");
