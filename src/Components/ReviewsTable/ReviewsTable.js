@@ -25,7 +25,7 @@ const ReviewsTable = () => {
 
   const reviewColumns = [
     { field: "id", headerName: "Review ID", width: 100 },
-    { field: "username", headerName: "Username", width: 200 }, // Username column
+    { field: "userName", headerName: "UserName", width: 200 }, // Username column
     { field: "comment", headerName: "Comment", width: 400 },
     { field: "rating", headerName: "Rating", width: 140 },
   ];
@@ -38,7 +38,7 @@ const ReviewsTable = () => {
       renderCell: (params) => (
         <div className="cellAction">
           <Link to={`/viewReview/${params.row.id}`}>
-            <button className="viewButton">View</button>
+            {/* <button className="viewButton">View</button> */}
           </Link>
           <button
             className="deleteButton"

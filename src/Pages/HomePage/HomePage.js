@@ -20,9 +20,9 @@ function HomePage() {
         <Title subTitle='Explore' title='Camping Locations' link='/locations' btn='All Locations'/>
         <Locations/>
         <Title subTitle='Meet With' title='Expert Guides' link='/guides' btn='All Guides'/>
-        <Guides/>
+        {/* <Guides/> */}
         <Title subTitle='Browse Through' title='Camping Gears' link='/items' btn='All Items'/>
-        <Shops/>
+        {/* <Shops/> */}
         <AboutUs/>
       </div>
       <Footer/>
