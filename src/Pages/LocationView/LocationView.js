@@ -4,6 +4,7 @@ import "./LocationView.css";
 import { Link } from "react-router-dom";
 import SachinthaJayaweera from '../../Assets/SachinthaJayaweera_1.jpg'
 import Lamborghini from '../../Assets/Lamborghini_1.jpg'
+import { ShoppingCartOutlined } from "@mui/icons-material";
 import axios from "axios";
 
 const LocationView = () => {
@@ -190,16 +191,16 @@ const LocationView = () => {
           <div className="guides-container">
             <h2>Top Guides Nearby</h2>
             <div className="guides-list">
-              {currentLocations.length > 0 ? (
-                currentLocations.slice(0, 4).map((location, index) => (
-                  <Link key={index} to={`/locationView/${location.id}`}>
+              {sameProvinceGuides.length > 0 ? (
+                sameProvinceGuides.slice(0, 4).map((guide, index) => (
+                  <Link key={index} to={`/guideView/${guide.id}`}>
                     <div className="guideTile">
-                      <img src={location.image || SachinthaJayaweera} alt={location.name} className="tile-img" />
+                      <img src={guide.image || SachinthaJayaweera} alt={guide.name} className="tile-img" />
                         <div className="tile-content">
-                          <h3>{location.location}</h3>
-                          <p>{location.shortDescription}</p>
+                          <h3>{guide.name}</h3>
+                          <p>{guide.description}</p>
                           <div className="star-rating">
-                            {renderStars(location.rating || 3)}
+                            {renderStars(guide.rating || 3)}
                           </div>
                         </div>
                     </div>
@@ -209,7 +210,9 @@ const LocationView = () => {
               <p>No Guides Found</p>
               )}
             </div>
-            <button className="view-more-button">View More Guides</button>
+            {sameProvinceGuides.length > 4 && (
+              <button className="view-more-button">View More Guides</button>
+            )}
           </div>
 
           <div className="shops-container">
@@ -219,7 +222,7 @@ const LocationView = () => {
                 sameProvinceShops.slice(0, 4).map((shop, index) => (
                   <Link key={index} to={`/shopView/${shop.id}`}>
                     <div className="shopTile">
-                      <img src={shop.image || Lamborghini} alt={shop.name} className="tile-img" />
+                      <ShoppingCartOutlined className="tile-img"/>
                       <div className="tile-content">
                         <h3>{shop.name}</h3>
                         <p>{shop.description || "No description available."}</p>

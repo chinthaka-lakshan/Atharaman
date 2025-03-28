@@ -17,6 +17,7 @@ const ViewLocation = () => {
     const [extraImages, setExtraImages] = useState([null, null, null, null]);
     const [extraImagePreviews, setExtraImagePreviews] = useState([null, null, null, null]);
     const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+    const [loading, setLoading] = useState(true);
 
     const provinces = ["Central", "Western", "Uva", "North", "Southern", "Eastern"];
 
@@ -24,8 +25,9 @@ const ViewLocation = () => {
         fetchLocation();
     }, [id]);
 
-    async function fetchLocation() {
+    const fetchLocation = async () => {
         try {
+            setLoading(true);
             const response = await axios.get(`http://localhost:8080/locations/${id}`);
             const data = response.data;
             setLocation(data.location);
@@ -38,25 +40,34 @@ const ViewLocation = () => {
         } catch (error) {
             console.error("Error fetching location details:", error.message);
             alert("Failed to fetch location details.");
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     const handleImageChange = (index, file) => {
-        if (file && !["image/jpeg", "image/png"].includes(file.type)) {
-            alert("Invalid file type. Please upload JPEG or PNG images.");
-            return;
-        }
+        const maxFileSize = 5 * 1024 * 1024; // 5 MB
+        if (file) {
+            if (!["image/jpeg", "image/png"].includes(file.type)) {
+                alert("Invalid file type. Please upload JPEG or PNG images.");
+                return;
+            }
+            if (file.size > maxFileSize) {
+                alert("File size exceeds 5 MB. Please upload a smaller image.");
+                return;
+            }
 
-        if (index === -1) {
-            setMainImage(file);
-            setMainImagePreview(URL.createObjectURL(file));
-        } else {
-            const updatedImages = [...extraImages];
-            const updatedPreviews = [...extraImagePreviews];
-            updatedImages[index] = file;
-            updatedPreviews[index] = URL.createObjectURL(file);
-            setExtraImages(updatedImages);
-            setExtraImagePreviews(updatedPreviews);
+            if (index === -1) {
+                setMainImage(file);
+                setMainImagePreview(URL.createObjectURL(file));
+            } else {
+                const updatedImages = [...extraImages];
+                const updatedPreviews = [...extraImagePreviews];
+                updatedImages[index] = file;
+                updatedPreviews[index] = URL.createObjectURL(file);
+                setExtraImages(updatedImages);
+                setExtraImagePreviews(updatedPreviews);
+            }
         }
     };
 
@@ -65,7 +76,7 @@ const ViewLocation = () => {
         setLocation(place);
 
         try {
-            const geocodeApiKey = "AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk";
+            const geocodeApiKey = "YOUR_GOOGLE_API_KEY";
             const geocodeResponse = await axios.get(
                 `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
                     place
@@ -107,7 +118,7 @@ const ViewLocation = () => {
         });
 
         try {
-            const response = await axios.put(`http://localhost:8080/locations/${id}`, formData, {
+            await axios.put(`http://localhost:8080/locations/${id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             alert("Location updated successfully!");
@@ -117,6 +128,10 @@ const ViewLocation = () => {
             alert("An error occurred while updating the location.");
         }
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="viewLocation">
@@ -178,7 +193,7 @@ const ViewLocation = () => {
                             <div className="editFormInput">
                                 <label>Location:</label>
                                 <GooglePlacesAutocomplete
-                                    apiKey="AIzaSyBnoSZiGiahM3iiUAGCFyDyWj73vl_INjk"
+                                    apiKey="YOUR_GOOGLE_API_KEY"
                                     selectProps={{
                                         onChange: handleLocationSelect,
                                         placeholder: "Search for a location...",

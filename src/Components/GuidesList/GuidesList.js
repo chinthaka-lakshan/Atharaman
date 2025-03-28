@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./GuidesList.css";
-import SachinthaJayaweera from "../../Assets/SachinthaJayaweera_1.jpg";
+import Elderly from '../../Assets/elderly-person-icon-19.jpg';
 import axios from "axios";
 import { Link } from 'react-router-dom';
 
@@ -67,7 +67,7 @@ const GuidesList = () => {
                         <Link key={index} to={`/guideView/${guide.id}`}>
                             <div className="itemTile">
                                 <img
-                                    src={guide.image || SachinthaJayaweera}
+                                    src={guide.image || Elderly}
                                     alt={guide.name}
                                     className="tile-img"
                                 />

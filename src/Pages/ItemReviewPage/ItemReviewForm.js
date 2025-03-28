@@ -45,7 +45,7 @@ const ItemReviewForm = () => {
         rating,
         comment,
         
-        itemId: itemId,
+        itemId: parseInt(itemId),
         userId: user.id, // user id from local storage
         //username: user.username, // username from local storage
          // placeId from URL params

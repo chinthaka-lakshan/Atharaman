@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import "./GuideView.css";
 import { Link } from 'react-router-dom';
 import axios from "axios";
+import Elderly from '../../Assets/elderly-person-icon-19.jpg';
 
 const GuideView = () => {
   const { id } = useParams();
@@ -82,7 +83,7 @@ const GuideView = () => {
           </div>
           <div className="photo-grid">
             <div className="main-image">
-              {mainImagePreview && <img src={mainImagePreview} alt="Main" onClick={() => openImage(mainImagePreview) }/>}
+              <img src={Elderly} alt="Main"/>
             </div>
           </div>
         </div>
