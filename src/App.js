@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
 import AdminDashboard from './Pages/AdminDashboard/AdminDashboard';
 import ManageLocations from './Pages/ManageLocations/ManageLocations';
