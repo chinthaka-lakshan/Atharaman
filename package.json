@@ -1,7 +1,7 @@
 {
   "name": "atharaman",
   "version": "0.1.0",
-  "homepage": "https://github.com/chinthaka-lakshan/Atharaman",
+  "homepage": "https://chinthaka-lakshan.github.io/Atharaman",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.3",
