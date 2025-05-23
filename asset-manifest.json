@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/chinthaka-lakshan/Atharaman/static/css/main.d2b37efa.css",
-    "main.js": "/chinthaka-lakshan/Atharaman/static/js/main.94c431e7.js",
+    "main.css": "/chinthaka-lakshan/Atharaman/static/css/main.357fa5e9.css",
+    "main.js": "/chinthaka-lakshan/Atharaman/static/js/main.796c1182.js",
     "static/media/AboutUs.jpeg": "/chinthaka-lakshan/Atharaman/static/media/AboutUs.c12a821a2ed4c3359646.jpeg",
     "static/media/Background.jpg": "/chinthaka-lakshan/Atharaman/static/media/Background.ba7250ab815ec54a15fa.jpg",
     "static/media/Wangedigala_1.jpg": "/chinthaka-lakshan/Atharaman/static/media/Wangedigala_1.6342f74efb624e4957c2.jpg",
@@ -23,11 +23,11 @@
     "static/media/fa-v4compatibility.ttf": "/chinthaka-lakshan/Atharaman/static/media/fa-v4compatibility.fa86b3c85e77abbd2ebd.ttf",
     "static/media/fa-v4compatibility.woff2": "/chinthaka-lakshan/Atharaman/static/media/fa-v4compatibility.c3ea317a0f10f201597f.woff2",
     "index.html": "/chinthaka-lakshan/Atharaman/index.html",
-    "main.d2b37efa.css.map": "/chinthaka-lakshan/Atharaman/static/css/main.d2b37efa.css.map",
-    "main.94c431e7.js.map": "/chinthaka-lakshan/Atharaman/static/js/main.94c431e7.js.map"
+    "main.357fa5e9.css.map": "/chinthaka-lakshan/Atharaman/static/css/main.357fa5e9.css.map",
+    "main.796c1182.js.map": "/chinthaka-lakshan/Atharaman/static/js/main.796c1182.js.map"
   },
   "entrypoints": [
-    "static/css/main.d2b37efa.css",
-    "static/js/main.94c431e7.js"
+    "static/css/main.357fa5e9.css",
+    "static/js/main.796c1182.js"
   ]
 }
