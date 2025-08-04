@@ -8,46 +8,6 @@ const GuidesTable = () => {
   const [data, setData] = useState([]);
 
   // Fetch guides from the backend
-  useEffect(() => {
-    const fetchGuides = async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/api/guides");
-        setData(response.data); // set the guides data
-      } catch (error) {
-        console.error("Error fetching guides data", error);
-      }
-    };
-
-    fetchGuides();
-  }, []);
-
-  const guideColumns = [
-    { field: "id", headerName: "Guide ID", width: 70 },
-    { field: "name", headerName: "Guide", width: 180 },
-    { field: "description", headerName: "Description", width: 220 },
-    { field: "contactNumber", headerName: "Phone Number", width: 120 },
-    { field: "email", headerName: "E-Mail", width: 180 },
-    { field: "nic", headerName: "NIC", width: 140 },
-  ];
-
-  const actionColumn = [
-    {
-      field: "action",
-      headerName: "Action",
-      width: 150,
-      renderCell: (params) => {
-        return (
-          <div className="cellAction">
-            <Link to={`/viewGuide/${params.row.id}`}>
-              <button className="viewButton">View</button>
-            </Link>
-              <button className="deleteButton" onClick={() => handleDelete(params.row.id)}>Delete</button>
-          </div>
-        );
-      },
-    },
-  ];
-
   const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/guides");
@@ -63,34 +23,72 @@ const GuidesTable = () => {
 
   const handleDelete = async (id) => {
     const userConfirmed = window.confirm(
-        `Are you sure you want to delete the guide?`
+      `Are you sure you want to delete the guide with ID ${id}?`
     );
 
     if (!userConfirmed) {
-        alert("Deletion canceled.");
-        return;
+      alert("Deletion canceled.");
+      return;
     }
 
     try {
-        await axios.delete(`http://localhost:8080/api/guides/${id}`);
-        // Update the state to remove the deleted guide
-        setData((prevData) => prevData.filter((item) => item.id !== id));
-        alert(`Guide with ID ${id} has been successfully deleted.`);
+      await axios.delete(`http://localhost:8080/api/guides/${id}`);
+      setData((prevData) => prevData.filter((item) => item.id !== id));
+      alert(`Guide with ID ${id} has been successfully deleted.`);
     } catch (error) {
-        console.error("Error deleting guide:", error);
-        alert(
-            `Failed to delete guide with ID ${id}. ${
-                error.response?.data?.message || "Please try again later."
-            }`
-        );
+      console.error("Error deleting guide:", error);
+      alert(
+        `Failed to delete guide with ID ${id}. ${
+          error.response?.data?.message || "Please try again later."
+        }`
+      );
     }
-};
+  };
 
+  const guideColumns = [
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "guideName", headerName: "Name", width: 180 },
+    { field: "businessMail", headerName: "Business Email", width: 200 },
+    { field: "personalNumber", headerName: "Personal No", width: 150 },
+    { field: "whatsappNumber", headerName: "WhatsApp No", width: 150 },
+    { field: "location", headerName: "Location", width: 150},
+    {
+      field: "languages",
+      headerName: "Languages",
+      width: 180,
+      renderCell: (params) => params.row.languages?.join(", "),
+    },
+    { field: "description", headerName: "Description", width: 200 },
+  ];
+
+  const actionColumn = [
+    {
+      field: "action",
+      headerName: "Actions",
+      width: 160,
+      renderCell: (params) => (
+        <div className="cellAction">
+          <Link to={`/viewGuide/${params.row.id}`}>
+            <button className="viewButton">View</button>
+          </Link>
+          <button
+            className="deleteButton"
+            onClick={() => handleDelete(params.row.id)}
+          >
+            Delete
+          </button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="guidesTable">
       <div className="guidesTableTitle">
-        <span>Guides List</span>
+        <span>Registered Guides</span>
+        <Link to="/manageGuides/addNew">
+          <button className="link">Add New</button>
+        </Link>
       </div>
       <DataGrid
         className="dataGrid"
