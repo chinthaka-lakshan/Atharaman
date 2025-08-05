@@ -1,6 +1,7 @@
 {
   "name": "atharaman",
   "version": "0.1.0",
+  "homepage": "https://chinthaka-lakshan.github.io/Atharaman",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -15,7 +16,6 @@
     "@testing-library/user-event": "^13.5.0",
     "react": "^18.3.1",
     "react-axios": "^2.0.6",
-
     "react-dom": "^18.3.1",
     "react-google-places-autocomplete": "^4.1.0",
     "react-router-dom": "^6.26.2",
@@ -25,6 +25,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -46,5 +48,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }

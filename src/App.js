@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
 import AdminDashboard from './Pages/AdminDashboard/AdminDashboard';
 import ManageLocations from './Pages/ManageLocations/ManageLocations';
 import AddNewLocation from './Pages/AddNewLocation/AddNewLocation';
 import ViewLocation from './Pages/ViewLocation/ViewLocation';
 import ManageGuides from './Pages/ManageGuides/ManageGuides';
+import AddNewGuide from './Pages/AddNewGuide/AddNewGuide';
 import ViewGuide from './Pages/ViewGuide/ViewGuide';
 import ManageShops from './Pages/ManageShops/ManageShops';
 import ViewShop from './Pages/ViewShop/ViewShop';
@@ -54,6 +55,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
     '/manageLocations/addNew',
     '/viewLocation',
     '/manageGuides',
+    '/manageGuides/addNew',
     '/viewGuide',
     '/manageShops',
     '/viewShop',
@@ -85,6 +87,7 @@ const AppRoutes = ({ user, setUser, logout }) => {
         <Route path="/manageLocations/addNew" element={<AddNewLocation />} />
         <Route path="/viewLocation/:id" element={<ViewLocation />} />
         <Route path="/manageGuides" element={<ManageGuides />} />
+        <Route path="/manageGuides/addNew" element={<AddNewGuide />} />
         <Route path="/viewGuide/:id" element={<ViewGuide />} />
         <Route path="/manageShops" element={<ManageShops />} />
         <Route path="/viewShop/:id" element={<ViewShop />} />
