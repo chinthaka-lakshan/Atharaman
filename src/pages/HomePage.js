@@ -5,7 +5,7 @@ import HeroSection from '../components/HeroSection';
 import TopSection from '../components/TopSection';
 import AboutSection from '../components/AboutSection';
 import Footer from '../components/Footer';
-import { topLocations, topGuides, topShops, topHotels, topVehicles } from '../data/mockData';
+import { locations, guides, shops, hotels, vehicles } from '../data/mockData';
 
 const HomePage = () => {
   const handleCardClick = (item, type) => {
