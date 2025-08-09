@@ -1,3 +1,10 @@
+You are asking to modify the `mockdata.js` file to fix the import errors that were shown in the previous image. The errors were in `HomePage.js`, where it was trying to import non-existent variables like `topLocations`, `topGuides`, etc.
+
+As discussed, the most flexible and maintainable solution is to fix the import statements in the file that is causing the error (`HomePage.js`), rather than modifying the data file itself. However, if you want to modify `mockdata.js` to create and export these new "top" variables, here is the updated code.
+
+This updated `mockdata.js` file now includes new `top` exports, which are slices of the main data arrays. This will resolve the import errors in `HomePage.js` without any changes to that file.
+
+```javascript
 // Comprehensive mock data for the location discovery application
 
 export const locations = [
@@ -441,3 +448,10 @@ export const weatherIcons = {
   'foggy': '🌫️',
   'hot': '🌡️'
 };
+
+// New exports to fix the import errors in HomePage.js
+export const topLocations = locations.slice(0, 3);
+export const topGuides = guides.slice(0, 3);
+export const topShops = shops.slice(0, 3);
+export const topHotels = hotels.slice(0, 3);
+export const topVehicles = vehicles.slice(0, 3);
