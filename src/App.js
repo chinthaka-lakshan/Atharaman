@@ -3,7 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './context/AuthContext';
+import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
+import LocationsPage from './pages/LocationsPage';
+import LocationDetailsPage from './pages/LocationDetailsPage';
+import GuideDetailsPage from './pages/GuideDetailsPage';
+import ShopDetailsPage from './pages/ShopDetailsPage';
+import VehicleDetailsPage from './pages/VehicleDetailsPage';
+import HotelDetailsPage from './pages/HotelDetailsPage';
 
 const theme = createTheme({
   palette: {
@@ -86,8 +93,15 @@ function App() {
       <CssBaseline />
       <AuthProvider>
         <Router>
+          <Navbar />
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/locations" element={<LocationsPage />} />
+            <Route path="/location/:id" element={<LocationDetailsPage />} />
+            <Route path="/guide/:id" element={<GuideDetailsPage />} />
+            <Route path="/shop/:id" element={<ShopDetailsPage />} />
+            <Route path="/vehicle/:id" element={<VehicleDetailsPage />} />
+            <Route path="/hotel/:id" element={<HotelDetailsPage />} />
           </Routes>
         </Router>
       </AuthProvider>
