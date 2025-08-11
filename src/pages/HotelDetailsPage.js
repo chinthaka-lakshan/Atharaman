@@ -8,7 +8,6 @@ import {
   CardContent,
   CardMedia,
   Rating,
-  Chip,
   Button,
   Breadcrumbs,
   Link,
@@ -16,14 +15,14 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Skeleton
+  Skeleton,
+  Fade,
+  Grow
 } from '@mui/material';
 import {
   LocationOn,
   Phone,
   NavigateNext,
-  Hotel,
-  Schedule,
   CheckCircle,
   Message
 } from '@mui/icons-material';
@@ -62,20 +61,12 @@ const HotelDetailsPage = () => {
   }
 
   return (
-    <Box sx={{ pt: 10, pb: 6 }}>
+    <Box sx={{ pt: 4, pb: 6 }}>
       <Container maxWidth="xl">
         <Breadcrumbs
           separator={<NavigateNext fontSize="small" />}
           sx={{ mb: 3 }}
         >
-          <Link
-            component="button"
-            variant="body2"
-            onClick={() => navigate('/')}
-            sx={{ textDecoration: 'none' }}
-          >
-            Home
-          </Link>
           <Link
             component="button"
             variant="body2"
@@ -91,113 +82,115 @@ const HotelDetailsPage = () => {
 
         <Grid container spacing={6}>
           <Grid item xs={12} md={8}>
-            <Card sx={{ mb: 4 }}>
-              <CardMedia
-                component="img"
-                height="400"
-                image={hotel.image}
-                alt={hotel.name}
-              />
-            </Card>
+            <Grow in timeout={800}>
+              <Card sx={{ mb: 4 }}>
+                <CardMedia
+                  component="img"
+                  height="400"
+                  image={hotel.image}
+                  alt={hotel.name}
+                />
+              </Card>
+            </Grow>
 
-            <Card>
-              <CardContent>
-                <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
-                  About {hotel.name}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
-                  {hotel.description}
-                </Typography>
-                
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Amenities
-                </Typography>
-                <List>
-                  {hotel.amenities.map((amenity, index) => (
-                    <ListItem key={index} sx={{ px: 0 }}>
-                      <ListItemIcon>
-                        <CheckCircle color="primary" />
-                      </ListItemIcon>
-                      <ListItemText primary={amenity} />
-                    </ListItem>
-                  ))}
-                </List>
-              </CardContent>
-            </Card>
+            <Fade in timeout={1000}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
+                    About {hotel.name}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
+                    {hotel.description}
+                  </Typography>
+                  
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                    Amenities
+                  </Typography>
+                  <List>
+                    {hotel.amenities.map((amenity, index) => (
+                      <ListItem key={index} sx={{ px: 0 }}>
+                        <ListItemIcon>
+                          <CheckCircle color="primary" />
+                        </ListItemIcon>
+                        <ListItemText primary={amenity} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </CardContent>
+              </Card>
+            </Fade>
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-                  {hotel.name}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <LocationOn sx={{ color: 'text.secondary', mr: 0.5 }} />
-                  <Typography variant="body1" color="text.secondary">
-                    {hotel.location}
+            <Grow in timeout={1200}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                    {hotel.name}
                   </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Rating value={hotel.rating} precision={0.1} readOnly />
-                  <Typography variant="body1" sx={{ ml: 1, fontWeight: 500 }}>
-                    {hotel.rating} ({hotel.reviewCount} reviews)
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ mb: 3 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                    Address
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                    {hotel.address}
-                  </Typography>
-                </Box>
-
-                <Grid container spacing={2} sx={{ mb: 3 }}>
-                  <Grid item xs={6}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <LocationOn sx={{ color: 'text.secondary', mr: 0.5 }} />
+                    <Typography variant="body1" color="text.secondary">
+                      {hotel.location}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Rating value={hotel.rating} precision={0.1} readOnly />
+                    <Typography variant="body1" sx={{ ml: 1, fontWeight: 500 }}>
+                      {hotel.rating} ({hotel.reviewCount} reviews)
+                    </Typography>
+                  </Box>
+                  
+                  <Box sx={{ mb: 3 }}>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                      Check-in
+                      Address
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                      {hotel.checkIn}
+                      {hotel.address}
                     </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                      Check-out
-                    </Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                      {hotel.checkOut}
-                    </Typography>
-                  </Grid>
-                </Grid>
+                  </Box>
 
-                <Typography variant="h5" color="primary.main" sx={{ fontWeight: 600, mb: 3 }}>
-                  ${hotel.pricePerNight}/night
-                </Typography>
-                
-                <Button
-                  variant="contained"
-                  fullWidth
-                  startIcon={<Message />}
-                  sx={{
-                    background: 'linear-gradient(45deg, #2E7D32, #4CAF50)',
-                    py: 1.5,
-                    mb: 2
-                  }}
-                >
-                  Book Now
-                </Button>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<Phone />}
-                >
-                  {hotel.contact}
-                </Button>
-              </CardContent>
-            </Card>
+                  <Grid container spacing={2} sx={{ mb: 3 }}>
+                    <Grid item xs={6}>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                        Check-in
+                      </Typography>
+                      <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                        {hotel.checkIn}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                        Check-out
+                      </Typography>
+                      <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                        {hotel.checkOut}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    startIcon={<Message />}
+                    sx={{
+                      background: 'linear-gradient(45deg, #2E7D32, #4CAF50)',
+                      py: 1.5,
+                      mb: 2
+                    }}
+                  >
+                    Book Now
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<Phone />}
+                  >
+                    {hotel.contact}
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grow>
           </Grid>
         </Grid>
       </Container>
@@ -206,7 +199,7 @@ const HotelDetailsPage = () => {
 };
 
 const HotelDetailsSkeleton = () => (
-  <Box sx={{ pt: 10, pb: 6 }}>
+  <Box sx={{ pt: 4, pb: 6 }}>
     <Container maxWidth="xl">
       <Skeleton variant="text" width={200} height={30} sx={{ mb: 3 }} />
       <Grid container spacing={6}>

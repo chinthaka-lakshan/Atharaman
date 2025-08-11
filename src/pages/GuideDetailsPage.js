@@ -6,7 +6,6 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia,
   Rating,
   Chip,
   Button,
@@ -17,17 +16,19 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Skeleton
+  Skeleton,
+  Fade,
+  Grow
 } from '@mui/material';
 import {
   LocationOn,
   Phone,
-  Star,
   NavigateNext,
   Language,
   Work,
   CheckCircle,
-  Message
+  Message,
+  Star
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { guides } from '../data/mockData';
@@ -64,20 +65,12 @@ const GuideDetailsPage = () => {
   }
 
   return (
-    <Box sx={{ pt: 10, pb: 6 }}>
+    <Box sx={{ pt: 4, pb: 6 }}>
       <Container maxWidth="xl">
         <Breadcrumbs
           separator={<NavigateNext fontSize="small" />}
           sx={{ mb: 3 }}
         >
-          <Link
-            component="button"
-            variant="body2"
-            onClick={() => navigate('/')}
-            sx={{ textDecoration: 'none' }}
-          >
-            Home
-          </Link>
           <Link
             component="button"
             variant="body2"
@@ -93,113 +86,116 @@ const GuideDetailsPage = () => {
 
         <Grid container spacing={6}>
           <Grid item xs={12} md={4}>
-            <Card>
-              <Box sx={{ p: 3, textAlign: 'center' }}>
-                <Avatar
-                  src={guide.image}
-                  sx={{ width: 150, height: 150, mx: 'auto', mb: 2 }}
-                />
-                <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-                  {guide.name}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
-                  <LocationOn sx={{ color: 'text.secondary', mr: 0.5 }} />
-                  <Typography variant="body1" color="text.secondary">
-                    {guide.location}
+            <Grow in timeout={800}>
+              <Card>
+                <Box sx={{ p: 3, textAlign: 'center' }}>
+                  <Avatar
+                    src={guide.image}
+                    sx={{ width: 150, height: 150, mx: 'auto', mb: 2 }}
+                  />
+                  <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                    {guide.name}
                   </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                    <LocationOn sx={{ color: 'text.secondary', mr: 0.5 }} />
+                    <Typography variant="body1" color="text.secondary">
+                      {guide.location}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                    <Rating value={guide.rating} precision={0.1} readOnly />
+                    <Typography variant="body1" sx={{ ml: 1, fontWeight: 500 }}>
+                      {guide.rating} ({guide.reviewCount} reviews)
+                    </Typography>
+                  </Box>
+                  <Chip
+                    label={guide.availability}
+                    color={guide.availability === 'Available' ? 'success' : 'warning'}
+                    sx={{ mb: 3 }}
+                  />
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    startIcon={<Message />}
+                    sx={{
+                      background: 'linear-gradient(45deg, #2E7D32, #4CAF50)',
+                      py: 1.5,
+                      mb: 2
+                    }}
+                  >
+                    Contact Guide
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<Phone />}
+                  >
+                    {guide.contact}
+                  </Button>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
-                  <Rating value={guide.rating} precision={0.1} readOnly />
-                  <Typography variant="body1" sx={{ ml: 1, fontWeight: 500 }}>
-                    {guide.rating} ({guide.reviewCount} reviews)
-                  </Typography>
-                </Box>
-                <Chip
-                  label={guide.availability}
-                  color={guide.availability === 'Available' ? 'success' : 'warning'}
-                  sx={{ mb: 3 }}
-                />
-                <Typography variant="h5" color="primary.main" sx={{ fontWeight: 600, mb: 3 }}>
-                  ${guide.pricePerDay}/day
-                </Typography>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  startIcon={<Message />}
-                  sx={{
-                    background: 'linear-gradient(45deg, #2E7D32, #4CAF50)',
-                    py: 1.5,
-                    mb: 2
-                  }}
-                >
-                  Contact Guide
-                </Button>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<Phone />}
-                >
-                  {guide.contact}
-                </Button>
-              </Box>
-            </Card>
+              </Card>
+            </Grow>
           </Grid>
 
           <Grid item xs={12} md={8}>
-            <Card sx={{ mb: 4 }}>
-              <CardContent>
-                <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
-                  About {guide.name}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
-                  {guide.description}
-                </Typography>
-                
-                <Grid container spacing={4}>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                      Experience
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Work sx={{ color: 'primary.main', mr: 1 }} />
-                      <Typography variant="body1">
-                        {guide.experience} of guiding
-                      </Typography>
-                    </Box>
-                  </Grid>
+            <Fade in timeout={1000}>
+              <Card sx={{ mb: 4 }}>
+                <CardContent>
+                  <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
+                    About {guide.name}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
+                    {guide.description}
+                  </Typography>
                   
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                      Languages
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Language sx={{ color: 'primary.main', mr: 1 }} />
-                      <Typography variant="body1">
-                        {guide.languages.join(', ')}
+                  <Grid container spacing={4}>
+                    <Grid item xs={12} sm={6}>
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                        Experience
                       </Typography>
-                    </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Work sx={{ color: 'primary.main', mr: 1 }} />
+                        <Typography variant="body1">
+                          {guide.experience} of guiding
+                        </Typography>
+                      </Box>
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={6}>
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                        Languages
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Language sx={{ color: 'primary.main', mr: 1 }} />
+                        <Typography variant="body1">
+                          {guide.languages.join(', ')}
+                        </Typography>
+                      </Box>
+                    </Grid>
                   </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Fade>
 
-            <Card>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
-                  Specialties
-                </Typography>
-                <List>
-                  {guide.specialties.map((specialty, index) => (
-                    <ListItem key={index} sx={{ px: 0 }}>
-                      <ListItemIcon>
-                        <CheckCircle color="primary" />
-                      </ListItemIcon>
-                      <ListItemText primary={specialty} />
-                    </ListItem>
-                  ))}
-                </List>
-              </CardContent>
-            </Card>
+            <Grow in timeout={1200}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+                    Specialties
+                  </Typography>
+                  <List>
+                    {guide.specialties.map((specialty, index) => (
+                      <ListItem key={index} sx={{ px: 0 }}>
+                        <ListItemIcon>
+                          <CheckCircle color="primary" />
+                        </ListItemIcon>
+                        <ListItemText primary={specialty} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </CardContent>
+              </Card>
+            </Grow>
           </Grid>
         </Grid>
       </Container>
@@ -208,7 +204,7 @@ const GuideDetailsPage = () => {
 };
 
 const GuideDetailsSkeleton = () => (
-  <Box sx={{ pt: 10, pb: 6 }}>
+  <Box sx={{ pt: 4, pb: 6 }}>
     <Container maxWidth="xl">
       <Skeleton variant="text" width={200} height={30} sx={{ mb: 3 }} />
       <Grid container spacing={6}>

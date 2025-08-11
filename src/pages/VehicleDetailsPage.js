@@ -16,13 +16,14 @@ import {
   ListItemIcon,
   ListItemText,
   Skeleton,
-  Rating
+  Rating,
+  Fade,
+  Grow
 } from '@mui/material';
 import {
   LocationOn,
   Phone,
   NavigateNext,
-  DirectionsCar,
   Person,
   CheckCircle,
   Message
@@ -62,20 +63,12 @@ const VehicleDetailsPage = () => {
   }
 
   return (
-    <Box sx={{ pt: 10, pb: 6 }}>
+    <Box sx={{ pt: 4, pb: 6 }}>
       <Container maxWidth="xl">
         <Breadcrumbs
           separator={<NavigateNext fontSize="small" />}
           sx={{ mb: 3 }}
         >
-          <Link
-            component="button"
-            variant="body2"
-            onClick={() => navigate('/')}
-            sx={{ textDecoration: 'none' }}
-          >
-            Home
-          </Link>
           <Link
             component="button"
             variant="body2"
@@ -91,105 +84,107 @@ const VehicleDetailsPage = () => {
 
         <Grid container spacing={6}>
           <Grid item xs={12} md={8}>
-            <Card sx={{ mb: 4 }}>
-              <CardMedia
-                component="img"
-                height="400"
-                image={vehicle.image}
-                alt={vehicle.vehicleName}
-              />
-            </Card>
+            <Grow in timeout={800}>
+              <Card sx={{ mb: 4 }}>
+                <CardMedia
+                  component="img"
+                  height="400"
+                  image={vehicle.image}
+                  alt={vehicle.vehicleName}
+                />
+              </Card>
+            </Grow>
 
-            <Card>
-              <CardContent>
-                <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
-                  About This Vehicle
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
-                  {vehicle.description}
-                </Typography>
-                
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Features & Amenities
-                </Typography>
-                <List>
-                  {vehicle.features.map((feature, index) => (
-                    <ListItem key={index} sx={{ px: 0 }}>
-                      <ListItemIcon>
-                        <CheckCircle color="primary" />
-                      </ListItemIcon>
-                      <ListItemText primary={feature} />
-                    </ListItem>
-                  ))}
-                </List>
-              </CardContent>
-            </Card>
+            <Fade in timeout={1000}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
+                    About This Vehicle
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
+                    {vehicle.description}
+                  </Typography>
+                  
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                    Features & Amenities
+                  </Typography>
+                  <List>
+                    {vehicle.features.map((feature, index) => (
+                      <ListItem key={index} sx={{ px: 0 }}>
+                        <ListItemIcon>
+                          <CheckCircle color="primary" />
+                        </ListItemIcon>
+                        <ListItemText primary={feature} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </CardContent>
+              </Card>
+            </Fade>
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-                  {vehicle.vehicleName}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Person sx={{ color: 'text.secondary', mr: 0.5 }} />
-                  <Typography variant="body1" color="text.secondary">
-                    Owner: {vehicle.ownerName}
+            <Grow in timeout={1200}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                    {vehicle.vehicleName}
                   </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <LocationOn sx={{ color: 'text.secondary', mr: 0.5 }} />
-                  <Typography variant="body1" color="text.secondary">
-                    {vehicle.location}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Rating value={vehicle.rating} precision={0.1} readOnly />
-                  <Typography variant="body1" sx={{ ml: 1, fontWeight: 500 }}>
-                    {vehicle.rating} ({vehicle.reviewCount} reviews)
-                  </Typography>
-                </Box>
-                <Chip
-                  label={vehicle.availability}
-                  color={vehicle.availability === 'Available' ? 'success' : 'warning'}
-                  sx={{ mb: 3 }}
-                />
-                
-                <Box sx={{ mb: 3 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                    Capacity
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                    {vehicle.capacity}
-                  </Typography>
-                </Box>
-
-                <Typography variant="h5" color="primary.main" sx={{ fontWeight: 600, mb: 3 }}>
-                  ${vehicle.pricePerDay}/day
-                </Typography>
-                
-                <Button
-                  variant="contained"
-                  fullWidth
-                  startIcon={<Message />}
-                  sx={{
-                    background: 'linear-gradient(45deg, #2E7D32, #4CAF50)',
-                    py: 1.5,
-                    mb: 2
-                  }}
-                >
-                  Book Now
-                </Button>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<Phone />}
-                >
-                  {vehicle.contact}
-                </Button>
-              </CardContent>
-            </Card>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Person sx={{ color: 'text.secondary', mr: 0.5 }} />
+                    <Typography variant="body1" color="text.secondary">
+                      Owner: {vehicle.ownerName}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <LocationOn sx={{ color: 'text.secondary', mr: 0.5 }} />
+                    <Typography variant="body1" color="text.secondary">
+                      {vehicle.location}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Rating value={vehicle.rating} precision={0.1} readOnly />
+                    <Typography variant="body1" sx={{ ml: 1, fontWeight: 500 }}>
+                      {vehicle.rating} ({vehicle.reviewCount} reviews)
+                    </Typography>
+                  </Box>
+                  <Chip
+                    label={vehicle.availability}
+                    color={vehicle.availability === 'Available' ? 'success' : 'warning'}
+                    sx={{ mb: 3 }}
+                  />
+                  
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                      Capacity
+                    </Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                      {vehicle.capacity}
+                    </Typography>
+                  </Box>
+                  
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    startIcon={<Message />}
+                    sx={{
+                      background: 'linear-gradient(45deg, #2E7D32, #4CAF50)',
+                      py: 1.5,
+                      mb: 2
+                    }}
+                  >
+                    Book Now
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<Phone />}
+                  >
+                    {vehicle.contact}
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grow>
           </Grid>
         </Grid>
       </Container>
@@ -198,7 +193,7 @@ const VehicleDetailsPage = () => {
 };
 
 const VehicleDetailsSkeleton = () => (
-  <Box sx={{ pt: 10, pb: 6 }}>
+  <Box sx={{ pt: 4, pb: 6 }}>
     <Container maxWidth="xl">
       <Skeleton variant="text" width={200} height={30} sx={{ mb: 3 }} />
       <Grid container spacing={6}>
