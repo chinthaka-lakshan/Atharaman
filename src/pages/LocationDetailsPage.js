@@ -274,7 +274,7 @@ const LocationDetailsPage = () => {
         </Box>
         <Grid container spacing={3}>
           {filteredItems.map((item, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
+            <Grid item xs={12} sm={6} md={4} key={item.id}>
               <Grow in timeout={500 + index * 100} appear={false}>
                 <Card
                   onClick={() => navigate(`/${type}/${item.id}`)}
