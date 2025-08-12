@@ -275,7 +275,7 @@ const LocationDetailsPage = () => {
         <Grid container spacing={3}>
           {filteredItems.map((item, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <Grow in timeout={500 + index * 100}>
+              <Grow in timeout={500 + index * 100} appear={false}>
                 <Card
                   onClick={() => navigate(`/${type}/${item.id}`)}
                   sx={{
@@ -389,7 +389,7 @@ const LocationDetailsPage = () => {
 
         <Grid container spacing={6}>
           <Grid item xs={12} lg={8}>
-            <Grow in timeout={1000}>
+            <Grow in timeout={1000} appear={false}>
               <Card sx={{ mb: 4 }}>
                 <Box sx={{ position: 'relative' }}>
                   <CardMedia
@@ -463,7 +463,7 @@ const LocationDetailsPage = () => {
               </Card>
             </Grow>
 
-            <Grow in timeout={1200}>
+            <Grow in timeout={1200} appear={false}>
               <Card sx={{ mb: 4 }}>
                 <CardContent>
                   <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
@@ -479,11 +479,11 @@ const LocationDetailsPage = () => {
               </Card>
             </Grow>
 
-            <Grow in timeout={1400}>
+            <Grow in timeout={1400} appear={false}>
               <WeatherWidget />
             </Grow>
 
-            <Grow in timeout={1600}>
+            <Grow in timeout={1600} appear={false}>
               <Card sx={{ mb: 4 }}>
                 <CardContent>
                   <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
@@ -522,7 +522,7 @@ const LocationDetailsPage = () => {
           </Grid>
 
           <Grid item xs={12} lg={4}>
-            <Grow in timeout={1000}>
+            <Grow in timeout={1000} appear={false}>
               <Card sx={{ mb: 4 }}>
                 <CardContent>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
@@ -567,7 +567,7 @@ const LocationDetailsPage = () => {
               </Card>
             </Grow>
 
-            <Grow in timeout={1200}>
+            <Grow in timeout={1200} appear={false}>
               <Card sx={{ mb: 4 }}>
                 <CardContent>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
