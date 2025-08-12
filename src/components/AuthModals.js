@@ -106,6 +106,7 @@ const AuthModals = ({ open, onClose, mode, onModeChange }) => {
       </Typography>
       
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      }
       
       <TextField
         fullWidth
@@ -184,6 +185,7 @@ const AuthModals = ({ open, onClose, mode, onModeChange }) => {
       </Typography>
       
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      }
       
       <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
         <TextField
@@ -285,7 +287,9 @@ const AuthModals = ({ open, onClose, mode, onModeChange }) => {
       </Typography>
       
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      }
       {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      }
       
       <Typography variant="body2" sx={{ mb: 3, textAlign: 'center', color: 'text.secondary' }}>
         Enter your email address and we'll send you a link to reset your password.
