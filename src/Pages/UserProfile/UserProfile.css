@@ -1,0 +1,144 @@
+.user-page {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(rgba(8,0,58,0.7),rgba(8,0,58,0.7)), url('../../Assets/Background.jpg');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.user-profile-container {
+  max-width: 800px;
+  margin-top: 100px;
+  background: rgba(255, 255, 255, 0.559);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+}
+
+.profile-img{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  .user-img{
+    width: 50px;
+    height: 50px;
+    align-self: center;
+    justify-self: center;
+    color: #1f374b;
+  }
+
+  .user-welcome-message {
+    color: #2d3748;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    border-bottom: 2px solid #0a0a0a3e;
+    padding-bottom: 1rem;
+  }
+}
+
+.user-profile-details {
+  background: rgba(255, 255, 255, 0.068);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.user-profile-details p {
+  color: #4a5568;
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.user-profile-details span {
+  color: #1f374b;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.user-requests-section {
+  margin: 1rem 0;
+}
+
+.user-requests-section h2 {
+  color: #2d3748;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.request-btn {
+  background: #4299e110;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+}
+
+.request-btn:hover {
+  background: #3182ce;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.2);
+}
+
+.user-pending-message {
+  background: #ebf8ff;
+  color: #2b6cb0;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #4299e1;
+  margin: 1rem 0;
+}
+
+
+
+
+
+
+
+.user-delete-profile-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #0a0a0a3e;
+}
+
+
+
+.user-delete-profile-section .delete-btn {
+  background: #d32020;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.user-delete-profile-section .delete-btn:hover {
+  background: #931414;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
+}
+
+.user-loading-text {
+  text-align: center;
+  color: #4a5568;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+}

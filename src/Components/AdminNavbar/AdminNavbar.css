@@ -1,0 +1,21 @@
+.adminNavbar{
+    height: 100px;
+    display: flex;
+    align-items: center;
+    background-color: #1a1f24;
+    border-bottom: 1px solid #425060;
+
+    .adminNavbarContainer{
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: end;
+        padding: 20px;
+
+        span{
+            font-size: 40px;
+            font-weight: bold;
+            color: #616161;
+        }
+    }
+}

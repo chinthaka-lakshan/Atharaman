@@ -1,0 +1,226 @@
+.viewLocation {
+    display: flex;
+
+    .viewLocationContainer {
+        flex: 6;
+
+        .top {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            height: auto;
+            align-items: center;
+            justify-content: center;
+            -webkit-box-shadow: 2px 2px 5px 1px #425060;
+            box-shadow: 2px 2px 5px 1px #a0afc1;
+            border-radius: 5px;
+            margin: 20px;
+            padding: 20px;
+            gap: 40px;
+
+            h1{
+                font-size: 25px;
+                color: #425060;
+            }
+
+            .imageGallery {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 40px;
+
+                img{
+                    width: 120px;
+                    height: 120px;
+                    object-fit: cover;
+                    border-radius: 10px;
+                    color: #a0afc1;
+                }
+            }
+
+            .details{
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                color: #425060;
+                font-size: 20px;
+
+                p{
+                    font-weight: 400;
+                }
+
+                p strong{
+                    font-weight: bold;
+                }
+            }
+        }
+        
+        .bottom {
+            display: flex;
+            flex: 2;
+            flex-direction: column;
+            height: auto;
+            align-items: center;
+            justify-content: center;
+            -webkit-box-shadow: 2px 2px 5px 1px #425060;
+            box-shadow: 2px 2px 5px 1px #a0afc1;
+            border-radius: 5px;
+            margin: 20px;
+            padding: 20px;
+            gap: 20px;
+
+            h2{
+                font-size: 25px;
+                color: #425060;
+            }
+
+            .eForm{
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+
+                .formImages{
+                    display: flex;
+                    flex-direction: row;
+                    gap: 40px;
+                    align-items: center;
+                    justify-content: center;
+
+                    .mainImage{
+                        display: flex;
+                        flex-direction: column;
+                        width: 120px;
+                        gap: 5px;
+
+                        .mainImg{
+                            border-radius: 5px;
+                            color: #a0afc1;
+                        }
+
+                        img{
+                            width: 120px;
+                            height: 120px;
+                            object-fit: cover;
+                            border-radius: 10px;
+                            color: #a0afc1;
+                        }
+                    }
+
+                    .extraImages{
+                        display: flex;
+                        flex-direction: row;
+                        gap: 40px;
+
+                        .extraImage{
+                            display: flex;
+                            flex-direction: column;
+                            width: 120px;
+                            gap: 5px;
+
+                            .extraImg{
+                                border-radius: 5px;
+                                color: #a0afc1;
+                            }
+
+                            img{
+                                width: 120px;
+                                height: 120px;
+                                object-fit: cover;
+                                border-radius: 10px;
+                                color: #a0afc1;
+                            }
+                        }
+                    }
+                }
+
+                .formDetails{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 25px;
+                    color: #425060;
+                    width: 100%;
+
+                    .editFormInput{
+                        display: flex;
+                        flex-direction: column;
+                        gap: 5px;
+                        font-size: 20px;
+
+                        label{
+                            font-weight: bold;
+                        }
+
+                        input, select, textarea{
+                            width: 100%;
+                            font-weight: 400;
+                            height: auto;
+                            padding: 10px;
+                            font-size: 20px;
+                            border: 1px solid #dcdcdc;
+                            border-radius: 5px;
+                            outline: none;
+                        }
+                    }
+                }
+
+                button{
+                    width: 150px;
+                    padding: 10px;
+                    margin-top: 10px;
+                    background-color: #425060;
+                    color: white;
+                    font-size: 16px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    align-self: center;
+                }
+
+                button:hover{
+                    background-color: #334150;
+                }
+            }
+        }
+    }
+}
+
+.mainImage input[type="file"] + label,
+.extraImage input[type="file"] + label {
+    display: flex;
+    width: 120px;
+}
+
+.mainImage .mainImg,
+.extraImage .extraImg {
+    display: none;
+}
+
+.mainImage label,
+.extraImage label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    background-color: white;
+    padding: 5px 5px;
+    border: 1px dotted #616161;
+    border-radius: 5px;
+    width: 120px;
+    font-size: 13px;
+    transition: background-color 0.3s;
+}
+
+.mainImage label:hover,
+.extraImage label:hover {
+    -webkit-box-shadow: 2px 2px 5px 1px #425060;
+    box-shadow: 2px 2px 5px 1px #a0afc1;
+    background-color: #f0f0f0;
+    border: none;
+    width: 120px;
+    font-size: 13px;
+}

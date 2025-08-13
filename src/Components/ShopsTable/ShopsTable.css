@@ -1,0 +1,68 @@
+.shopsTable{
+    height: 550px;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+
+    .cellWithImg{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .cellImg{
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+    }
+
+    .shopsTableTitle{
+        width: 100%;
+        font-size: 24px;
+        color: #616161;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .datagrid{
+        color: #616161;
+        border: none;
+    }
+
+    .cellAction{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 15px;
+        text-decoration: none;
+        margin-top: 10px;
+
+        .viewButton{
+            width: 50px;
+            height: 30px;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            background-color: #1a1f24;
+        }
+
+        .deleteButton{
+            width: 60px;
+            height: 30px;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            background-color: crimson;
+        }
+
+        .viewButton:hover, .deleteButton:hover{
+            transform: scale(1.05);
+        }
+    }
+}

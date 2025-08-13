@@ -1,0 +1,42 @@
+.widget{
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    padding: 10px;
+    -webkit-box-shadow: 2px 2px 5px 1px #425060;
+    box-shadow: 2px 2px 5px 1px #a0afc1;
+    border-radius: 5px;
+    height: 200px;
+
+    .left,.right{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .title{
+            font-weight: bold;
+            font-size: 18px;
+            color: #425060;
+        }
+
+        .counter{
+            font-size: 25px;
+            font-weight: 300;
+            color: #a0afc1;
+        }
+
+        .link{
+            width: max-content;
+            font-size: 12px;
+            border-bottom: 1px solid #425060;
+            cursor: pointer;
+        }
+
+        .icon{
+            font-size: 50px;
+            padding: 5px;
+            align-self: flex-end;
+        }
+
+    }
+}
