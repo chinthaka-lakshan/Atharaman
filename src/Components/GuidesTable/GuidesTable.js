@@ -7,7 +7,7 @@ import axios from "axios";
 const GuidesTable = () => {
   const [data, setData] = useState([]);
 
-  // Fetch guides from the backend
+  // Fetch guides from the backend ..
   const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/guides");
