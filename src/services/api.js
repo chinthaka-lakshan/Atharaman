@@ -47,7 +47,14 @@ export const getReviewsByEntity = (entityType, entityId) => api.get(`/reviews/en
 export const getReviews = () => api.get('/reviews');
 export const getReview = (id) => api.get(`/reviews/${id}`);
 export const createReview = (formData) => api.post('/reviews', formData, {headers: {'Content-Type': 'multipart/form-data'}});
-export const updateReview = (id, formData) => api.put(`/reviews/${id}`, formData, {headers: {'Content-Type': 'multipart/form-data'}});
+export const updateReview = (id, formData) => {
+  formData.append('_method', 'PUT'); // Tell Laravel to treat this as PUT
+  return api.post(`/reviews/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+}
+
+// export const updateReview = (id, formData) => api.put(`/reviews/${id}`, formData, {headers: {'Content-Type': 'multipart/form-data'}});
 export const deleteReview = (id) => api.delete(`/reviews/${id}`);
 export const getUserReviews = () => api.get('/user/reviews');
 
