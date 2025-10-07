@@ -19,7 +19,7 @@ import {
 } from '../../services/api'
 
 const ManageHotelOwners = () => {
-  const [currentView, setCurrentView] = useState('owners');
+  const [currentView, setCurrentView] = useState('owners'); // 'owners' or 'hotels'
   const [selectedOwner, setSelectedOwner] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('add');
@@ -28,8 +28,10 @@ const ManageHotelOwners = () => {
   const [hotelOwners, setHotelOwners] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-// Fetch hotel owners on component mount
+  // Fetch hotel owners on component mount
   useEffect(() => {
     fetchHotelOwners();
   }, []);
@@ -39,7 +41,9 @@ const ManageHotelOwners = () => {
     try {
       const response = await getHotelOwners();
       setHotelOwners(response.data);
+      setError(null);
     } catch (error) {
+      setError('Failed to fetch hotel owners. Please try again.');
       console.error('Error fetching hotel owners:', error);
     } finally {
       setLoading(false);
@@ -58,12 +62,28 @@ const ManageHotelOwners = () => {
     try {
       const response = await getHotelsByOwner(ownerId);
       setHotels(response.data);
+      setError(null);
     } catch (error) {
+      setError('Failed to fetch hotels. Please try again.');
       console.error('Error fetching hotels:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const ownerColumns = [
+    { key: 'hotel_owner_name', label: 'Hotel Owner Name', sortable: true },
+    { key: 'hotel_owner_nic', label: 'NIC', sortable: true },
+    { key: 'business_mail', label: 'Email', sortable: true },
+    { key: 'contact_number', label: 'Phone', sortable: true },
+  ];
+
+  const hotelColumns = [
+    { key: 'hotel_name', label: 'Hotel Name', sortable: true },
+    { key: 'nearest_city', label: 'City', sortable: true },
+    { key: 'contact_number', label: 'Phone', sortable: true },
+    { key: 'hotel_address', label: 'Address', sortable: true },
+  ];
 
   const handleOwnerRowClick = (owner) => {
     setSelectedOwner(owner);
@@ -96,8 +116,9 @@ const ManageHotelOwners = () => {
         setSelectedHotel(response.data);
         setShowModal(true);
       }
-    } catch (err) {
-      console.error('Error fetching details:', err);
+    } catch (error) {
+      setError('Failed to fetch details. Please try again.');
+      console.error('Error fetching details:', error);
     }
   };
 
@@ -114,75 +135,85 @@ const ManageHotelOwners = () => {
   };
 
   const handleDelete = async (item) => {
-    const itemName = currentView === 'owners' ? item.hotelOwnerName : item.hotelName;
+    const itemName = currentView === 'owners' ? item.hotel_owner_name : item.hotelName;
     if (window.confirm(`Are you sure you want to delete "${itemName}"?`)) {
       try {
+        setLoading(true);
         if (currentView === 'owners') {
           await deleteHotelOwner(item.id);
           setHotelOwners(hotelOwners.filter(o => o.id !== item.id));
+          setError(null);
         } else {
           await deleteHotel(item.id);
           setHotels(hotels.filter(h => h.id !== item.id));
+          setError(null);
         }
       } catch (error) {
+        setError('Failed to delete. Please try again.');
         console.error('Error deleting:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleSave = async (formData) => {
     try {
-      if (currentView === 'owners') {   
-        if (modalType === 'add') {
-          const response = await createHotelOwner(formData);
-          setHotelOwners([...hotelOwners, response.data.hotelOwner]);
-        } else if (modalType === 'edit') {
-          const response = await updateHotelOwner(selectedHotelOwner.id, formData);
-          console.log('Update response:', response.data);
-          setHotelOwners(hotelOwners.map(owner => 
-            owner.id === selectedHotelOwner.id ? response.data.hotelOwner : owner
-          ));
-        }
-        setShowModal(false);
+      setError(null);
+      setSubmitting(true);
+
+      if (currentView === 'owners') {
+        await handleOwnerSave(formData);
       } else {
-        // For hotels - formData is now a FormData object
-        const response = modalType === 'add'
-          ? await createHotel(formData)
-          : await updateHotel(selectedHotel.id, formData);
-        
-        setHotels(prev => modalType === 'add'
-          ? [...prev, response.data.hotel]
-          : prev.map(h => h.id === response.data.hotel.id ? {
-              ...response.data.hotel,
-              locations: Array.isArray(response.data.hotel.locations)
-                ? response.data.hotel.locations
-                : []
-            } : h)
-        );
-        setShowModal(false);
+        await handleHotelSave(formData);
       }
+      
+      setShowModal(false);
     } catch (error) {
-      console.error('Error saving:', error);
-      console.error('Error response:', error.response?.data);
-      alert(`Error: ${error.response?.data?.message || error.message}`);
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          error.message ||
+                          'Failed to save. Please try again.';
+      setError(`Failed to save: ${errorMessage}`);
+      console.error('Save error:', error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const ownerColumns = [
-    { key: 'hotelOwnerName', label: 'Owner Name', sortable: true },
-    { key: 'businessMail', label: 'Email', sortable: true },
-    { key: 'contactNumber', label: 'Phone', sortable: true },
-  ];
+  // Helper methods
+  const handleOwnerSave = async (formData) => {
+    let response;
+    
+    if (modalType === 'add') {
+      response = await createHotelOwner(formData);
+      setHotelOwners(prev => [...prev, response.data.hotelOwner]);
+    } else {
+      response = await updateHotelOwner(selectedHotelOwner.id, formData);
+      setHotelOwners(prev => 
+        prev.map(owner => 
+          owner.id === selectedHotelOwner.id ? response.data.hotelOwner : owner
+        )
+      );
+    }
+  };
 
-  const hotelColumns = [
-    { key: 'hotelName', label: 'Hotel Name', sortable: true },
-    { key: 'hotelAddress', label: 'Address', sortable: true },
-    { key: 'contactNumber', label: 'Phone', sortable: true },
-  ];
+  const handleHotelSave = async (formData) => {
+    const response = modalType === 'add'
+      ? await createHotel(formData)
+      : await updateHotel(selectedHotel.id, formData);
+
+    // Refresh hotels list to ensure data consistency
+    if (selectedOwner) {
+      await fetchHotelsByOwner(selectedOwner.id);
+    }
+  };
 
   const filteredHotels = selectedOwner ? hotels : [];
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <div className="mt-16 p-4">Loading...</div>;
+  }
 
   return (
     <div className="mt-16">
@@ -222,7 +253,7 @@ const ManageHotelOwners = () => {
                 ← Back to Hotel Owners
               </button>
               <h1 className="text-2xl font-bold text-gray-900">
-                Hotels - {selectedOwner?.hotelOwnerName || selectedOwner?.name}
+                Hotels - {selectedOwner?.hotel_owner_name}
               </h1>
               <p className="text-gray-600 mt-1">Manage hotels for this owner</p>
             </div>
@@ -269,6 +300,7 @@ const ManageHotelOwners = () => {
               onSave={handleSave}
               onCancel={() => setShowModal(false)}
               isEditing={modalType === 'edit'}
+              submitting={submitting}
             />
           ) : (
             <HotelForm
@@ -277,6 +309,7 @@ const ManageHotelOwners = () => {
               onCancel={() => setShowModal(false)}
               isEditing={modalType === 'edit'}
               selectedOwner={selectedOwner}
+              submitting={submitting}
             />
           )
         )}

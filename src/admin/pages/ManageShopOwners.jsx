@@ -28,6 +28,8 @@ const ManageShopOwners = () => {
   const [shopOwners, setShopOwners] = useState([]);
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   // Fetch shop owners on component mount
   useEffect(() => {
@@ -39,7 +41,9 @@ const ManageShopOwners = () => {
     try {
       const response = await getShopOwners();
       setShopOwners(response.data);
+      setError(null);
     } catch (error) {
+      setError('Failed to fetch shop owners. Please try again.');
       console.error('Error fetching shop owners:', error);
     } finally {
       setLoading(false);
@@ -58,12 +62,28 @@ const ManageShopOwners = () => {
     try {
       const response = await getShopsByOwner(ownerId);
       setShops(response.data);
+      setError(null);
     } catch (error) {
+      setError('Failed to fetch shops. Please try again.');
       console.error('Error fetching shops:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const ownerColumns = [
+    { key: 'shop_owner_name', label: 'Shop Owner Name', sortable: true },
+    { key: 'shop_owner_nic', label: 'NIC', sortable: true },
+    { key: 'business_mail', label: 'Email', sortable: true },
+    { key: 'contact_number', label: 'Phone', sortable: true },
+  ];
+
+  const shopColumns = [
+    { key: 'shop_name', label: 'Shop Name', sortable: true },
+    { key: 'nearest_city', label: 'City', sortable: true },
+    { key: 'contact_number', label: 'Contact', sortable: true },
+    { key: 'shop_address', label: 'Address', sortable: true },
+  ];
 
   const handleOwnerRowClick = (owner) => {
     setSelectedOwner(owner);
@@ -96,8 +116,9 @@ const ManageShopOwners = () => {
         setSelectedShop(response.data);
         setShowModal(true);
       }
-    } catch (err) {
-      console.error('Error fetching details:', err);
+    } catch (error) {
+      setError('Failed to fetch details. Please try again.');
+      console.error('Error fetching details:', error);
     }
   };
 
@@ -114,75 +135,85 @@ const ManageShopOwners = () => {
   };
 
   const handleDelete = async (item) => {
-    const itemName = currentView === 'owners' ? item.shopOwnerName : item.shopName;
+    const itemName = currentView === 'owners' ? item.shop_owner_name : item.shopName;
     if (window.confirm(`Are you sure you want to delete "${itemName}"?`)) {
       try {
+        setLoading(true);
         if (currentView === 'owners') {
           await deleteShopOwner(item.id);
           setShopOwners(shopOwners.filter(o => o.id !== item.id));
+          setError(null);
         } else {
           await deleteShop(item.id);
           setShops(shops.filter(s => s.id !== item.id));
+          setError(null);
         }
       } catch (error) {
+        setError('Failed to delete. Please try again.');
         console.error('Error deleting:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleSave = async (formData) => {
     try {
-      if (currentView === 'owners') {   
-        if (modalType === 'add') {
-          const response = await createShopOwner(formData);
-          setShopOwners([...shopOwners, response.data.shopOwner]);
-        } else if (modalType === 'edit') {
-          const response = await updateShopOwner(selectedShopOwner.id, formData);
-          console.log('Update response:', response.data);
-          setShopOwners(shopOwners.map(owner => 
-            owner.id === selectedShopOwner.id ? response.data.shopOwner : owner
-          ));
-        }
-        setShowModal(false);
+      setError(null);
+      setSubmitting(true);
+
+      if (currentView === 'owners') {
+        await handleOwnerSave(formData);
       } else {
-        // For shops - formData is now a FormData object
-        const response = modalType === 'add'
-          ? await createShop(formData)
-          : await updateShop(selectedShop.id, formData);
-        
-        setShops(prev => modalType === 'add'
-          ? [...prev, response.data.shop]
-          : prev.map(s => s.id === response.data.shop.id ? {
-              ...response.data.shop,
-              locations: Array.isArray(response.data.shop.locations)
-                ? response.data.shop.locations
-                : []
-            } : s)
-        );
-        setShowModal(false);
+        await handleShopSave(formData);
       }
+      
+      setShowModal(false);
     } catch (error) {
-      console.error('Error saving:', error);
-      console.error('Error response:', error.response?.data);
-      alert(`Error: ${error.response?.data?.message || error.message}`);
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          error.message ||
+                          'Failed to save. Please try again.';
+      setError(`Failed to save: ${errorMessage}`);
+      console.error('Save error:', error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const ownerColumns = [
-    { key: 'shopOwnerName', label: 'Owner Name', sortable: true },
-    { key: 'businessMail', label: 'Email', sortable: true },
-    { key: 'contactNumber', label: 'Phone', sortable: true },
-  ];
+  // Helper methods
+  const handleOwnerSave = async (formData) => {
+    let response;
+    
+    if (modalType === 'add') {
+      response = await createShopOwner(formData);
+      setShopOwners(prev => [...prev, response.data.shopOwner]);
+    } else {
+      response = await updateShopOwner(selectedShopOwner.id, formData);
+      setShopOwners(prev => 
+        prev.map(owner => 
+          owner.id === selectedShopOwner.id ? response.data.shopOwner : owner
+        )
+      );
+    }
+  };
 
-  const shopColumns = [
-    { key: 'shopName', label: 'Shop Name', sortable: true },
-    { key: 'shopAddress', label: 'Address', sortable: true },
-    { key: 'contactNumber', label: 'Contact', sortable: true },
-  ];
+  const handleShopSave = async (formData) => {
+    const response = modalType === 'add'
+      ? await createShop(formData)
+      : await updateShop(selectedShop.id, formData);
+
+    // Refresh shops list to ensure data consistency
+    if (selectedOwner) {
+      await fetchShopsByOwner(selectedOwner.id);
+    }
+  };
 
   const filteredShops = selectedOwner ? shops : [];
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <div className="mt-16 p-4">Loading...</div>;
+  }
 
   return (
     <div className="mt-16">
@@ -222,7 +253,7 @@ const ManageShopOwners = () => {
                 ← Back to Shop Owners
               </button>
               <h1 className="text-2xl font-bold text-gray-900">
-                Shops - {selectedOwner?.shopOwnerName || selectedOwner?.name}
+                Shops - {selectedOwner?.shop_owner_name}
               </h1>
               <p className="text-gray-600 mt-1">Manage shops for this owner</p>
             </div>
@@ -269,6 +300,7 @@ const ManageShopOwners = () => {
               onSave={handleSave}
               onCancel={() => setShowModal(false)}
               isEditing={modalType === 'edit'}
+              submitting={submitting}
             />
           ) : (
             <ShopForm
@@ -277,6 +309,7 @@ const ManageShopOwners = () => {
               onCancel={() => setShowModal(false)}
               isEditing={modalType === 'edit'}
               selectedOwner={selectedOwner}
+              submitting={submitting}
             />
           )
         )}

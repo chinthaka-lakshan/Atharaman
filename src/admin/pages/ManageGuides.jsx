@@ -29,19 +29,20 @@ const ManageGuides = () => {
       const response = await getGuides();
       setGuides(response.data);
       setError(null);
-    } catch (err) {
+    } catch (error) {
       setError('Failed to fetch guides. Please try again.');
-      console.error('Error fetching guides:', err);
+      console.error('Error fetching guides:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const columns = [
-    { key: 'guideName', label: 'Guide Name', sortable: true },
-    { key: 'guideNic', label: 'NIC', sortable: true },
-    { key: 'businessMail', label: 'Email', sortable: true },
-    { key: 'personalNumber', label: 'Phone', sortable: true },
+    { key: 'guide_name', label: 'Guide Name', sortable: true },
+    { key: 'guide_nic', label: 'NIC', sortable: true },
+    { key: 'business_mail', label: 'Email', sortable: true },
+    { key: 'contact_number', label: 'Contact', sortable: true },
+    { key: 'guide_address', label: 'Address', sortable: true },
   ];
 
   const handleAdd = () => {
@@ -63,12 +64,15 @@ const ManageGuides = () => {
   };
 
   const handleDelete = async (guide) => {
-    if (window.confirm(`Are you sure you want to delete "${guide.guideName}"?`)) {
+    if (window.confirm(`Are you sure you want to delete "${guide.guide_name}"?`)) {
       try {
+        setLoading(true);
         await deleteGuide(guide.id);
         setGuides(guides.filter(g => g.id !== guide.id));
-      } catch (err) {
-        console.error('Error deleting guide:', err);
+      } catch (error) {
+        console.error('Error deleting guide:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -89,8 +93,8 @@ const ManageGuides = () => {
       }
       setShowModal(false);
       setError(null);
-    } catch (err) {
-      console.error('Error saving guide:', err);
+    } catch (error) {
+      console.error('Error saving guide:', error);
     }
   };
 

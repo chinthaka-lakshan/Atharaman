@@ -9,11 +9,13 @@ const ShopDetailPage = () => {
   const [shop, setShop] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
   useEffect(() => {
     const fetchShop = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8000/api/shops/${id}`);
+        const response = await axios.get(`${API_URL}/api/shops/${id}`);
         setShop(response.data);
       } catch (error) {
         console.error('Error fetching shop:', error);
