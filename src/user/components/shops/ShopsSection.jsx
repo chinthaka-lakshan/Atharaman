@@ -17,12 +17,15 @@ export const ShopsSection = () => {
   const shopsPerPage = 9;
   const navigate = useNavigate();
 
+  // Base URL
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
   // Fetch all locations from API
   useEffect(() => {
     const fetchLocations = async () => {
       try {
         setIsLoadingLocations(true);
-        const response = await axios.get('http://localhost:8000/api/locations');
+        const response = await axios.get(`${API_URL}/api/locations`);
         const locationNames = response.data.map(location => location.locationName);
         setAllLocations(['All Locations', ...locationNames.sort()]);
       } catch (error) {
@@ -40,7 +43,7 @@ export const ShopsSection = () => {
     const fetchShops = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get('http://localhost:8000/api/shops');
+        const response = await axios.get(`${API_URL}/api/shops`);
 
         const shopsWithReviews = response.data.map(shop => ({
           ...shop,

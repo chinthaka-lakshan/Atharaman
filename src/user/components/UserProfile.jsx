@@ -101,10 +101,10 @@ const UserProfile = () => {
 
       // Map frontend role IDs to backend role IDs
       const roleMap = {
-        'guide': 2,
-        'shop_owner': 3,
-        'hotel_owner': 4,
-        'vehicle_owner': 5
+        'guide': 1,
+        'shop_owner': 2,
+        'hotel_owner': 3,
+        'vehicle_owner': 4
       };
 
       const backendRoleId = roleMap[selectedRole];
@@ -161,46 +161,69 @@ const UserProfile = () => {
     }
   };
 
+  // Add this helper function to convert base64 images for upload
+  const processGuideImages = (images) => {
+    return images.map(image => {
+      if (typeof image === 'string' && !image.startsWith('data:image/')) {
+        // If it's already a file path, return as is
+        return image;
+      }
+      // If it's base64, ensure it's properly formatted
+      return image;
+    });
+  };
+
   const prepareExtraData = (role, formData) => {
     switch (role) {
       case 'guide':
         return {
-          guideName: formData.name.substring(0, 20),
-          guideNic: formData.nic.substring(0, 12),
-          businessMail: formData.email.substring(0, 100),
-          personalNumber: formData.contactNumber.substring(0, 15),
-          whatsappNumber: formData.whatsappNumber.substring(0, 15),
-          guideImage: formData.guideImage || [],
+          guide_name: formData.guide_name,
+          guide_nic: formData.guide_nic,
+          guide_dob: formData.guide_dob,
+          guide_gender: formData.guide_gender,
+          guide_address: formData.guide_address,
+          business_mail: formData.business_mail,
+          contact_number: formData.contact_number,
+          whatsapp_number: formData.whatsapp_number,
+          short_description: formData.short_description,
+          long_description: formData.long_description,
           languages: formData.languages,
           locations: formData.locations,
-          description: formData.description.substring(0, 500)
+          guide_images: processGuideImages(formData.guide_images || [])
         };
       
       case 'hotel_owner':
         return {
-          hotelOwnerName: formData.name.substring(0, 100),
-          hotelOwnerNic: formData.nic.substring(0, 12),
-          businessMail: formData.email.substring(0, 100),
-          contactNumber: formData.contactNumber.substring(0, 15)
+          hotel_owner_name: formData.hotel_owner_name,
+          hotel_owner_nic: formData.hotel_owner_nic,
+          hotel_owner_dob: formData.hotel_owner_dob,
+          hotel_owner_address: formData.hotel_owner_address,
+          business_mail: formData.business_mail,
+          contact_number: formData.contact_number,
+          whatsapp_number: formData.whatsapp_number
         };
       
       case 'shop_owner':
         return {
-          shopOwnerName: formData.name.substring(0, 100),
-          shopOwnerNic: formData.nic.substring(0, 12),
-          businessMail: formData.email.substring(0, 100),
-          contactNumber: formData.contactNumber.substring(0, 15)
+          shop_owner_name: formData.shop_owner_name,
+          shop_owner_nic: formData.shop_owner_nic,
+          shop_owner_dob: formData.shop_owner_dob,
+          shop_owner_address: formData.shop_owner_address,
+          business_mail: formData.business_mail,
+          contact_number: formData.contact_number,
+          whatsapp_number: formData.whatsapp_number
         };
       
       case 'vehicle_owner':
         return {
-          vehicleOwnerName: formData.name.substring(0, 100),
-          vehicleOwnerNic: formData.nic.substring(0, 12),
-          businessMail: formData.email.substring(0, 100),
-          personalNumber: formData.personalNumber.substring(0, 15),
-          whatsappNumber: formData.whatsappNumber.substring(0, 15),
-          locations: formData.locations,
-          description: formData.description.substring(0, 500)
+          vehicle_owner_name: formData.vehicle_owner_name,
+          vehicle_owner_nic: formData.vehicle_owner_nic,
+          vehicle_owner_dob: formData.vehicle_owner_dob,
+          vehicle_owner_address: formData.vehicle_owner_address,
+          business_mail: formData.business_mail,
+          contact_number: formData.contact_number,
+          whatsapp_number: formData.whatsapp_number,
+          locations: formData.locations
         };
       
       default:

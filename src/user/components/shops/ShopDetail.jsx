@@ -22,6 +22,16 @@ const ShopDetail = ({ shop, onBack }) => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const navigate = useNavigate();
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+  const getImageUrl = (imagePath) => {
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    return `${baseUrl}/storage/${imagePath}`;
+  };
+
+  // Get all images from the shop
+  const shopImages = shop.images || [];
+
   useEffect(() => {
     const fetchShopLocations = async () => {
       if (shop?.locations && shop.locations.length > 0) {
@@ -53,9 +63,7 @@ const ShopDetail = ({ shop, onBack }) => {
     const fetchShopItems = async () => {
       if (shop?.id) {
         try {
-          const response = await axios.get(
-            `http://localhost:8000/api/shops/${shop.id}/items`
-          );
+          const response = await axios.get(`${API_URL}/api/shops/${shop.id}/items`);
           setItems(response.data);
         } catch (error) {
           console.error('Error fetching shop items:', error);
@@ -100,17 +108,17 @@ const ShopDetail = ({ shop, onBack }) => {
   };
 
   const nextImage = () => {
-    if (shop?.shopImage?.length) {
+    if (shopImages.length > 0) {
       setCurrentImageIndex((prev) => 
-        prev === shop.shopImage.length - 1 ? 0 : prev + 1
+        prev === shopImages.length - 1 ? 0 : prev + 1
       );
     }
   };
 
   const prevImage = () => {
-    if (shop?.shopImage?.length) {
+    if (shopImages.length > 0) {
       setCurrentImageIndex((prev) => 
-        prev === 0 ? shop.shopImage.length - 1 : prev - 1
+        prev === 0 ? shopImages.length - 1 : prev - 1
       );
     }
   };
@@ -158,10 +166,10 @@ const ShopDetail = ({ shop, onBack }) => {
           {/* Hero Section */}
           <div className="relative h-128 overflow-hidden">
             <div className="relative w-full h-full">
-              {shop.shopImage && shop.shopImage.length > 0 ? (
+              {shopImages.length > 0 ? (
                 <img
-                  src={`http://localhost:8000/storage/${shop.shopImage[currentImageIndex]}`}
-                  alt={shop.shopName}
+                  src={getImageUrl(shopImages[currentImageIndex]?.image_path)}
+                  alt={shopImages[currentImageIndex]?.alt_text || shop.shopName}
                   className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
                 />
               ) : (
@@ -179,7 +187,7 @@ const ShopDetail = ({ shop, onBack }) => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 
               {/* Image Navigation */}
-              {shop.shopImage && shop.shopImage.length > 1 && (
+              {shopImages.length > 1 && (
                 <>
                   <button
                     onClick={prevImage}
@@ -197,9 +205,9 @@ const ShopDetail = ({ shop, onBack }) => {
               )}
 
               {/* Image Indicators */}
-              {shop.shopImage && shop.shopImage.length > 1 && (
+              {shopImages.length > 1 && (
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {shop.shopImage.map((_, index) => (
+                  {shopImages.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
@@ -212,9 +220,14 @@ const ShopDetail = ({ shop, onBack }) => {
               )}
             </div>
 
-            {/* Guite Title Overlay */}
+            {/* Shop Title Overlay */}
             <div className={`absolute bottom-8 left-8 text-white ${styles.animateSlideInUp}`}>
               <h1 className="text-4xl font-bold mb-2">{shop.shopName}</h1>
+              {shopImages.length > 0 && (
+                <div className="text-white/80 text-sm">
+                  Image {currentImageIndex + 1} of {shopImages.length}
+                </div>
+              )}
             </div>
           </div>
 
@@ -236,7 +249,7 @@ const ShopDetail = ({ shop, onBack }) => {
                       <h2 className="text-xl font-semibold text-gray-900 mb-3">Nearby Locations</h2>
                       <div className="flex flex-wrap gap-2">
                         {shop.locations.map((location, index) => (
-                          <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                          <span key={index} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
                             {location}
                           </span>
                         ))}
@@ -292,7 +305,7 @@ const ShopDetail = ({ shop, onBack }) => {
                     >
                       <div className="h-32 overflow-hidden">
                         <img
-                          src={`http://localhost:8000/${item.image}`}
+                          src={getImageUrl(item.image)}
                           alt={item.name}
                           className="w-full h-full object-cover hover:scale-105 transition-transform"
                           loading="lazy"

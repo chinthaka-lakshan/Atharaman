@@ -6,8 +6,8 @@ import UserView from '../components/views/UserView';
 import {
   getUsers,
   registerAdmin,
-  updateUser,
-  deleteUser
+  updateAdmin,
+  deleteAdmin
 } from '../../services/api';
 
 const ManageUsers = () => {
@@ -39,7 +39,7 @@ const ManageUsers = () => {
         await registerAdmin(formData);
         alert('Admin registered successfully!');
       } else if (modalType === 'edit') {
-        await updateUser(selectedUser.id, formData);
+        await updateAdmin(selectedUser.id, formData);
         alert('User updated successfully!');
       }
       setShowModal(false);
@@ -53,7 +53,7 @@ const ManageUsers = () => {
   const handleDelete = async (user) => {
     if (window.confirm(`Are you sure you want to delete "${user.name}"?`)) {
       try {
-        await deleteUser(user.id);
+        await deleteAdmin(user.id);
         setUsers(users.filter(u => u.id !== user.id));
         alert('User deleted successfully');
       } catch (error) {

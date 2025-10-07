@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Upload, X, Loader } from 'lucide-react';
-import { getUsers, getLocations } from '../../../services/api';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Upload, X, Loader, AlertCircle, CheckCircle } from 'lucide-react';
+import { getUsers, getLocations, checkNicAvailability } from '../../../services/api';
 
 const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
   const [formData, setFormData] = useState({
-    guideName: guide?.guideName || '',
-    description: guide?.description || '',
-    guideNic: guide?.guideNic || '',
-    businessMail: guide?.businessMail || '',
-    personalNumber: guide?.personalNumber || '',
-    whatsappNumber: guide?.whatsappNumber || '',
+    guide_name: guide?.guide_name || '',
+    guide_nic: guide?.guide_nic || '',
+    guide_dob: guide?.guide_dob || '',
+    guide_gender: guide?.guide_gender || '',
+    guide_address: guide?.guide_address || '',
+    business_mail: guide?.business_mail || '',
+    contact_number: guide?.contact_number || '',
+    whatsapp_number: guide?.whatsapp_number || '',
+    short_description: guide?.short_description || '',
+    long_description: guide?.long_description || '',
     languages: guide?.languages || [],
     locations: guide?.locations || [],
     user_id: guide?.user_id || ''
@@ -26,6 +30,14 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
   const [locationError, setLocationError] = useState('');
 
   const availableLanguages = ['English', 'Sinhala', 'Tamil', 'German', 'French', 'Japanese', 'Chinese'];
+  const genderOptions = ['Male', 'Female', 'Other'];
+
+  const [nicValidation, setNicValidation] = useState({
+    loading: false,
+    available: null,
+    message: ''
+  });
+  const [nicDebounceTimer, setNicDebounceTimer] = useState(null);
 
   useEffect(() => {
     if (guide) {
@@ -55,8 +67,8 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
         setError('Unexpected data format from server');
         setAvailableUsers([]);
       }
-    } catch (err) {
-      console.error('Error fetching users:', err);
+    } catch (error) {
+      console.error('Error fetching users:', error);
       setError('Failed to load users. Please try again.');
       setAvailableUsers([]);
     } finally {
@@ -77,14 +89,74 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
         setLocationError('Unexpected data format from server');
         setAvailableLocations([]);
       }
-    } catch (err) {
-      console.error('Error fetching locations:', err);
+    } catch (error) {
+      console.error('Error fetching locations:', error);
       setLocationError('Failed to load locations. Please try again.');
       setAvailableLocations([]);
     } finally {
       setLocationLoading(false);
     }
   };
+
+  // Real-time NIC validation with debounce
+  const validateNic = useCallback(async (nicValue) => {
+    if (!nicValue || nicValue.length < 5) {
+      setNicValidation({ loading: false, available: null, message: '' });
+      return;
+    }
+
+    // Skip validation if it's the same NIC in edit mode
+    if (isEditing && guide && nicValue === guide.guide_nic) {
+      setNicValidation({ loading: false, available: true, message: 'Current NIC' });
+      return;
+    }
+
+    setNicValidation({ loading: true, available: null, message: 'Checking NIC availability...' });
+    
+    try {
+      const response = await checkNicAvailability({
+        nic: nicValue,
+        role: 'guide'
+      });
+      
+      setNicValidation({
+        loading: false,
+        available: response.data.available,
+        message: response.data.message
+      });
+    } catch (error) {
+      setNicValidation({
+        loading: false,
+        available: false,
+        message: error.response?.data?.message || 'Error validating NIC'
+      });
+    }
+  }, [isEditing, guide]);
+
+  // Debounced NIC validation
+  useEffect(() => {
+    const nicValue = formData.guide_nic;
+    
+    if (nicDebounceTimer) {
+      clearTimeout(nicDebounceTimer);
+    }
+
+    if (nicValue && nicValue.length >= 5) {
+      const timer = setTimeout(() => {
+        validateNic(nicValue);
+      }, 800);
+      
+      setNicDebounceTimer(timer);
+    } else {
+      setNicValidation({ loading: false, available: null, message: '' });
+    }
+
+    return () => {
+      if (nicDebounceTimer) {
+        clearTimeout(nicDebounceTimer);
+      }
+    };
+  }, [formData.guide_nic, validateNic]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -149,8 +221,62 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
     }
   };
 
+  // NIC Validation Indicator Component
+  const NicValidationIndicator = () => {
+    const nicValue = formData.guide_nic;
+    
+    if (!nicValue || nicValue.length < 5) {
+      return (
+        <p className="text-xs text-gray-500 mt-1">
+          Enter NIC number to check availability
+        </p>
+      );
+    }
+
+    if (nicValidation.loading) {
+      return (
+        <div className="flex items-center space-x-1 mt-1">
+          <Loader className="w-4 h-4 animate-spin text-blue-500" />
+          <span className="text-xs text-blue-600">{nicValidation.message}</span>
+        </div>
+      );
+    }
+
+    if (nicValidation.available === false) {
+      return (
+        <div className="flex items-center space-x-1 mt-1">
+          <AlertCircle className="w-4 h-4 text-red-500" />
+          <span className="text-xs text-red-600">{nicValidation.message}</span>
+        </div>
+      );
+    }
+
+    if (nicValidation.available === true) {
+      return (
+        <div className="flex items-center space-x-1 mt-1">
+          <CheckCircle className="w-4 h-4 text-green-500" />
+          <span className="text-xs text-green-600">{nicValidation.message}</span>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Final validation before submission
+    if (nicValidation.available === false) {
+      alert('Please fix the NIC validation error before submitting.');
+      return;
+    }
+
+    if (nicValidation.loading) {
+      alert('Please wait for NIC validation to complete.');
+      return;
+    }
+
     setLoading(true);
     
     // Client-side validation for images
@@ -174,29 +300,35 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
     }
     
     const formDataObj = new FormData();
-    formDataObj.append('guideName', formData.guideName);
-    formDataObj.append('description', formData.description);
-    formDataObj.append('guideNic', formData.guideNic);
-    formDataObj.append('businessMail', formData.businessMail);
-    formDataObj.append('personalNumber', formData.personalNumber);
-    formDataObj.append('whatsappNumber', formData.whatsappNumber);
+    
+    // Append all guide fields
+    formDataObj.append('guide_name', formData.guide_name);
+    formDataObj.append('guide_nic', formData.guide_nic);
+    formDataObj.append('guide_dob', formData.guide_dob);
+    formDataObj.append('guide_gender', formData.guide_gender);
+    formDataObj.append('guide_address', formData.guide_address);
+    formDataObj.append('business_mail', formData.business_mail);
+    formDataObj.append('contact_number', formData.contact_number);
+    formDataObj.append('whatsapp_number', formData.whatsapp_number);
+    formDataObj.append('short_description', formData.short_description);
+    formDataObj.append('long_description', formData.long_description || '');
     
     if (!isEditing) {
       formDataObj.append('user_id', formData.user_id);
     }
 
+    // Append arrays
     formData.languages.forEach(lang => {
       formDataObj.append('languages[]', lang);
     });
     
-    // Only append locations if they exist
     if (formData.locations && formData.locations.length > 0) {
       formData.locations.forEach(locationName => {
         formDataObj.append('locations[]', locationName);
       });
     }
     
-    // Append each new image file
+    // Append images
     newImages.forEach(img => {
       formDataObj.append('guideImage[]', img);
     });
@@ -228,8 +360,14 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
   const totalImages = currentImageCount + newImages.length;
   const remainingSlots = Math.max(0, 5 - totalImages);
 
-  const removedImages = guide ?
-    guide.images.filter(img => imagesToRemove.includes(img.id)) : [];
+  const removedImages = guide ? guide.images.filter(img => imagesToRemove.includes(img.id)) : [];
+
+  // Image URL helper
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return '/fallback-image.jpg';
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    return `${baseUrl}/storage/${imagePath}`;
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -240,8 +378,8 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
           </label>
           <input
             type="text"
-            name="guideName"
-            value={formData.guideName}
+            name="guide_name"
+            value={formData.guide_name}
             onChange={handleInputChange}
             required
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -255,12 +393,114 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
           </label>
           <input
             type="text"
-            name="guideNic"
-            value={formData.guideNic}
+            name="guide_nic"
+            value={formData.guide_nic}
+            onChange={handleInputChange}
+            required
+            className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 ${
+              nicValidation.available === false 
+                ? 'border-red-300 focus:ring-red-500' 
+                : nicValidation.available === true
+                ? 'border-green-300 focus:ring-green-500'
+                : 'border-gray-300 focus:ring-blue-500'
+            }`}
+            placeholder="Enter guide NIC"
+          />
+          <NicValidationIndicator />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Date of Birth *
+          </label>
+          <input
+            type="date"
+            name="guide_dob"
+            value={formData.guide_dob}
             onChange={handleInputChange}
             required
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter guide NIC"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Gender *
+          </label>
+          <select
+            name="guide_gender"
+            value={formData.guide_gender}
+            onChange={handleInputChange}
+            required
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="">Select Gender</option>
+            {genderOptions.map(gender => (
+              <option key={gender} value={gender}>{gender}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Address *
+        </label>
+        <textarea
+          name="guide_address"
+          value={formData.guide_address}
+          onChange={handleInputChange}
+          required
+          rows="1"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Enter guide address"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Business Email *
+        </label>
+        <input
+          type="email"
+          name="business_mail"
+          value={formData.business_mail}
+          onChange={handleInputChange}
+          required
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Enter email address"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Contact Number *
+          </label>
+          <input
+            type="tel"
+            name="contact_number"
+            value={formData.contact_number}
+            onChange={handleInputChange}
+            required
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter contact number"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            WhatsApp Number
+          </label>
+          <input
+            type="tel"
+            name="whatsapp_number"
+            value={formData.whatsapp_number}
+            onChange={handleInputChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter whatsapp number (optional)"
           />
         </div>
       </div>
@@ -322,7 +562,7 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
               {removedImages.map((img) => (
                 <div key={img.id} className="relative h-40 border-2 border-dashed border-yellow-300 rounded-lg flex items-center justify-center opacity-60">
                   <img 
-                    src={`http://localhost:8000/storage/${img.image_path}`}
+                    src={getImageUrl(img.image_path)}
                     alt={img.alt_text}
                     className="h-full w-full object-cover rounded-lg"
                   />
@@ -353,7 +593,7 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
               {existingImages.map((img) => (
                 <div key={img.id} className="relative h-40 border border-gray-300 rounded-lg flex items-center justify-center group">
                   <img 
-                    src={`http://localhost:8000/storage/${img.image_path}`}
+                    src={getImageUrl(img.image_path)}
                     alt={img.alt_text}
                     className="h-full w-full object-cover rounded-lg"
                   />
@@ -443,62 +683,39 @@ const GuideForm = ({ guide, onSave, onCancel, isEditing }) => {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Description *
+          Short Description *
         </label>
         <textarea
-          name="description"
-          value={formData.description}
+          name="short_description"
+          value={formData.short_description}
           onChange={handleInputChange}
           required
-          rows="4"
+          rows="3"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Brief description of the guide"
+          placeholder="Brief description of the guide (max 1000 characters)"
+          maxLength="1000"
         />
+        <p className="text-xs text-gray-500 mt-1">
+          {formData.short_description.length}/1000 characters
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Business Email *
-          </label>
-          <input
-            type="email"
-            name="businessMail"
-            value={formData.businessMail}
-            onChange={handleInputChange}
-            required
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Personal Number *
-          </label>
-          <input
-            type="tel"
-            name="personalNumber"
-            value={formData.personalNumber}
-            onChange={handleInputChange}
-            required
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            WhatsApp Number *
-          </label>
-          <input
-            type="tel"
-            name="whatsappNumber"
-            value={formData.whatsappNumber}
-            onChange={handleInputChange}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Detailed Description
+        </label>
+        <textarea
+          name="long_description"
+          value={formData.long_description}
+          onChange={handleInputChange}
+          rows="5"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Detailed description of the guide (optional)"
+          maxLength="10000"
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          {formData.long_description?.length || 0}/10000 characters
+        </p>
       </div>
 
       <div>
