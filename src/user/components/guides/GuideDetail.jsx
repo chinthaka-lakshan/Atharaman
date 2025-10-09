@@ -230,7 +230,7 @@ const GuideDetail = ({ guide, onBack }) => {
                       <h2 className="text-xl font-semibold text-gray-900 mb-3">Specialized Locations</h2>
                       <div className="flex flex-wrap gap-2">
                         {guide.locations.map((location, index) => (
-                          <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                          <span key={index} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
                             {location}
                           </span>
                         ))}

@@ -1,11 +1,33 @@
 import React from 'react';
 import { Star, MapPinned } from 'lucide-react';
 import styles from '../../styles/InitialPages.module.css';
-import { getShopImageUrls, getMainShopImage } from '../../../helpers/ImageHelpers';
 import { useNavigate } from 'react-router-dom';
 
 export const ShopCard = ({ shop, rating = 0, reviewCount = 0, animationDelay = 0, isClickable = true }) => {
   const navigate = useNavigate();
+
+  // Image URL helper
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return '/default-shop.jpg';
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    return `${baseUrl}/storage/${imagePath}`;
+  };
+
+  // Get main shop image
+  const getMainShopImage = () => {
+    if (shop.images && shop.images.length > 0) {
+      return getImageUrl(shop.images[0].image_path);
+    }
+    return '/default-shop.jpg';
+  };
+
+  // Get all shop image URLs
+  const getShopImageUrls = () => {
+    if (shop.images && shop.images.length > 0) {
+      return shop.images.map(img => getImageUrl(img.image_path));
+    }
+    return [];
+  };
     
   const handleClick = () => {
     if (isClickable) {
@@ -13,8 +35,7 @@ export const ShopCard = ({ shop, rating = 0, reviewCount = 0, animationDelay = 0
     }
   };
 
-  const imageUrls = getShopImageUrls(shop);
-  const mainImage = getMainShopImage(shop);
+  const mainImage = getMainShopImage();
 
   // Handle both string and number ratings
   const safeRating = typeof rating === 'number' ? rating : 

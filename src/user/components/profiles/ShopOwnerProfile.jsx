@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Building, ChevronDown, ChevronUp, Plus, Edit3, Trash2, MapPin, 
-  User, Mail, Phone, CreditCard, X, Upload, Package, Tag, DollarSign 
+  User, Mail, Phone, CreditCard, X, Upload, Package, DollarSign 
 } from 'lucide-react';
 import {
   getMyShopOwner,
@@ -21,7 +21,7 @@ import {
 const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   const [shopOwner, setShopOwner] = useState(null);
   const [shops, setShops] = useState([]);
-  const [items, setItems] = useState({}); // { shopId: [items] }
+  const [items, setItems] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showEditOwnerForm, setShowEditOwnerForm] = useState(false);
@@ -59,6 +59,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   const [shopImagePreviews, setShopImagePreviews] = useState([]);
   const [itemImages, setItemImages] = useState([]);
   const [itemImagePreviews, setItemImagePreviews] = useState([]);
+  const [removedShopImages, setRemovedShopImages] = useState([]);
 
   // Fetch data only when expanded
   useEffect(() => {
@@ -121,7 +122,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     setLoadingLocations(true);
     try {
       const response = await getLocations();
-      const locationNames = response.data.map(location => location.name || location.locationName);
+      const locationNames = response.data.map(location => location.locationName);
       setAvailableLocations(locationNames);
     } catch (error) {
       console.error('Error fetching locations:', error);
@@ -161,6 +162,8 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
       formData.append('shopName', shopFormData.shopName);
       formData.append('shopAddress', shopFormData.shopAddress);
       formData.append('description', shopFormData.description);
+      formData.append('user_id', userId);
+      formData.append('shop_owner_id', shopOwner.id);
       
       if (shopFormData.locations && shopFormData.locations.length > 0) {
         shopFormData.locations.forEach(loc => {
@@ -168,11 +171,19 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
         });
       }
 
+      // Append new images
       shopImages.forEach(image => {
-        if (image instanceof File && image.type.startsWith('image/')) {
+        if (image instanceof File) {
           formData.append('shopImage[]', image);
         }
       });
+
+      // Append removed image IDs for edit mode
+      if (editingShop && removedShopImages.length > 0) {
+        removedShopImages.forEach(imageId => {
+          formData.append('removedImages[]', imageId);
+        });
+      }
 
       let response;
       if (editingShop) {
@@ -233,8 +244,9 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
         });
       }
 
+      // Append item images
       itemImages.forEach(image => {
-        if (image instanceof File && image.type.startsWith('image/')) {
+        if (image instanceof File) {
           formData.append('itemImage[]', image);
         }
       });
@@ -286,7 +298,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
 
   const startEditShop = (shop) => {
     setEditingShop(shop);
-    const parsedShopImages = parseShopImages(shop.shopImage);
+    setRemovedShopImages([]);
   
     setShopFormData({
       shopName: shop.shopName,
@@ -295,28 +307,41 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
       locations: shop.locations || []
     });
 
-    setShopImagePreviews(parsedShopImages.length > 0 
-      ? parsedShopImages.map(img => `http://localhost:8000/storage/${img}`) 
-      : []);
+    // Set existing image previews
+    if (shop.images && shop.images.length > 0) {
+      const previews = shop.images.map(img => 
+        `http://localhost:8000/storage/${img.image_path}`
+      );
+      setShopImagePreviews(previews);
+    } else {
+      setShopImagePreviews([]);
+    }
+
     setShopImages([]);
     setShowShopForm(true);
   };
 
   const startEditItem = (item, shopId) => {
     setEditingItem(item);
-    const parsedItemImages = parseItemImages(item.itemImage);
-    const parsedLocations = parseLocations(item.locations);
 
     setItemFormData({
       itemName: item.itemName,
       description: item.description || '',
       price: item.price,
-      locations: parsedLocations,
+      locations: item.locations || [],
       shop_id: shopId
     });
-    setItemImagePreviews(parsedItemImages.length > 0 
-      ? parsedItemImages.map(img => `http://localhost:8000/storage/${img}`) 
-      : []);
+
+    // Set existing item image previews
+    if (item.images && item.images.length > 0) {
+      const previews = item.images.map(img => 
+        `http://localhost:8000/storage/${img.image_path}`
+      );
+      setItemImagePreviews(previews);
+    } else {
+      setItemImagePreviews([]);
+    }
+
     setItemImages([]);
     setShowItemForm(true);
   };
@@ -330,6 +355,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     });
     setShopImages([]);
     setShopImagePreviews([]);
+    setRemovedShopImages([]);
   };
 
   const resetItemForm = () => {
@@ -350,7 +376,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     
     const validImageFiles = files.filter(file => 
       file.type.startsWith('image/') && 
-      ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'].includes(file.type)
+      ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'].includes(file.type)
     );
     
     const newImages = [...shopImages, ...validImageFiles];
@@ -366,7 +392,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     
     const validImageFiles = files.filter(file => 
       file.type.startsWith('image/') && 
-      ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'].includes(file.type)
+      ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'].includes(file.type)
     );
     
     const newImages = [...itemImages, ...validImageFiles];
@@ -376,19 +402,28 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     setItemImagePreviews(prev => [...prev, ...newPreviews]);
   };
 
-  const removeShopImage = (index) => {
-    const newImages = [...shopImages];
-    const newPreviews = [...shopImagePreviews];
-    
-    if (newPreviews[index].startsWith('blob:')) {
-      URL.revokeObjectURL(newPreviews[index]);
+  const removeShopImage = (index, isExisting = false, imageId = null) => {
+    if (isExisting && imageId) {
+      // Remove existing image (mark for deletion)
+      setRemovedShopImages(prev => [...prev, imageId]);
+      const newPreviews = [...shopImagePreviews];
+      newPreviews.splice(index, 1);
+      setShopImagePreviews(newPreviews);
+    } else {
+      // Remove new image
+      const newImages = [...shopImages];
+      const newPreviews = [...shopImagePreviews];
+      
+      if (newPreviews[index].startsWith('blob:')) {
+        URL.revokeObjectURL(newPreviews[index]);
+      }
+      
+      newImages.splice(index, 1);
+      newPreviews.splice(index, 1);
+      
+      setShopImages(newImages);
+      setShopImagePreviews(newPreviews);
     }
-    
-    newImages.splice(index, 1);
-    newPreviews.splice(index, 1);
-    
-    setShopImages(newImages);
-    setShopImagePreviews(newPreviews);
   };
 
   const removeItemImage = (index) => {
@@ -431,45 +466,10 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     }
   };
 
-  const parseShopImages = (shopImage) => {
-    if (Array.isArray(shopImage)) return shopImage;
-    if (typeof shopImage === 'string') {
-      try {
-        return JSON.parse(shopImage);
-      } catch (e) {
-        console.error('Error parsing shopImage JSON:', e);
-        return [];
-      }
-    }
-    return [];
-  };
-
-  // Add this helper function at the top of your component
-  const parseItemImages = (itemImage) => {
-    if (Array.isArray(itemImage)) return itemImage;
-    if (typeof itemImage === 'string') {
-      try {
-        return JSON.parse(itemImage);
-      } catch (e) {
-        console.error('Error parsing itemImage JSON:', e);
-        return [];
-      }
-    }
-    return [];
-  };
-
-  // Add this helper function
-  const parseLocations = (locations) => {
-    if (Array.isArray(locations)) return locations;
-    if (typeof locations === 'string') {
-      try {
-        return JSON.parse(locations);
-      } catch (e) {
-        console.error('Error parsing locations JSON:', e);
-        return [];
-      }
-    }
-    return [];
+  // Image URL helper
+  const getImageUrl = (imagePath) => {
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    return `${baseUrl}/storage/${imagePath}`;
   };
 
   return (
@@ -653,43 +653,61 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Shop Images
+                        Shop Images (Max 5)
                       </label>
                       <div className="flex flex-wrap gap-4 mb-4">
-                        {shopImagePreviews.map((preview, index) => (
-                          <div key={index} className="relative h-32 w-32">
-                            <img
-                              src={preview}
-                              alt={`Preview ${index}`}
-                              className="h-full w-full object-cover rounded-lg"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeShopImage(index)}
-                              className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
-                            >
-                              <X className="w-4 h-4 text-gray-700" />
-                            </button>
-                          </div>
-                        ))}
+                        {shopImagePreviews.map((preview, index) => {
+                          const isExisting = !preview.startsWith('blob:');
+                          const existingImage = editingShop?.images?.[index];
+                          return (
+                            <div key={index} className="relative h-32 w-32">
+                              <img
+                                src={preview}
+                                alt={`Preview ${index}`}
+                                className="h-full w-full object-cover rounded-lg"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeShopImage(
+                                  index, 
+                                  isExisting, 
+                                  existingImage?.id
+                                )}
+                                className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
+                              >
+                                <X className="w-4 h-4 text-gray-700" />
+                              </button>
+                              {isExisting && (
+                                <div className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                  Existing
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
-                      <div className="flex flex-col">
-                        <label 
-                          htmlFor="shopFileInput"
-                          className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors w-40"
-                        >
-                          <Upload className="w-4 h-4 mr-2" />
-                          <span className="text-sm">Upload Images</span>
-                        </label>
-                        <input
-                          type="file"
-                          id="shopFileInput"
-                          onChange={handleShopImageChange}
-                          accept="image/*"
-                          multiple
-                          className="hidden"
-                        />
-                      </div>
+                      {shopImagePreviews.length < 5 && (
+                        <div className="flex flex-col">
+                          <label 
+                            htmlFor="shopFileInput"
+                            className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors w-40"
+                          >
+                            <Upload className="w-4 h-4 mr-2" />
+                            <span className="text-sm">Upload Images</span>
+                          </label>
+                          <input
+                            type="file"
+                            id="shopFileInput"
+                            onChange={handleShopImageChange}
+                            accept="image/*"
+                            multiple
+                            className="hidden"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            {5 - shopImagePreviews.length} slots remaining
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -699,6 +717,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       <textarea
                         value={shopFormData.description}
                         onChange={(e) => setShopFormData({...shopFormData, description: e.target.value})}
+                        required
                         rows="3"
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
@@ -864,6 +883,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       <textarea
                         value={itemFormData.description}
                         onChange={(e) => setItemFormData({...itemFormData, description: e.target.value})}
+                        required
                         rows="3"
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
@@ -918,7 +938,11 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
               <div className="flex justify-between items-center mb-6">
                 <h4 className="text-xl font-semibold text-gray-800">My Shops ({shops.length})</h4>
                 <button
-                  onClick={() => setShowShopForm(true)}
+                  onClick={() => {
+                    setShowShopForm(true);
+                    setEditingShop(null);
+                    resetShopForm();
+                  }}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors"
                 >
                   <Plus className="size-5" />
@@ -949,20 +973,17 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                           </button>
 
                           {/* Shop thumbnail */}
-                          {(() => {
-                            const shopImages = parseShopImages(shop.shopImage);
-                            return shopImages.length > 0 ? (
-                              <img
-                                src={`http://localhost:8000/storage/${shopImages[0]}`}
-                                alt={shop.shopName}
-                                className="w-12 h-12 object-cover rounded-lg mr-3 border border-gray-200"
-                              />
-                            ) : (
-                              <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center mr-3">
-                                <Building className="size-6 text-gray-400" />
-                              </div>
-                            );
-                          })()}
+                          {shop.images && shop.images.length > 0 ? (
+                            <img
+                              src={getImageUrl(shop.images[0].image_path)}
+                              alt={shop.shopName}
+                              className="w-12 h-12 object-cover rounded-lg mr-3 border border-gray-200"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center mr-3">
+                              <Building className="size-6 text-gray-400" />
+                            </div>
+                          )}
 
                           <div>
                             <h5 className="font-semibold text-lg text-gray-800">{shop.shopName}</h5>
@@ -1003,26 +1024,23 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
 
                       {expandedShop === shop.id && (
                         <div className="p-4 bg-white">
-                          {/* Shop Images Section - Add this at the top */}
-                          {(() => {
-                            const shopImages = parseShopImages(shop.shopImage);
-                            return shopImages.length > 0 && (
-                              <div className="mb-6">
-                                <h6 className="font-semibold text-gray-800 mb-3">Shop Images</h6>
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                                  {shopImages.map((image, index) => (
-                                    <div key={index} className="relative h-32 w-full">
-                                      <img
-                                        src={`http://localhost:8000/storage/${image}`}
-                                        alt={`${shop.shopName} - Image ${index + 1}`}
-                                        className="h-full w-full object-cover rounded-lg border border-gray-200"
-                                      />
-                                    </div>
-                                  ))}
-                                </div>
+                          {/* Shop Images Section */}
+                          {shop.images && shop.images.length > 0 && (
+                            <div className="mb-6">
+                              <h6 className="font-semibold text-gray-800 mb-3">Shop Images</h6>
+                              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                {shop.images.map((image, index) => (
+                                  <div key={image.id} className="relative h-32 w-full">
+                                    <img
+                                      src={getImageUrl(image.image_path)}
+                                      alt={image.alt_text || `${shop.shopName} - Image ${index + 1}`}
+                                      className="h-full w-full object-cover rounded-lg border border-gray-200"
+                                    />
+                                  </div>
+                                ))}
                               </div>
-                            );
-                          })()}
+                            </div>
+                          )}
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             <div className="flex items-center">
@@ -1072,20 +1090,17 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {items[shop.id].map((item) => (
                                   <div key={item.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                                    {(() => {
-                                      const itemImages = parseItemImages(item.itemImage);
-                                      return itemImages.length > 0 ? (
-                                        <img
-                                          src={`http://localhost:8000/storage/${itemImages[0]}`}
-                                          alt={item.itemName}
-                                          className="w-full h-32 object-cover rounded-lg mb-3"
-                                        />
-                                      ) : (
-                                        <div className="w-full h-32 bg-gray-200 rounded-lg flex items-center justify-center mb-3">
-                                          <Package className="size-8 text-gray-400" />
-                                        </div>
-                                      );
-                                    })()}
+                                    {item.images && item.images.length > 0 ? (
+                                      <img
+                                        src={getImageUrl(item.images[0].image_path)}
+                                        alt={item.itemName}
+                                        className="w-full h-32 object-cover rounded-lg mb-3"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-32 bg-gray-200 rounded-lg flex items-center justify-center mb-3">
+                                        <Package className="size-8 text-gray-400" />
+                                      </div>
+                                    )}
                                     
                                     <h6 className="font-semibold text-gray-800 mb-2">{item.itemName}</h6>
                                     
