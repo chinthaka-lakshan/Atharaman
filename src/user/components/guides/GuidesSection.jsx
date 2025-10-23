@@ -23,7 +23,7 @@ export const GuidesSection = () => {
       try {
         setIsLoadingLocations(true);
         const response = await axios.get('http://localhost:8000/api/locations');
-        const locationNames = response.data.map(location => location.locationName);
+        const locationNames = response.data.map(location => location.locationName || location.name);
         setAllLocations(['All Locations', ...locationNames.sort()]);
       } catch (error) {
         console.error('Error fetching locations:', error);
@@ -44,11 +44,11 @@ export const GuidesSection = () => {
 
         const guidesWithReviews = response.data.map(guide => ({
           ...guide,
-          // Ratings are now included in the response
+          // Use backend field names
           averageRating: guide.reviews_avg_rating || 0,
           reviewCount: guide.reviews_count || 0,
-          // Include images in the response
-          guideImage: guide.images ? guide.images.map(img => img.image_path) : (guide.guideImage || [])
+          // Images are already in the correct structure from backend
+          images: guide.images || []
         }));
 
         setGuides(guidesWithReviews);
@@ -68,7 +68,8 @@ export const GuidesSection = () => {
     const filtered = guides.filter((guide) => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch = 
-        guide.guideName?.toLowerCase().includes(searchLower);
+        guide.guide_name?.toLowerCase().includes(searchLower) ||
+        guide.short_description?.toLowerCase().includes(searchLower);
       
       // Check if the guide has the selected location in their locations array
       const hasLocation = guide.locations && Array.isArray(guide.locations) && 
@@ -90,8 +91,8 @@ export const GuidesSection = () => {
       }
       
       // If ratings are the same, sort alphabetically by name
-      const nameA = a.guideName?.toLowerCase() || '';
-      const nameB = b.guideName?.toLowerCase() || '';
+      const nameA = a.guide_name?.toLowerCase() || '';
+      const nameB = b.guide_name?.toLowerCase() || '';
       
       if (nameA < nameB) return -1;
       if (nameA > nameB) return 1;
@@ -203,6 +204,7 @@ export const GuidesSection = () => {
                   key={guide.id}
                   guide={guide}
                   rating={guide.averageRating || 0}
+                  reviewCount={guide.reviewCount || 0}
                   onClick={() => handleGuideClick(guide)}
                   animationDelay={index * 0.1}
                 />
