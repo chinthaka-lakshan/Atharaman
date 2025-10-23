@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Building, ChevronDown, ChevronUp, Plus, Edit3, Trash2, MapPin, User, Mail, Phone, CreditCard, X, Upload, Package, DollarSign, Calendar, Loader, AlertCircle, CheckCircle } from 'lucide-react';
 import { 
-  Building, ChevronDown, ChevronUp, Plus, Edit3, Trash2, MapPin, 
-  User, Mail, Phone, CreditCard, X, Upload, Package, DollarSign 
-} from 'lucide-react';
-import {
-  getMyShopOwner,
-  updateMyShopOwner,
-  deleteMyShopOwner,
+  getMyShopOwner, 
+  updateMyShopOwner, 
+  deleteMyShopOwner, 
+  checkNicAvailability,
   getMyShops,
   createMyShop,
   updateMyShop,
@@ -17,6 +15,7 @@ import {
   updateMyItem,
   deleteMyItem
 } from '../../../services/api';
+import { FaWhatsapp } from 'react-icons/fa6';
 
 const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   const [shopOwner, setShopOwner] = useState(null);
@@ -32,21 +31,32 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   const [expandedShop, setExpandedShop] = useState(null);
   const [availableLocations, setAvailableLocations] = useState([]);
   const [loadingLocations, setLoadingLocations] = useState(false);
-  
+  const [submitting, setSubmitting] = useState(false);
+
+  // Shop Owner Form Data
   const [ownerFormData, setOwnerFormData] = useState({
-    shopOwnerName: '',
-    shopOwnerNic: '',
-    businessMail: '',
-    contactNumber: ''
+    shop_owner_name: '',
+    shop_owner_nic: '',
+    shop_owner_dob: '',
+    shop_owner_address: '',
+    business_mail: '',
+    contact_number: '',
+    whatsapp_number: ''
   });
 
+  // Shop Form Data
   const [shopFormData, setShopFormData] = useState({
-    shopName: '',
-    shopAddress: '',
-    description: '',
+    shop_name: '',
+    nearest_city: '',
+    shop_address: '',
+    contact_number: '',
+    whatsapp_number: '',
+    short_description: '',
+    long_description: '',
     locations: []
   });
 
+  // Item Form Data
   const [itemFormData, setItemFormData] = useState({
     itemName: '',
     description: '',
@@ -55,11 +65,21 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     shop_id: ''
   });
 
+  // Image States
   const [shopImages, setShopImages] = useState([]);
-  const [shopImagePreviews, setShopImagePreviews] = useState([]);
+  const [existingShopImages, setExistingShopImages] = useState([]);
+  const [shopImagesToRemove, setShopImagesToRemove] = useState([]);
   const [itemImages, setItemImages] = useState([]);
-  const [itemImagePreviews, setItemImagePreviews] = useState([]);
-  const [removedShopImages, setRemovedShopImages] = useState([]);
+
+  // NIC Validation State
+  const [nicValidation, setNicValidation] = useState({
+    loading: false,
+    available: null,
+    message: ''
+  });
+  const [nicDebounceTimer, setNicDebounceTimer] = useState(null);
+
+  const genderOptions = ['Male', 'Female', 'Other'];
 
   // Fetch data only when expanded
   useEffect(() => {
@@ -74,20 +94,28 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     setError(null);
     try {
       const ownerResponse = await getMyShopOwner();
-      setShopOwner(ownerResponse.data);
+      const shopOwnerData = ownerResponse.data;
+      setShopOwner(shopOwnerData);
+
+      // Set form data with correct field names
       setOwnerFormData({
-        shopOwnerName: ownerResponse.data.shopOwnerName,
-        shopOwnerNic: ownerResponse.data.shopOwnerNic,
-        businessMail: ownerResponse.data.businessMail,
-        contactNumber: ownerResponse.data.contactNumber
+        shop_owner_name: shopOwnerData.shop_owner_name || '',
+        shop_owner_nic: shopOwnerData.shop_owner_nic || '',
+        shop_owner_dob: shopOwnerData.shop_owner_dob || '',
+        shop_owner_address: shopOwnerData.shop_owner_address || '',
+        business_mail: shopOwnerData.business_mail || '',
+        contact_number: shopOwnerData.contact_number || '',
+        whatsapp_number: shopOwnerData.whatsapp_number || ''
       });
-      
+
+      // Fetch shops
       const shopsResponse = await getMyShops();
-      setShops(shopsResponse.data);
-      
+      const shopData = shopsResponse.data;
+      setShops(shopData);
+
       // Fetch items for each shop
       const itemsData = {};
-      for (const shop of shopsResponse.data) {
+      for (const shop of shopData) {
         try {
           const itemsResponse = await getItemsByAuthenticatedShop(shop.id);
           itemsData[shop.id] = itemsResponse.data;
@@ -122,7 +150,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     setLoadingLocations(true);
     try {
       const response = await getLocations();
-      const locationNames = response.data.map(location => location.locationName);
+      const locationNames = response.data.map(location => location.name || location.locationName);
       setAvailableLocations(locationNames);
     } catch (error) {
       console.error('Error fetching locations:', error);
@@ -131,15 +159,113 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     }
   };
 
-  const handleUpdateOwner = async () => {
+  // Real-time NIC validation with debounce
+  const validateNic = useCallback(async (nicValue) => {
+    if (!nicValue || nicValue.length < 5) {
+      setNicValidation({ loading: false, available: null, message: '' });
+      return;
+    }
+
+    // Skip validation if it's the same NIC in edit mode
+    if (shopOwner && nicValue === shopOwner.shop_owner_nic) {
+      setNicValidation({ loading: false, available: true, message: 'Current NIC' });
+      return;
+    }
+
+    setNicValidation({ loading: true, available: null, message: 'Checking NIC availability...' });
+    
     try {
-      const response = await updateMyShopOwner(ownerFormData);
+      const response = await checkNicAvailability({
+        nic: nicValue,
+        role: 'shop_owner',
+        current_shop_owner_id: shopOwner?.id
+      });
+      
+      setNicValidation({
+        loading: false,
+        available: response.data.available,
+        message: response.data.message
+      });
+    } catch (error) {
+      setNicValidation({
+        loading: false,
+        available: false,
+        message: error.response?.data?.message || 'Error validating NIC'
+      });
+    }
+  }, [shopOwner]);
+
+  // Debounced NIC validation
+  useEffect(() => {
+    const nicValue = ownerFormData.shop_owner_nic;
+    
+    if (nicDebounceTimer) {
+      clearTimeout(nicDebounceTimer);
+    }
+
+    if (nicValue && nicValue.length >= 5) {
+      const timer = setTimeout(() => {
+        validateNic(nicValue);
+      }, 800);
+      
+      setNicDebounceTimer(timer);
+    } else {
+      setNicValidation({ loading: false, available: null, message: '' });
+    }
+
+    return () => {
+      if (nicDebounceTimer) {
+        clearTimeout(nicDebounceTimer);
+      }
+    };
+  }, [ownerFormData.shop_owner_nic, validateNic]);
+
+  // Shop Owner Form Handlers
+  const handleOwnerInputChange = (e) => {
+    const { name, value } = e.target;
+    setOwnerFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleUpdateOwner = async () => {
+    // Final validation before submission
+    if (nicValidation.available === false) {
+      alert('Please fix the NIC validation error before submitting.');
+      return;
+    }
+
+    if (nicValidation.loading) {
+      alert('Please wait for NIC validation to complete.');
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      
+      // Append all shop owner fields with correct field names
+      Object.keys(ownerFormData).forEach(key => {
+        formData.append(key, ownerFormData[key]);
+      });
+
+      // Add method spoofing for PUT
+      formData.append('_method', 'PUT');
+
+      const response = await updateMyShopOwner(formData);
       setShopOwner(response.data.shopOwner);
       setShowEditOwnerForm(false);
       alert('Shop owner details updated successfully!');
     } catch (err) {
       console.error('Error updating shop owner:', err);
-      setError('Failed to update shop owner details.');
+      const errorMessage = err.response?.data?.error || 'Failed to update shop owner details.';
+      setError(errorMessage);
+      alert(errorMessage);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -147,46 +273,111 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
     if (window.confirm('Are you sure you want to delete your shop owner profile? This will also remove all associated shops and items.')) {
       try {
         await deleteMyShopOwner();
-        alert('Shop owner deleted successfully!');
+        alert('Shop owner profile deleted successfully!');
         window.location.reload();
       } catch (err) {
         console.error('Error deleting shop owner:', err);
-        setError('Failed to delete shop owner.');
+        const errorMessage = err.response?.data?.error || 'Failed to delete shop owner profile.';
+        setError(errorMessage);
+      }
+    }
+  };
+
+  // Shop Form Handlers
+  const handleShopInputChange = (e) => {
+    const { name, value } = e.target;
+    setShopFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleShopLocationChange = (location) => {
+    setShopFormData(prev => ({
+      ...prev,
+      locations: prev.locations.includes(location)
+        ? prev.locations.filter(l => l !== location)
+        : [...prev.locations, location]
+    }));
+  };
+
+  const handleShopImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    
+    const currentImageCount = existingShopImages.length - shopImagesToRemove.length;
+    const totalAfterAdd = currentImageCount + shopImages.length + files.length;
+    
+    if (totalAfterAdd > 5) {
+      alert(`Maximum 5 images allowed. You currently have ${currentImageCount + shopImages.length} images.`);
+      return;
+    }
+    
+    const validImageFiles = files.filter(file => 
+      file.type.startsWith('image/') && 
+      ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'].includes(file.type)
+    );
+    
+    setShopImages(prev => [...prev, ...validImageFiles]);
+    e.target.value = '';
+  };
+
+  const removeNewShopImage = (index) => {
+    setShopImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingShopImage = (imageId) => {
+    setShopImagesToRemove(prev => [...prev, imageId]);
+    setExistingShopImages(prev => prev.filter(img => img.id !== imageId));
+  };
+
+  const restoreExistingShopImage = (imageId) => {
+    setShopImagesToRemove(prev => prev.filter(id => id !== imageId));
+    if (editingShop) {
+      const originalImage = editingShop.images.find(img => img.id === imageId);
+      if (originalImage) {
+        setExistingShopImages(prev => [...prev, originalImage]);
       }
     }
   };
 
   const handleSaveShop = async () => {
+    setSubmitting(true);
+    setError(null);
+
     try {
       const formData = new FormData();
-      formData.append('shopName', shopFormData.shopName);
-      formData.append('shopAddress', shopFormData.shopAddress);
-      formData.append('description', shopFormData.description);
-      formData.append('user_id', userId);
-      formData.append('shop_owner_id', shopOwner.id);
       
-      if (shopFormData.locations && shopFormData.locations.length > 0) {
-        shopFormData.locations.forEach(loc => {
-          formData.append('locations[]', loc);
-        });
-      }
-
-      // Append new images
-      shopImages.forEach(image => {
-        if (image instanceof File) {
-          formData.append('shopImage[]', image);
+      // Append all shop fields
+      Object.keys(shopFormData).forEach(key => {
+        if (key === 'locations') {
+          shopFormData[key].forEach(item => {
+            formData.append(`${key}[]`, item);
+          });
+        } else if (shopFormData[key] !== null && shopFormData[key] !== undefined) {
+          formData.append(key, shopFormData[key]);
         }
       });
 
-      // Append removed image IDs for edit mode
-      if (editingShop && removedShopImages.length > 0) {
-        removedShopImages.forEach(imageId => {
+      // Append shop owner ID and user ID
+      formData.append('shop_owner_id', shopOwner.id);
+      formData.append('user_id', userId);
+
+      // Append new images
+      shopImages.forEach(img => {
+        formData.append('shopImage[]', img);
+      });
+
+      // Append images to remove for edit mode
+      if (editingShop && shopImagesToRemove.length > 0) {
+        shopImagesToRemove.forEach(imageId => {
           formData.append('removedImages[]', imageId);
         });
       }
 
       let response;
       if (editingShop) {
+        formData.append('_method', 'PUT');
         response = await updateMyShop(editingShop.id, formData);
         setShops(shops.map(shop => shop.id === editingShop.id ? response.data.shop : shop));
       } else {
@@ -200,7 +391,11 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
       alert(editingShop ? 'Shop updated successfully!' : 'Shop created successfully!');
     } catch (err) {
       console.error('Error saving shop:', err);
-      setError('Failed to save shop. Please try again.');
+      const errorMessage = err.response?.data?.error || 'Failed to save shop. Please try again.';
+      setError(errorMessage);
+      alert(errorMessage);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -220,39 +415,73 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
         alert('Shop deleted successfully!');
       } catch (err) {
         console.error('Error deleting shop:', err);
-        setError('Failed to delete shop.');
+        const errorMessage = err.response?.data?.error || 'Failed to delete shop.';
+        setError(errorMessage);
       }
     }
   };
 
+  // Item Form Handlers
+  const handleItemInputChange = (e) => {
+    const { name, value } = e.target;
+    setItemFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleItemLocationChange = (location) => {
+    setItemFormData(prev => ({
+      ...prev,
+      locations: prev.locations.includes(location)
+        ? prev.locations.filter(l => l !== location)
+        : [...prev.locations, location]
+    }));
+  };
+
+  const handleItemImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    
+    const validImageFiles = files.filter(file => 
+      file.type.startsWith('image/') && 
+      ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'].includes(file.type)
+    );
+    
+    setItemImages(prev => [...prev, ...validImageFiles]);
+    e.target.value = '';
+  };
+
+  const removeItemImage = (index) => {
+    setItemImages(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSaveItem = async () => {
+    setSubmitting(true);
+    setError(null);
+
     try {
       const formData = new FormData();
-      formData.append('itemName', itemFormData.itemName);
-      formData.append('description', itemFormData.description || '');
-      formData.append('price', itemFormData.price);
-      formData.append('shop_id', itemFormData.shop_id);
       
-      // Ensure locations is an array before using forEach
-      const locationsArray = Array.isArray(itemFormData.locations) 
-        ? itemFormData.locations 
-        : [];
-      
-      if (locationsArray.length > 0) {
-        locationsArray.forEach(loc => {
-          formData.append('locations[]', loc);
-        });
-      }
+      // Append all item fields
+      Object.keys(itemFormData).forEach(key => {
+        if (key === 'locations') {
+          itemFormData[key].forEach(item => {
+            formData.append(`${key}[]`, item);
+          });
+        } else if (itemFormData[key] !== null && itemFormData[key] !== undefined) {
+          formData.append(key, itemFormData[key]);
+        }
+      });
 
       // Append item images
-      itemImages.forEach(image => {
-        if (image instanceof File) {
-          formData.append('itemImage[]', image);
-        }
+      itemImages.forEach(img => {
+        formData.append('itemImage[]', img);
       });
 
       let response;
       if (editingItem) {
+        formData.append('_method', 'PUT');
         response = await updateMyItem(editingItem.id, formData);
         // Update items for this shop
         setItems(prev => ({
@@ -276,7 +505,11 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
       alert(editingItem ? 'Item updated successfully!' : 'Item created successfully!');
     } catch (err) {
       console.error('Error saving item:', err);
-      setError('Failed to save item. Please try again.');
+      const errorMessage = err.response?.data?.error || 'Failed to save item. Please try again.';
+      setError(errorMessage);
+      alert(errorMessage);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -291,71 +524,58 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
         alert('Item deleted successfully!');
       } catch (err) {
         console.error('Error deleting item:', err);
-        setError('Failed to delete item.');
+        const errorMessage = err.response?.data?.error || 'Failed to delete item.';
+        setError(errorMessage);
       }
     }
   };
 
+  // Form Management
   const startEditShop = (shop) => {
     setEditingShop(shop);
-    setRemovedShopImages([]);
-  
     setShopFormData({
-      shopName: shop.shopName,
-      shopAddress: shop.shopAddress,
-      description: shop.description || '',
+      shop_name: shop.shop_name || '',
+      nearest_city: shop.nearest_city || '',
+      shop_address: shop.shop_address || '',
+      contact_number: shop.contact_number || '',
+      whatsapp_number: shop.whatsapp_number || '',
+      short_description: shop.short_description || '',
+      long_description: shop.long_description || '',
       locations: shop.locations || []
     });
-
-    // Set existing image previews
-    if (shop.images && shop.images.length > 0) {
-      const previews = shop.images.map(img => 
-        `http://localhost:8000/storage/${img.image_path}`
-      );
-      setShopImagePreviews(previews);
-    } else {
-      setShopImagePreviews([]);
-    }
-
+    setExistingShopImages(shop.images || []);
     setShopImages([]);
+    setShopImagesToRemove([]);
     setShowShopForm(true);
   };
 
   const startEditItem = (item, shopId) => {
     setEditingItem(item);
-
     setItemFormData({
-      itemName: item.itemName,
+      itemName: item.itemName || '',
       description: item.description || '',
-      price: item.price,
+      price: item.price || '',
       locations: item.locations || [],
       shop_id: shopId
     });
-
-    // Set existing item image previews
-    if (item.images && item.images.length > 0) {
-      const previews = item.images.map(img => 
-        `http://localhost:8000/storage/${img.image_path}`
-      );
-      setItemImagePreviews(previews);
-    } else {
-      setItemImagePreviews([]);
-    }
-
     setItemImages([]);
     setShowItemForm(true);
   };
 
   const resetShopForm = () => {
     setShopFormData({
-      shopName: '',
-      shopAddress: '',
-      description: '',
+      shop_name: '',
+      nearest_city: '',
+      shop_address: '',
+      contact_number: '',
+      whatsapp_number: '',
+      short_description: '',
+      long_description: '',
       locations: []
     });
     setShopImages([]);
-    setShopImagePreviews([]);
-    setRemovedShopImages([]);
+    setExistingShopImages([]);
+    setShopImagesToRemove([]);
   };
 
   const resetItemForm = () => {
@@ -367,96 +587,6 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
       shop_id: ''
     });
     setItemImages([]);
-    setItemImagePreviews([]);
-  };
-
-  const handleShopImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (!files.length) return;
-    
-    const validImageFiles = files.filter(file => 
-      file.type.startsWith('image/') && 
-      ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'].includes(file.type)
-    );
-    
-    const newImages = [...shopImages, ...validImageFiles];
-    setShopImages(newImages);
-    
-    const newPreviews = validImageFiles.map(file => URL.createObjectURL(file));
-    setShopImagePreviews(prev => [...prev, ...newPreviews]);
-  };
-
-  const handleItemImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (!files.length) return;
-    
-    const validImageFiles = files.filter(file => 
-      file.type.startsWith('image/') && 
-      ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'].includes(file.type)
-    );
-    
-    const newImages = [...itemImages, ...validImageFiles];
-    setItemImages(newImages);
-    
-    const newPreviews = validImageFiles.map(file => URL.createObjectURL(file));
-    setItemImagePreviews(prev => [...prev, ...newPreviews]);
-  };
-
-  const removeShopImage = (index, isExisting = false, imageId = null) => {
-    if (isExisting && imageId) {
-      // Remove existing image (mark for deletion)
-      setRemovedShopImages(prev => [...prev, imageId]);
-      const newPreviews = [...shopImagePreviews];
-      newPreviews.splice(index, 1);
-      setShopImagePreviews(newPreviews);
-    } else {
-      // Remove new image
-      const newImages = [...shopImages];
-      const newPreviews = [...shopImagePreviews];
-      
-      if (newPreviews[index].startsWith('blob:')) {
-        URL.revokeObjectURL(newPreviews[index]);
-      }
-      
-      newImages.splice(index, 1);
-      newPreviews.splice(index, 1);
-      
-      setShopImages(newImages);
-      setShopImagePreviews(newPreviews);
-    }
-  };
-
-  const removeItemImage = (index) => {
-    const newImages = [...itemImages];
-    const newPreviews = [...itemImagePreviews];
-    
-    if (newPreviews[index].startsWith('blob:')) {
-      URL.revokeObjectURL(newPreviews[index]);
-    }
-    
-    newImages.splice(index, 1);
-    newPreviews.splice(index, 1);
-    
-    setItemImages(newImages);
-    setItemImagePreviews(newPreviews);
-  };
-
-  const handleShopLocationChange = (location) => {
-    setShopFormData(prev => ({
-      ...prev,
-      locations: prev.locations.includes(location)
-        ? prev.locations.filter(l => l !== location)
-        : [...prev.locations, location]
-    }));
-  };
-
-  const handleItemLocationChange = (location) => {
-    setItemFormData(prev => ({
-      ...prev,
-      locations: prev.locations.includes(location)
-        ? prev.locations.filter(l => l !== location)
-        : [...prev.locations, location]
-    }));
   };
 
   const toggleShopExpand = (shopId) => {
@@ -468,8 +598,59 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
 
   // Image URL helper
   const getImageUrl = (imagePath) => {
+    if (!imagePath) return '/default-shop.jpg';
     const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
     return `${baseUrl}/storage/${imagePath}`;
+  };
+
+  // Calculate image slots for shop
+  const currentShopImageCount = existingShopImages.length - shopImagesToRemove.length;
+  const totalShopImages = currentShopImageCount + shopImages.length;
+  const remainingShopSlots = Math.max(0, 5 - totalShopImages);
+
+  // Removed shop images
+  const removedShopImages = editingShop ? editingShop.images.filter(img => shopImagesToRemove.includes(img.id)) : [];
+
+  // NIC Validation Indicator Component
+  const NicValidationIndicator = () => {
+    const nicValue = ownerFormData.shop_owner_nic;
+    
+    if (!nicValue || nicValue.length < 5) {
+      return (
+        <p className="text-xs text-gray-500 mt-1">
+          Enter NIC number to check availability
+        </p>
+      );
+    }
+
+    if (nicValidation.loading) {
+      return (
+        <div className="flex items-center space-x-1 mt-1">
+          <Loader className="w-4 h-4 animate-spin text-blue-500" />
+          <span className="text-xs text-blue-600">{nicValidation.message}</span>
+        </div>
+      );
+    }
+
+    if (nicValidation.available === false) {
+      return (
+        <div className="flex items-center space-x-1 mt-1">
+          <AlertCircle className="w-4 h-4 text-red-500" />
+          <span className="text-xs text-red-600">{nicValidation.message}</span>
+        </div>
+      );
+    }
+
+    if (nicValidation.available === true) {
+      return (
+        <div className="flex items-center space-x-1 mt-1">
+          <CheckCircle className="w-4 h-4 text-green-500" />
+          <span className="text-xs text-green-600">{nicValidation.message}</span>
+        </div>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -509,7 +690,10 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
           )}
           
           {loading ? (
-            <div className="text-center py-8">Loading shop owner data...</div>
+            <div className="text-center py-8">
+              <Loader className="size-8 animate-spin mx-auto mb-2 text-blue-600" />
+              <p>Loading shop owner data...</p>
+            </div>
           ) : shopOwner ? (
             <>
               {/* Shop Owner Details */}
@@ -522,110 +706,190 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors text-sm"
                     >
                       <Edit3 className="size-4" />
-                      Edit Details
+                      {showEditOwnerForm ? 'Cancel Edit' : 'Edit Details'}
                     </button>
                     <button
                       onClick={handleDeleteOwner}
                       className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 transition-colors text-sm"
                     >
                       <Trash2 className="size-4" />
-                      Delete Owner
+                      Delete Profile
                     </button>
                   </div>
                 </div>
                 
                 {showEditOwnerForm ? (
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Shop Owner Name
+                          Shop Owner Name *
                         </label>
                         <input
                           type="text"
-                          value={ownerFormData.shopOwnerName}
-                          onChange={(e) => setOwnerFormData({...ownerFormData, shopOwnerName: e.target.value})}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          name="shop_owner_name"
+                          value={ownerFormData.shop_owner_name}
+                          onChange={handleOwnerInputChange}
+                          required
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          NIC Number
+                          NIC Number *
                         </label>
                         <input
                           type="text"
-                          value={ownerFormData.shopOwnerNic}
-                          onChange={(e) => setOwnerFormData({...ownerFormData, shopOwnerNic: e.target.value})}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          name="shop_owner_nic"
+                          value={ownerFormData.shop_owner_nic}
+                          onChange={handleOwnerInputChange}
+                          required
+                          className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 ${
+                            nicValidation.available === false 
+                              ? 'border-red-300 focus:ring-red-500' 
+                              : nicValidation.available === true
+                              ? 'border-green-300 focus:ring-green-500'
+                              : 'border-gray-300 focus:ring-blue-500'
+                          }`}
+                        />
+                        <NicValidationIndicator />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Date of Birth *
+                        </label>
+                        <input
+                          type="date"
+                          name="shop_owner_dob"
+                          value={ownerFormData.shop_owner_dob}
+                          onChange={handleOwnerInputChange}
+                          required
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Business Email
+                          Business Email *
                         </label>
                         <input
                           type="email"
-                          value={ownerFormData.businessMail}
-                          onChange={(e) => setOwnerFormData({...ownerFormData, businessMail: e.target.value})}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          name="business_mail"
+                          value={ownerFormData.business_mail}
+                          onChange={handleOwnerInputChange}
+                          required
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Contact Number
+                          Contact Number *
                         </label>
                         <input
                           type="tel"
-                          value={ownerFormData.contactNumber}
-                          onChange={(e) => setOwnerFormData({...ownerFormData, contactNumber: e.target.value})}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          name="contact_number"
+                          value={ownerFormData.contact_number}
+                          onChange={handleOwnerInputChange}
+                          required
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          WhatsApp Number
+                        </label>
+                        <input
+                          type="tel"
+                          name="whatsapp_number"
+                          value={ownerFormData.whatsapp_number}
+                          onChange={handleOwnerInputChange}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       </div>
                     </div>
-                    <div className="flex gap-3 mt-4">
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Address *
+                      </label>
+                      <textarea
+                        name="shop_owner_address"
+                        value={ownerFormData.shop_owner_address}
+                        onChange={handleOwnerInputChange}
+                        required
+                        rows="2"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div className="flex gap-3 pt-4 border-t border-gray-200">
                       <button
                         onClick={handleUpdateOwner}
-                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        disabled={submitting || nicValidation.available === false}
+                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Update Details
+                        {submitting && <Loader className="size-4 animate-spin" />}
+                        {submitting ? 'Updating...' : 'Update Details'}
                       </button>
                       <button
                         onClick={() => setShowEditOwnerForm(false)}
-                        className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                        disabled={submitting}
+                        className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50"
                       >
                         Cancel
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center">
-                      <User className="size-5 text-gray-600 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-600">Name</p>
-                        <p className="font-medium">{shopOwner.shopOwnerName}</p>
+                  // Display Mode for Shop Owner
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="flex items-center">
+                        <User className="size-5 text-gray-600 mr-3" />
+                        <div>
+                          <p className="text-sm text-gray-600">Name</p>
+                          <p className="font-medium">{shopOwner.shop_owner_name}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <CreditCard className="size-5 text-gray-600 mr-3" />
+                        <div>
+                          <p className="text-sm text-gray-600">NIC</p>
+                          <p className="font-medium">{shopOwner.shop_owner_nic}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <Mail className="size-5 text-gray-600 mr-3" />
+                        <div>
+                          <p className="text-sm text-gray-600">Business Email</p>
+                          <p className="font-medium">{shopOwner.business_mail}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <Phone className="size-5 text-gray-600 mr-3" />
+                        <div>
+                          <p className="text-sm text-gray-600">Contact Number</p>
+                          <p className="font-medium">{shopOwner.contact_number}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <FaWhatsapp className="size-5 text-gray-600 mr-3" />
+                        <div>
+                          <p className="text-sm text-gray-600">WhatsApp Number</p>
+                          <p className="font-medium">{shopOwner.whatsapp_number || 'Not provided'}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <Calendar className="size-5 text-gray-600 mr-3" />
+                        <div>
+                          <p className="text-sm text-gray-600">Date of Birth</p>
+                          <p className="font-medium">{new Date(shopOwner.shop_owner_dob).toLocaleDateString()}</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center">
-                      <CreditCard className="size-5 text-gray-600 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-600">NIC</p>
-                        <p className="font-medium">{shopOwner.shopOwnerNic}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <Mail className="size-5 text-gray-600 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-600">Business Email</p>
-                        <p className="font-medium">{shopOwner.businessMail}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <Phone className="size-5 text-gray-600 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-600">Contact Number</p>
-                        <p className="font-medium">{shopOwner.contactNumber}</p>
-                      </div>
+
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Address</p>
+                      <p className="font-medium">{shopOwner.shop_owner_address}</p>
                     </div>
                   </div>
                 )}
@@ -637,108 +901,236 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                   <h5 className="text-lg font-semibold mb-4">
                     {editingShop ? 'Edit Shop' : 'Add New Shop'}
                   </h5>
-                  <div className="space-y-4">
+                  <div className="space-y-6">
+                    {/* Shop Image Management */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Shop Name *
+                        Shop Images {remainingShopSlots >= 0 && `(${remainingShopSlots} remaining)`}
                       </label>
-                      <input
-                        type="text"
-                        value={shopFormData.shopName}
-                        onChange={(e) => setShopFormData({...shopFormData, shopName: e.target.value})}
-                        required
+
+                      {/* Removed Images */}
+                      {removedShopImages.length > 0 && (
+                        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                          <p className="text-sm text-yellow-800 mb-2 font-medium">
+                            {removedShopImages.length} image{removedShopImages.length !== 1 ? 's' : ''} marked for removal
+                          </p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {removedShopImages.map((img) => (
+                              <div key={img.id} className="relative h-32 border-2 border-dashed border-yellow-300 rounded-lg flex items-center justify-center opacity-60">
+                                <img 
+                                  src={getImageUrl(img.image_path)}
+                                  alt={img.alt_text}
+                                  className="h-full w-full object-cover rounded-lg"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => restoreExistingShopImage(img.id)}
+                                  className="absolute top-1 right-1 bg-green-500 text-white rounded-full p-1 shadow-md hover:bg-green-600"
+                                  title="Restore image"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v0a8 8 0 01-8 8H3" />
+                                  </svg>
+                                </button>
+                                <div className="absolute bottom-0 left-0 right-0 bg-yellow-500 text-white text-xs py-1 text-center">
+                                  Will be removed
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Existing Images */}
+                      {existingShopImages.length > 0 && (
+                        <div className="mb-4">
+                          <p className="text-sm text-gray-600 mb-2">Existing Images (click × to remove):</p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {existingShopImages.map((img) => (
+                              <div key={img.id} className="relative h-32 border border-gray-300 rounded-lg flex items-center justify-center group">
+                                <img 
+                                  src={getImageUrl(img.image_path)}
+                                  alt={img.alt_text}
+                                  className="h-full w-full object-cover rounded-lg"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => removeExistingShopImage(img.id)}
+                                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                                <div className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                  #{img.order_index + 1}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* New Image Uploads */}
+                      {(shopImages.length > 0 || remainingShopSlots > 0) && (
+                        <div className="mb-4">
+                          <p className="text-sm text-gray-600 mb-2">New Images:</p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {shopImages.map((img, index) => (
+                              <div key={`new-${index}`} className="relative h-32 border-2 border-dashed border-blue-300 rounded-lg flex items-center justify-center bg-blue-50">
+                                <img 
+                                  src={URL.createObjectURL(img)} 
+                                  alt={`New ${index}`}
+                                  className="h-full w-full object-cover rounded-lg"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => removeNewShopImage(index)}
+                                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                                <div className="absolute bottom-1 left-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                                  New #{index + 1}
+                                </div>
+                              </div>
+                            ))}
+                            
+                            {remainingShopSlots > 0 && (
+                              <div className="h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50">
+                                <label htmlFor="shopFileInput" className="flex flex-col items-center cursor-pointer p-4 text-center w-full h-full justify-center">
+                                  <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                                  <span className="text-sm text-gray-600">Add Images</span>
+                                  <span className="text-xs text-gray-500 mt-1">
+                                    {remainingShopSlots} slot{remainingShopSlots !== 1 ? 's' : ''} remaining
+                                  </span>
+                                </label>
+                                <input
+                                  type="file"
+                                  id="shopFileInput"
+                                  onChange={handleShopImageChange}
+                                  accept="image/*"
+                                  multiple
+                                  className="hidden"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="text-sm text-gray-500 space-y-1">
+                        <p>• Maximum 5 images per shop</p>
+                        <p>• Currently using: {totalShopImages}/5 slots</p>
+                        <p>• Supported formats: JPEG, PNG, GIF, WEBP</p>
+                        <p>• Maximum file size: 2MB per image</p>
+                      </div>
+                    </div>
+
+                    {/* Shop Form Fields */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Shop Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="shop_name"
+                          value={shopFormData.shop_name}
+                          onChange={handleShopInputChange}
+                          required
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Nearest City *
+                        </label>
+                        <input
+                          type="text"
+                          name="nearest_city"
+                          value={shopFormData.nearest_city}
+                          onChange={handleShopInputChange}
+                          required
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Contact Number *
+                        </label>
+                        <input
+                          type="tel"
+                          name="contact_number"
+                          value={shopFormData.contact_number}
+                          onChange={handleShopInputChange}
+                          required
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          WhatsApp Number
+                        </label>
+                        <input
+                          type="tel"
+                          name="whatsapp_number"
+                          value={shopFormData.whatsapp_number}
+                          onChange={handleShopInputChange}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Shop Address
+                      </label>
+                      <textarea
+                        name="shop_address"
+                        value={shopFormData.shop_address}
+                        onChange={handleShopInputChange}
+                        rows="2"
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Shop Images (Max 5)
-                      </label>
-                      <div className="flex flex-wrap gap-4 mb-4">
-                        {shopImagePreviews.map((preview, index) => {
-                          const isExisting = !preview.startsWith('blob:');
-                          const existingImage = editingShop?.images?.[index];
-                          return (
-                            <div key={index} className="relative h-32 w-32">
-                              <img
-                                src={preview}
-                                alt={`Preview ${index}`}
-                                className="h-full w-full object-cover rounded-lg"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => removeShopImage(
-                                  index, 
-                                  isExisting, 
-                                  existingImage?.id
-                                )}
-                                className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
-                              >
-                                <X className="w-4 h-4 text-gray-700" />
-                              </button>
-                              {isExisting && (
-                                <div className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                                  Existing
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                      {shopImagePreviews.length < 5 && (
-                        <div className="flex flex-col">
-                          <label 
-                            htmlFor="shopFileInput"
-                            className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors w-40"
-                          >
-                            <Upload className="w-4 h-4 mr-2" />
-                            <span className="text-sm">Upload Images</span>
-                          </label>
-                          <input
-                            type="file"
-                            id="shopFileInput"
-                            onChange={handleShopImageChange}
-                            accept="image/*"
-                            multiple
-                            className="hidden"
-                          />
-                          <p className="text-xs text-gray-500 mt-1">
-                            {5 - shopImagePreviews.length} slots remaining
-                          </p>
-                        </div>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Description
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Short Description *
                       </label>
                       <textarea
-                        value={shopFormData.description}
-                        onChange={(e) => setShopFormData({...shopFormData, description: e.target.value})}
+                        name="short_description"
+                        value={shopFormData.short_description}
+                        onChange={handleShopInputChange}
                         required
                         rows="3"
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        maxLength="1000"
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        {shopFormData.short_description.length}/1000 characters
+                      </p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Address *
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Detailed Description
                       </label>
-                      <input
-                        type="text"
-                        value={shopFormData.shopAddress}
-                        onChange={(e) => setShopFormData({...shopFormData, shopAddress: e.target.value})}
-                        required
+                      <textarea
+                        name="long_description"
+                        value={shopFormData.long_description}
+                        onChange={handleShopInputChange}
+                        rows="4"
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        maxLength="10000"
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        {shopFormData.long_description.length}/10000 characters
+                      </p>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Related Locations
+                        Service Locations
                       </label>
                       {loadingLocations ? (
                         <div className="text-gray-500">Loading locations...</div>
@@ -759,11 +1151,13 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       )}
                     </div>
 
-                    <div className="flex gap-3 mt-4">
+                    <div className="flex gap-3 pt-4 border-t border-gray-200">
                       <button
                         onClick={handleSaveShop}
-                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        disabled={submitting}
+                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
+                        {submitting && <Loader className="size-4 animate-spin" />}
                         {editingShop ? 'Update Shop' : 'Add Shop'}
                       </button>
                       <button
@@ -772,7 +1166,8 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                           setEditingShop(null);
                           resetShopForm();
                         }}
-                        className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                        disabled={submitting}
+                        className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -787,14 +1182,15 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                   <h5 className="text-lg font-semibold mb-4">
                     {editingItem ? 'Edit Item' : 'Add New Item'}
                   </h5>
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Shop *
                       </label>
                       <select
+                        name="shop_id"
                         value={itemFormData.shop_id}
-                        onChange={(e) => setItemFormData({...itemFormData, shop_id: e.target.value})}
+                        onChange={handleItemInputChange}
                         required
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         disabled={editingItem} // Can't change shop for existing item
@@ -802,68 +1198,77 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                         <option value="">Select a Shop</option>
                         {shops.map(shop => (
                           <option key={shop.id} value={shop.id}>
-                            {shop.shopName}
+                            {shop.shop_name}
                           </option>
                         ))}
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Item Name *
                       </label>
                       <input
                         type="text"
+                        name="itemName"
                         value={itemFormData.itemName}
-                        onChange={(e) => setItemFormData({...itemFormData, itemName: e.target.value})}
+                        onChange={handleItemInputChange}
                         required
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Price *
                       </label>
                       <input
                         type="number"
                         step="0.01"
+                        name="price"
                         value={itemFormData.price}
-                        onChange={(e) => setItemFormData({...itemFormData, price: e.target.value})}
+                        onChange={handleItemInputChange}
                         required
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
 
+                    {/* Item Images */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Item Images
                       </label>
-                      <div className="flex flex-wrap gap-4 mb-4">
-                        {itemImagePreviews.map((preview, index) => (
-                          <div key={index} className="relative h-32 w-32">
-                            <img
-                              src={preview}
-                              alt={`Preview ${index}`}
-                              className="h-full w-full object-cover rounded-lg"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeItemImage(index)}
-                              className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
-                            >
-                              <X className="w-4 h-4 text-gray-700" />
-                            </button>
+                      {itemImages.length > 0 && (
+                        <div className="mb-4">
+                          <p className="text-sm text-gray-600 mb-2">New Images:</p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {itemImages.map((img, index) => (
+                              <div key={`item-new-${index}`} className="relative h-32 border-2 border-dashed border-blue-300 rounded-lg flex items-center justify-center bg-blue-50">
+                                <img 
+                                  src={URL.createObjectURL(img)} 
+                                  alt={`New ${index}`}
+                                  className="h-full w-full object-cover rounded-lg"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => removeItemImage(index)}
+                                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                                <div className="absolute bottom-1 left-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                                  New #{index + 1}
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                      <div className="flex flex-col">
-                        <label 
-                          htmlFor="itemFileInput"
-                          className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors w-40"
-                        >
-                          <Upload className="w-4 h-4 mr-2" />
-                          <span className="text-sm">Upload Images</span>
+                        </div>
+                      )}
+
+                      <div className="h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50">
+                        <label htmlFor="itemFileInput" className="flex flex-col items-center cursor-pointer p-4 text-center w-full h-full justify-center">
+                          <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                          <span className="text-sm text-gray-600">Add Item Images</span>
                         </label>
                         <input
                           type="file"
@@ -877,13 +1282,13 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Description
                       </label>
                       <textarea
+                        name="description"
                         value={itemFormData.description}
-                        onChange={(e) => setItemFormData({...itemFormData, description: e.target.value})}
-                        required
+                        onChange={handleItemInputChange}
                         rows="3"
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
@@ -912,11 +1317,13 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       )}
                     </div>
 
-                    <div className="flex gap-3 mt-4">
+                    <div className="flex gap-3 pt-4 border-t border-gray-200">
                       <button
                         onClick={handleSaveItem}
-                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        disabled={submitting}
+                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
+                        {submitting && <Loader className="size-4 animate-spin" />}
                         {editingItem ? 'Update Item' : 'Add Item'}
                       </button>
                       <button
@@ -925,7 +1332,8 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                           setEditingItem(null);
                           resetItemForm();
                         }}
-                        className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                        disabled={submitting}
+                        className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -976,7 +1384,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                           {shop.images && shop.images.length > 0 ? (
                             <img
                               src={getImageUrl(shop.images[0].image_path)}
-                              alt={shop.shopName}
+                              alt={shop.shop_name}
                               className="w-12 h-12 object-cover rounded-lg mr-3 border border-gray-200"
                             />
                           ) : (
@@ -986,7 +1394,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                           )}
 
                           <div>
-                            <h5 className="font-semibold text-lg text-gray-800">{shop.shopName}</h5>
+                            <h5 className="font-semibold text-lg text-gray-800">{shop.shop_name}</h5>
                             <span className="ml-3 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
                               {items[shop.id]?.length || 0} items
                             </span>
@@ -1033,7 +1441,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                                   <div key={image.id} className="relative h-32 w-full">
                                     <img
                                       src={getImageUrl(image.image_path)}
-                                      alt={image.alt_text || `${shop.shopName} - Image ${index + 1}`}
+                                      alt={image.alt_text || `${shop.shop_name} - Image ${index + 1}`}
                                       className="h-full w-full object-cover rounded-lg border border-gray-200"
                                     />
                                   </div>
@@ -1045,24 +1453,51 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             <div className="flex items-center">
                               <MapPin className="size-4 text-gray-600 mr-2" />
-                              <span className="text-sm text-gray-600">{shop.shopAddress}</span>
+                              <span className="text-sm text-gray-600">{shop.shop_address}</span>
                             </div>
-                            {shop.locations && shop.locations.length > 0 && (
-                              <div>
-                                <p className="text-xs text-gray-500 mb-1">Available in:</p>
-                                <div className="flex flex-wrap gap-1">
-                                  {shop.locations.map((location, index) => (
-                                    <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                                      {location}
-                                    </span>
-                                  ))}
-                                </div>
+                            <div className="flex items-center">
+                              <MapPin className="size-4 text-gray-600 mr-2" />
+                              <span className="text-sm text-gray-600">Nearest City: {shop.nearest_city}</span>
+                            </div>
+                            {shop.contact_number && (
+                              <div className="flex items-center">
+                                <Phone className="size-4 text-gray-600 mr-2" />
+                                <span className="text-sm text-gray-600">{shop.contact_number}</span>
+                              </div>
+                            )}
+                            {shop.whatsapp_number && (
+                              <div className="flex items-center">
+                                <FaWhatsapp className="size-4 text-gray-600 mr-2" />
+                                <span className="text-sm text-gray-600">{shop.whatsapp_number}</span>
                               </div>
                             )}
                           </div>
 
-                          {shop.description && (
-                            <p className="text-gray-600 mb-6">{shop.description}</p>
+                          {shop.locations && shop.locations.length > 0 && (
+                            <div className="mb-4">
+                              <p className="text-xs text-gray-500 mb-1">Available in:</p>
+                              <div className="flex flex-wrap gap-1">
+                                {shop.locations.map((location, index) => (
+                                  <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                                    {location}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {shop.short_description && (
+                            <div className="mb-4">
+                              <p className="text-sm font-medium text-gray-700 mb-1">Short Description:</p>
+                              <p className="text-gray-600">{shop.short_description}</p>
+                            </div>
+                          )}
+
+                          {shop.long_description && (
+                            <div className="mb-6">
+                              <p className="text-sm font-medium text-gray-700 mb-1">Detailed Description:</p>
+                              <p className="text-gray-600 whitespace-pre-line">{shop.long_description}</p>
+                            </div>
                           )}
 
                           {/* Items for this shop */}
@@ -1090,9 +1525,9 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {items[shop.id].map((item) => (
                                   <div key={item.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                                    {item.images && item.images.length > 0 ? (
+                                    {item.itemImage && item.itemImage.length > 0 ? (
                                       <img
-                                        src={getImageUrl(item.images[0].image_path)}
+                                        src={getImageUrl(JSON.parse(item.itemImage)[0])}
                                         alt={item.itemName}
                                         className="w-full h-32 object-cover rounded-lg mb-3"
                                       />
@@ -1151,7 +1586,7 @@ const ShopOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
           ) : (
             <div className="text-center py-8 text-gray-500">
               <Building className="size-12 mx-auto mb-4 text-gray-400" />
-              <p>No shop owner data available.</p>
+              <p>No shop owner profile found.</p>
             </div>
           )}
         </div>
