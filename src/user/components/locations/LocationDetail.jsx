@@ -261,8 +261,7 @@ const LocationDetail = ({ location, onBack }) => {
                 </div>
 
                 {/* Map Section */}
-                <div
-                  className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft} ${styles.animateStagger1}`}>
+                <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft} ${styles.animateStagger1}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">Location Map</h2>
                   <LocationMap
                     latitude={location.latitude}
