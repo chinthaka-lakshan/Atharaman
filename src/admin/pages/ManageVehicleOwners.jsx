@@ -1,61 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DataTable from '../components/common/DataTable';
 import Modal from '../components/common/Modal';
 import VehicleOwnerForm from '../components/forms/VehicleOwnerForm';
 import VehicleForm from '../components/forms/VehicleForm';
 import VehicleOwnerView from '../components/views/VehicleOwnerView';
 import VehicleView from '../components/views/VehicleView';
+import {
+  getVehicleOwners,
+  getVehicleOwnerById,
+  createVehicleOwner,
+  updateVehicleOwner,
+  deleteVehicleOwner,
+  getVehiclesByOwner,
+  getVehicleById,
+  createVehicle,
+  updateVehicle,
+  deleteVehicle
+} from '../../services/api';
 
 const ManageVehicleOwners = () => {
-  const [currentView, setCurrentView] = useState('owners');
+  const [currentView, setCurrentView] = useState('owners'); // 'owners' or 'shops'
   const [selectedOwner, setSelectedOwner] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('add');
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedVehicleOwner, setSelectedVehicleOwner] = useState(null);
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [vehicleOwners, setVehicleOwners] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const [vehicleOwners, setVehicleOwners] = useState([
-    {
-      id: 1,
-      name: 'Kamal Jayasinghe',
-      description: 'Professional transport service provider',
-      nic: '198567432V',
-      businessEmail: 'kamal@transport.lk',
-      personalNumber: '+94734567890',
-      whatsappNumber: '+94734567890',
-      userId: 'user004',
-      image: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg'
-    }
-  ]);
+  // Fetch vehicle owners on component mount
+  useEffect(() => {
+    fetchVehicleOwners();
+  }, []);
 
-  const [vehicles, setVehicles] = useState([
-    {
-      id: 1,
-      ownerId: 1,
-      vehicleType: 'Car',
-      description: 'Comfortable Toyota Prius for city tours',
-      passengers: 4,
-      contactNumber: '+94734567890',
-      pricePerDay: 8500,
-      mileagePerDay: 150,
-      withDriver: true,
-      withoutDriver: false,
-      relatedLocations: ['Colombo', 'Kandy'],
-      mainImage: 'https://images.pexels.com/photos/164634/pexels-photo-164634.jpeg',
-      images: []
+  const fetchVehicleOwners = async () => {
+    setLoading(true);
+    try {
+      const response = await getVehicleOwners();
+      setVehicleOwners(response.data);
+      setError(null);
+    } catch (error) {
+      setError('Failed to fetch vehicle owners. Please try again.');
+      console.error('Error fetching vehicle owners:', error);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  // Fetch vehicles when selected owner changes
+  useEffect(() => {
+    if (selectedOwner) {
+      fetchVehiclesByOwner(selectedOwner.id);
+    }
+  }, [selectedOwner]);
+
+  const fetchVehiclesByOwner = async (ownerId) => {
+    setLoading(true);
+    try {
+      const response = await getVehiclesByOwner(ownerId);
+      setVehicles(response.data);
+      setError(null);
+    } catch (error) {
+      setError('Failed to fetch vehicles. Please try again.');
+      console.error('Error fetching vehicles:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const ownerColumns = [
-    { key: 'name', label: 'Owner Name', sortable: true },
-    { key: 'businessEmail', label: 'Email', sortable: true },
-    { key: 'personalNumber', label: 'Phone', sortable: false },
+    { key: 'vehicle_owner_name', label: 'Vehicle Owner Name', sortable: true },
+    { key: 'vehicle_owner_nic', label: 'NIC', sortable: true },
+    { key: 'business_mail', label: 'Email', sortable: true },
+    { key: 'contact_number', label: 'Phone', sortable: true },
   ];
 
   const vehicleColumns = [
-    { key: 'vehicleType', label: 'Type', sortable: true },
-    { key: 'passengers', label: 'Passengers', sortable: true },
-    { key: 'pricePerDay', label: 'Price/Day', sortable: true, render: (value) => `Rs. ${value}` },
-    { key: 'contactNumber', label: 'Contact', sortable: false },
+    { key: 'vehicle_name', label: 'Make & Model', sortable: true },
+    { key: 'vehicle_type', label: 'Type', sortable: true },
+    { key: 'reg_number', label: 'Reg No', sortable: true },
+    { key: 'no_of_passengers', label: 'Passengers', sortable: true },
+    { key: 'fuel_type', label: 'Fuel', sortable: true },
+    { key: 'driver_status', label: 'Driver Status', sortable: true },
   ];
 
   const handleOwnerRowClick = (owner) => {
@@ -66,67 +95,127 @@ const ManageVehicleOwners = () => {
   const handleBackToOwners = () => {
     setCurrentView('owners');
     setSelectedOwner(null);
+    setSelectedVehicle(null);
   };
 
   const handleAdd = () => {
     setModalType('add');
-    setSelectedItem(null);
+    setSelectedVehicleOwner(null)
+    setSelectedVehicle(null);
     setShowModal(true);
   };
 
-  const handleView = (item) => {
-    setModalType('view');
-    setSelectedItem(item);
-    setShowModal(true);
+const handleView = async (item) => {
+    try {
+      if (currentView === 'owners') {
+        const response = await getVehicleOwnerById(item.id);
+        setModalType('view');
+        setSelectedVehicleOwner(response.data);
+        setShowModal(true);
+      } else {
+        const response = await getVehicleById(item.id);
+        setModalType('view');
+        setSelectedVehicle(response.data);
+        setShowModal(true);
+      }
+    } catch (error) {
+      setError('Failed to fetch details. Please try again.');
+      console.error('Error fetching details:', error);
+    }
   };
 
   const handleEdit = (item) => {
     setModalType('edit');
-    setSelectedItem(item);
+    if (currentView === 'owners') {
+      setSelectedVehicleOwner(item);
+      setSelectedVehicle(null);
+    } else {
+      setSelectedVehicle(item);
+      setSelectedVehicleOwner(null);
+    }
     setShowModal(true);
   };
 
-  const handleDelete = (item) => {
-    if (window.confirm(`Are you sure you want to delete this ${currentView === 'owners' ? 'owner' : 'vehicle'}?`)) {
+  const handleDelete = async (item) => {
+    const itemName = currentView === 'owners' ? item.vehicle_owner_name : item.vehicleName;
+    if (window.confirm(`Are you sure you want to delete "${itemName}"?`)) {
+      try {
+        setLoading(true);
+        if (currentView === 'owners') {
+          await deleteVehicleOwner(item.id);
+          setVehicleOwners(vehicleOwners.filter(o => o.id !== item.id));
+          setError(null);
+        } else {
+          await deleteVehicle(item.id);
+          setVehicles(vehicles.filter(v => v.id !== item.id));
+          setError(null);
+        }
+      } catch (error) {
+        setError('Failed to delete. Please try again.');
+        console.error('Error deleting:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleSave = async (formData) => {
+    try {
+      setError(null);
+      setSubmitting(true);
+
       if (currentView === 'owners') {
-        setVehicleOwners(vehicleOwners.filter(o => o.id !== item.id));
+        await handleOwnerSave(formData);
       } else {
-        setVehicles(vehicles.filter(v => v.id !== item.id));
+        await handleVehicleSave(formData);
       }
+      
+      setShowModal(false);
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          error.message ||
+                          'Failed to save. Please try again.';
+      setError(`Failed to save: ${errorMessage}`);
+      console.error('Save error:', error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleSave = (itemData) => {
-    if (currentView === 'owners') {
-      if (modalType === 'add') {
-        const newOwner = {
-          ...itemData,
-          id: Math.max(...vehicleOwners.map(o => o.id)) + 1
-        };
-        setVehicleOwners([...vehicleOwners, newOwner]);
-      } else if (modalType === 'edit') {
-        setVehicleOwners(vehicleOwners.map(o => 
-          o.id === selectedItem.id ? { ...o, ...itemData } : o
-        ));
-      }
+  // Helper methods
+  const handleOwnerSave = async (formData) => {
+    let response;
+    
+    if (modalType === 'add') {
+      response = await createVehicleOwner(formData);
+      setVehicleOwners(prev => [...prev, response.data.vehicleOwner]);
     } else {
-      if (modalType === 'add') {
-        const newVehicle = {
-          ...itemData,
-          id: Math.max(...vehicles.map(v => v.id)) + 1,
-          ownerId: selectedOwner.id
-        };
-        setVehicles([...vehicles, newVehicle]);
-      } else if (modalType === 'edit') {
-        setVehicles(vehicles.map(v => 
-          v.id === selectedItem.id ? { ...v, ...itemData } : v
-        ));
-      }
+      response = await updateVehicleOwner(selectedVehicleOwner.id, formData);
+      setVehicleOwners(prev => 
+        prev.map(owner => 
+          owner.id === selectedVehicleOwner.id ? response.data.vehicleOwner : owner
+        )
+      );
     }
-    setShowModal(false);
   };
 
-  const filteredVehicles = selectedOwner ? vehicles.filter(v => v.ownerId === selectedOwner.id) : [];
+  const handleVehicleSave = async (formData) => {
+    const response = modalType === 'add'
+      ? await createVehicle(formData)
+      : await updateVehicle(selectedVehicle.id, formData);
+
+    // Refresh vehicles list to ensure data consistency
+    if (selectedOwner) {
+      await fetchVehiclesByOwner(selectedOwner.id);
+    }
+  };
+
+  const filteredVehicles = selectedOwner ? vehicles : [];
+
+  if (loading) {
+    return <div className="mt-16 p-4">Loading...</div>;
+  }
 
   return (
     <div className="mt-16">
@@ -166,7 +255,7 @@ const ManageVehicleOwners = () => {
                 ← Back to Vehicle Owners
               </button>
               <h1 className="text-2xl font-bold text-gray-900">
-                Vehicles - {selectedOwner?.name}
+                Vehicles - {selectedOwner?.vehicle_owner_name}
               </h1>
               <p className="text-gray-600 mt-1">Manage vehicles for this owner</p>
             </div>
@@ -202,22 +291,27 @@ const ManageVehicleOwners = () => {
       >
         {modalType === 'view' ? (
           currentView === 'owners' ? (
-            <VehicleOwnerView owner={selectedItem} />
+            <VehicleOwnerView owner={selectedVehicleOwner} />
           ) : (
-            <VehicleView vehicle={selectedItem} />
+            <VehicleView vehicle={selectedVehicle} />
           )
         ) : (
           currentView === 'owners' ? (
             <VehicleOwnerForm
-              owner={selectedItem}
+              owner={selectedVehicleOwner}
               onSave={handleSave}
               onCancel={() => setShowModal(false)}
+              isEditing={modalType === 'edit'}
+              submitting={submitting}
             />
           ) : (
             <VehicleForm
-              vehicle={selectedItem}
+              vehicle={selectedVehicle}
               onSave={handleSave}
               onCancel={() => setShowModal(false)}
+              isEditing={modalType === 'edit'}
+              selectedOwner={selectedOwner}
+              submitting={submitting}
             />
           )
         )}

@@ -1,41 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DataTable from '../components/common/DataTable';
 import Modal from '../components/common/Modal';
 import UserForm from '../components/forms/UserForm';
 import UserView from '../components/views/UserView';
+import {
+  getUsers,
+  registerAdmin,
+  updateAdmin,
+  deleteAdmin
+} from '../../services/api';
 
 const ManageUsers = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('add');
   const [selectedUser, setSelectedUser] = useState(null);
-  const [users, setUsers] = useState([
-    {
-      userId: 1,
-      username: 'Ravi Perera',
-      email: 'ravi@admin.lk',
-      password: '1234',
-      image: 'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg'
-    },
-    {
-      userId: 2,
-      username: 'Ravi Perera',
-      email: 'ravi@admin2.lk',
-      password: '1234',
-      image: 'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg'
-    },
-    {
-      userId: 3,
-      username: 'Ravi Perera',
-      email: 'ravi@admin3.lk',
-      password: '1234',
-      image: 'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg'
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await getUsers();
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      alert('Failed to fetch users');
+    } finally {
+      setIsLoading(false);
     }
-  ]);
+  };
+
+  const handleSave = async (formData) => {
+    try {
+      if (modalType === 'add') {
+        await registerAdmin(formData);
+        alert('Admin registered successfully!');
+      } else if (modalType === 'edit') {
+        await updateAdmin(selectedUser.id, formData);
+        alert('User updated successfully!');
+      }
+      setShowModal(false);
+      fetchUsers();
+    } catch (error) {
+      console.error('Error saving user:', error);
+      alert('Failed to save user');
+    }
+  };
+
+  const handleDelete = async (user) => {
+    if (window.confirm(`Are you sure you want to delete "${user.name}"?`)) {
+      try {
+        await deleteAdmin(user.id);
+        setUsers(users.filter(u => u.id !== user.id));
+        alert('User deleted successfully');
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Failed to delete user');
+      }
+    }
+  };
 
   const columns = [
-    { key: 'userId', label: 'User ID', sortable: true },
-    { key: 'username', label: 'Username', sortable: true },
+    { key: 'id', label: 'User ID', sortable: true },
+    { key: 'name', label: 'Username', sortable: true },
     { key: 'email', label: 'Email', sortable: true },
+    { key: 'role', label: 'Role', sortable: true },
   ];
 
   const handleAdd = () => {
@@ -55,27 +87,8 @@ const ManageUsers = () => {
     setSelectedUser(user);
     setShowModal(true);
   };
-
-  const handleDelete = (user) => {
-    if (window.confirm(`Are you sure you want to delete "${user.username}"?`)) {
-      setUsers(users.filter(u => u.id !== user.userId));
-    }
-  };
-
-  const handleSave = (userData) => {
-    if (modalType === 'add') {
-      const newUser = {
-        ...userData,
-        userId: Math.max(...guides.map(u => u.userId)) + 1
-      };
-      setUsers([...users, newUser]);
-    } else if (modalType === 'edit') {
-      setUsers(users.map(u => 
-        u.userId === selectedUser.userId ? { ...u, ...userData } : u
-      ));
-    }
-    setShowModal(false);
-  };
+  
+  if (isLoading) return <div>Loading users...</div>;
 
   return (
     <div className="mt-16">

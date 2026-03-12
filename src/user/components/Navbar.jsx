@@ -3,17 +3,19 @@ import { Menu, X, User, ChevronDown, LogOut, Settings, Shield, FileText } from '
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar = ({ onScrollToSection }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   const navItems = [
     { name: 'Home', path: '/' },
-    { name: 'About Us', id: 'about' },
     { name: 'Locations', path: '/locations' },
     { name: 'Guides', path: '/guides' },
     { name: 'Shops', path: '/shops' },
@@ -21,26 +23,21 @@ const Navbar = ({ onScrollToSection }) => {
     { name: 'Vehicles', path: '/vehicles' }
   ];
 
-  const navigate = useNavigate();
-  
-  
   const handleNavClick = (path) => {
     navigate(path);
     setIsMenuOpen(false);
   };
 
-  const handleLogin = (username) => {
-    setUser(username);
+  const handleLoginSuccess = () => {
     setIsLoginModalOpen(false);
   };
 
-  const handleRegister = (username) => {
-    setUser(username);
+  const handleRegisterSuccess = () => {
     setIsRegisterModalOpen(false);
   };
 
-  const handleLogout = () => {
-    setUser(null);
+  const handleLogout = async () => {
+    await logout();
     setIsProfileDropdownOpen(false);
   };
 
@@ -76,14 +73,14 @@ const Navbar = ({ onScrollToSection }) => {
 
             {/* Login/Profile Section */}
             <div className="hidden md:block">
-              {user ? (
+              {isAuthenticated && user ? (
                 <div className="relative">
                   <button
                     onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                     className="flex items-center gap-2 text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
                   >
                     <User className="size-5" />
-                    <span>{user}</span>
+                    <span>{user.name}</span>
                     <ChevronDown className="size-4" />
                   </button>
                   
@@ -154,11 +151,11 @@ const Navbar = ({ onScrollToSection }) => {
                   {item.name}
                 </button>
               ))}
-              {user ? (
+              {isAuthenticated && user ? (
                 <div className="border-t pt-3">
                   <div className="flex items-center px-3 py-2">
                     <User className="size-5 mr-2" />
-                    <span className="font-medium">{user}</span>
+                    <span className="font-medium">{user.name}</span>
                   </div>
                   <button
                     onClick={handleLogout}
@@ -191,7 +188,7 @@ const Navbar = ({ onScrollToSection }) => {
           setIsLoginModalOpen(false);
           setIsRegisterModalOpen(true);
         }}
-        onLogin={handleLogin}
+        onLogin={handleLoginSuccess}
       />
       
       <RegisterModal
@@ -201,7 +198,7 @@ const Navbar = ({ onScrollToSection }) => {
           setIsRegisterModalOpen(false);
           setIsLoginModalOpen(true);
         }}
-        onRegister={handleRegister}
+        onRegister={handleRegisterSuccess}
       />
     </>
   );

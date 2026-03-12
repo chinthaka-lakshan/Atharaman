@@ -3,7 +3,7 @@ import { Upload, X } from 'lucide-react';
 
 const UserForm = ({ user, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
-    username: user?.username || '',
+    name: user?.name || '',
     email: user?.email || '',
     password: user?.password || ''
   });
@@ -28,18 +28,21 @@ const UserForm = ({ user, onSave, onCancel }) => {
     setImage(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Create FormData object for file upload
     const formDataObj = new FormData();
-    formDataObj.append('username', formData.username);
+    formDataObj.append('name', formData.name); // Changed to match backend
     formDataObj.append('email', formData.email);
     formDataObj.append('password', formData.password);
     
     if (image) formDataObj.append('image', image);
 
-    onSave(formDataObj);
+    try {
+      await onSave(formDataObj);
+    } catch (error) {
+      console.error('Error saving user:', error);
+    }
   };
 
   return (
@@ -51,8 +54,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
           </label>
           <input
             type="text"
-            name="username"
-            value={formData.username}
+            name="name"
+            value={formData.name}
             onChange={handleInputChange}
             required
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"

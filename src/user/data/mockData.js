@@ -147,6 +147,230 @@ export const shops = [
         price: 45
       }
     ]
+  },
+  {
+    id: 3,
+    name: "Adventure Gear Co",
+    description: "Premium camping and hiking equipment for serious adventurers",
+    location: "Rocky Mountains",
+    ownerName: "Tom Anderson",
+    ownerContact: "tom@adventuregear.com",
+    rating: 4.7,
+    items: [
+      {
+        id: 6,
+        name: "Professional Tent",
+        image: "https://images.pexels.com/photos/2662816/pexels-photo-2662816.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "4-season waterproof tent for 2-3 people",
+        price: 299
+      },
+      {
+        id: 7,
+        name: "Hiking Backpack",
+        image: "https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "50L capacity with hydration system",
+        price: 159
+      },
+      {
+        id: 8,
+        name: "Sleeping Bag",
+        image: "https://images.pexels.com/photos/2398220/pexels-photo-2398220.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "Ultra-light sleeping bag rated to -10°C",
+        price: 199
+      }
+    ]
+  },
+  {
+    id: 4,
+    name: "Adventure Gear Co",
+    description: "Premium camping and hiking equipment for serious adventurers",
+    location: "Rocky Mountains",
+    ownerName: "Tom Anderson",
+    ownerContact: "tom@adventuregear.com",
+    rating: 4.7,
+    items: [
+      {
+        id: 9,
+        name: "Professional Tent",
+        image: "https://images.pexels.com/photos/2662816/pexels-photo-2662816.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "4-season waterproof tent for 2-3 people",
+        price: 299
+      },
+      {
+        id: 10,
+        name: "Hiking Backpack",
+        image: "https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "50L capacity with hydration system",
+        price: 159
+      },
+      {
+        id: 11,
+        name: "Sleeping Bag",
+        image: "https://images.pexels.com/photos/2398220/pexels-photo-2398220.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "Ultra-light sleeping bag rated to -10°C",
+        price: 199
+      }
+    ]
+  },
+  {
+    id: 5,
+    name: "Adventure Gear Co",
+    description: "Premium camping and hiking equipment for serious adventurers",
+    location: "Rocky Mountains",
+    ownerName: "Tom Anderson",
+    ownerContact: "tom@adventuregear.com",
+    rating: 4.7,
+    items: [
+      {
+        id: 12,
+        name: "Professional Tent",
+        image: "https://images.pexels.com/photos/2662816/pexels-photo-2662816.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "4-season waterproof tent for 2-3 people",
+        price: 299
+      },
+      {
+        id: 13,
+        name: "Hiking Backpack",
+        image: "https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "50L capacity with hydration system",
+        price: 159
+      },
+      {
+        id: 14,
+        name: "Sleeping Bag",
+        image: "https://images.pexels.com/photos/2398220/pexels-photo-2398220.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "Ultra-light sleeping bag rated to -10°C",
+        price: 199
+      }
+    ]
+  },
+  {
+    id: 6,
+    name: "Adventure Gear Co",
+    description: "Premium camping and hiking equipment for serious adventurers",
+    location: "Rocky Mountains",
+    ownerName: "Tom Anderson",
+    ownerContact: "tom@adventuregear.com",
+    rating: 4.7,
+    items: [
+      {
+        id: 15,
+        name: "Professional Tent",
+        image: "https://images.pexels.com/photos/2662816/pexels-photo-2662816.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "4-season waterproof tent for 2-3 people",
+        price: 299
+      },
+      {
+        id: 16,
+        name: "Hiking Backpack",
+        image: "https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "50L capacity with hydration system",
+        price: 159
+      },
+      {
+        id: 17,
+        name: "Sleeping Bag",
+        image: "https://images.pexels.com/photos/2398220/pexels-photo-2398220.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "Ultra-light sleeping bag rated to -10°C",
+        price: 199
+      }
+    ]
+  },
+  {
+    id: 7,
+    name: "Adventure Gear Co",
+    description: "Premium camping and hiking equipment for serious adventurers",
+    location: "Rocky Mountains",
+    ownerName: "Tom Anderson",
+    ownerContact: "tom@adventuregear.com",
+    rating: 4.7,
+    items: [
+      {
+        id: 18,
+        name: "Professional Tent",
+        image: "https://images.pexels.com/photos/2662816/pexels-photo-2662816.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "4-season waterproof tent for 2-3 people",
+        price: 299
+      },
+      {
+        id: 19,
+        name: "Hiking Backpack",
+        image: "https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "50L capacity with hydration system",
+        price: 159
+      },
+      {
+        id: 20,
+        name: "Sleeping Bag",
+        image: "https://images.pexels.com/photos/2398220/pexels-photo-2398220.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "Ultra-light sleeping bag rated to -10°C",
+        price: 199
+      }
+    ]
+  },
+  {
+    id: 8,
+    name: "Adventure Gear Co",
+    description: "Premium camping and hiking equipment for serious adventurers",
+    location: "Rocky Mountains",
+    ownerName: "Tom Anderson",
+    ownerContact: "tom@adventuregear.com",
+    rating: 4.7,
+    items: [
+      {
+        id: 21,
+        name: "Professional Tent",
+        image: "https://images.pexels.com/photos/2662816/pexels-photo-2662816.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "4-season waterproof tent for 2-3 people",
+        price: 299
+      },
+      {
+        id: 22,
+        name: "Hiking Backpack",
+        image: "https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "50L capacity with hydration system",
+        price: 159
+      },
+      {
+        id: 23,
+        name: "Sleeping Bag",
+        image: "https://images.pexels.com/photos/2398220/pexels-photo-2398220.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "Ultra-light sleeping bag rated to -10°C",
+        price: 199
+      }
+    ]
+  },
+  {
+    id: 9,
+    name: "Adventure Gear Co",
+    description: "Premium camping and hiking equipment for serious adventurers",
+    location: "Rocky Mountains",
+    ownerName: "Tom Anderson",
+    ownerContact: "tom@adventuregear.com",
+    rating: 4.7,
+    items: [
+      {
+        id: 24,
+        name: "Professional Tent",
+        image: "https://images.pexels.com/photos/2662816/pexels-photo-2662816.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "4-season waterproof tent for 2-3 people",
+        price: 299
+      },
+      {
+        id: 25,
+        name: "Hiking Backpack",
+        image: "https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "50L capacity with hydration system",
+        price: 159
+      },
+      {
+        id: 26,
+        name: "Sleeping Bag",
+        image: "https://images.pexels.com/photos/2398220/pexels-photo-2398220.jpeg?auto=compress&cs=tinysrgb&w=400",
+        description: "Ultra-light sleeping bag rated to -10°C",
+        price: 199
+      }
+    ]
   }
 ];
 

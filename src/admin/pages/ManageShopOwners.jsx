@@ -1,55 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DataTable from '../components/common/DataTable';
 import Modal from '../components/common/Modal';
 import ShopOwnerForm from '../components/forms/ShopOwnerForm';
 import ShopForm from '../components/forms/ShopForm';
 import ShopOwnerView from '../components/views/ShopOwnerView';
 import ShopView from '../components/views/ShopView';
+import {
+  getShopOwners,
+  getShopOwnerById,
+  createShopOwner,
+  updateShopOwner,
+  deleteShopOwner,
+  getShopsByOwner,
+  getShopById,
+  createShop,
+  updateShop,
+  deleteShop
+} from '../../services/api';
 
 const ManageShopOwners = () => {
   const [currentView, setCurrentView] = useState('owners'); // 'owners' or 'shops'
   const [selectedOwner, setSelectedOwner] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('add');
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedShopOwner, setSelectedShopOwner] = useState(null);
+  const [selectedShop, setSelectedShop] = useState(null);
+  const [shopOwners, setShopOwners] = useState([]);
+  const [shops, setShops] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const [shopOwners, setShopOwners] = useState([
-    {
-      id: 1,
-      name: 'Sunil Fernando',
-      description: 'Traditional craft shop owner',
-      nic: '197234567V',
-      businessEmail: 'sunil@crafts.lk',
-      personalNumber: '+94712345678',
-      whatsappNumber: '+94712345678',
-      userId: 'user002',
-      image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg'
-    }
-  ]);
+  // Fetch shop owners on component mount
+  useEffect(() => {
+    fetchShopOwners();
+  }, []);
 
-  const [shops, setShops] = useState([
-    {
-      id: 1,
-      ownerId: 1,
-      name: 'Traditional Crafts Emporium',
-      description: 'Authentic Sri Lankan handicrafts and souvenirs',
-      address: '123 Main Street, Kandy',
-      contactNumber: '+94812345678',
-      relatedLocations: ['Kandy', 'Sigiriya'],
-      image: 'https://images.pexels.com/photos/264636/pexels-photo-264636.jpeg'
+  const fetchShopOwners = async () => {
+    setLoading(true);
+    try {
+      const response = await getShopOwners();
+      setShopOwners(response.data);
+      setError(null);
+    } catch (error) {
+      setError('Failed to fetch shop owners. Please try again.');
+      console.error('Error fetching shop owners:', error);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  // Fetch shops when selected owner changes
+  useEffect(() => {
+    if (selectedOwner) {
+      fetchShopsByOwner(selectedOwner.id);
+    }
+  }, [selectedOwner]);
+
+  const fetchShopsByOwner = async (ownerId) => {
+    setLoading(true);
+    try {
+      const response = await getShopsByOwner(ownerId);
+      setShops(response.data);
+      setError(null);
+    } catch (error) {
+      setError('Failed to fetch shops. Please try again.');
+      console.error('Error fetching shops:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const ownerColumns = [
-    { key: 'name', label: 'Owner Name', sortable: true },
-    { key: 'businessEmail', label: 'Email', sortable: true },
-    { key: 'personalNumber', label: 'Phone', sortable: false },
+    { key: 'shop_owner_name', label: 'Shop Owner Name', sortable: true },
+    { key: 'shop_owner_nic', label: 'NIC', sortable: true },
+    { key: 'business_mail', label: 'Email', sortable: true },
+    { key: 'contact_number', label: 'Phone', sortable: true },
   ];
 
   const shopColumns = [
-    { key: 'name', label: 'Shop Name', sortable: true },
-    { key: 'address', label: 'Address', sortable: false },
-    { key: 'contactNumber', label: 'Contact', sortable: false },
+    { key: 'shop_name', label: 'Shop Name', sortable: true },
+    { key: 'nearest_city', label: 'City', sortable: true },
+    { key: 'contact_number', label: 'Contact', sortable: true },
+    { key: 'shop_address', label: 'Address', sortable: true },
   ];
 
   const handleOwnerRowClick = (owner) => {
@@ -60,68 +93,127 @@ const ManageShopOwners = () => {
   const handleBackToOwners = () => {
     setCurrentView('owners');
     setSelectedOwner(null);
+    setSelectedShop(null);
   };
 
   const handleAdd = () => {
     setModalType('add');
-    setSelectedItem(null);
+    setSelectedShopOwner(null);
+    setSelectedShop(null);
     setShowModal(true);
   };
 
-  const handleView = (item) => {
-    setModalType('view');
-    setSelectedItem(item);
-    setShowModal(true);
+  const handleView = async (item) => {
+    try {
+      if (currentView === 'owners') {
+        const response = await getShopOwnerById(item.id);
+        setModalType('view');
+        setSelectedShopOwner(response.data);
+        setShowModal(true);
+      } else {
+        const response = await getShopById(item.id);
+        setModalType('view');
+        setSelectedShop(response.data);
+        setShowModal(true);
+      }
+    } catch (error) {
+      setError('Failed to fetch details. Please try again.');
+      console.error('Error fetching details:', error);
+    }
   };
 
   const handleEdit = (item) => {
     setModalType('edit');
-    setSelectedItem(item);
+    if (currentView === 'owners') {
+      setSelectedShopOwner(item);
+      setSelectedShop(null);
+    } else {
+      setSelectedShop(item);
+      setSelectedShopOwner(null);
+    }
     setShowModal(true);
   };
 
-  const handleDelete = (item) => {
-    const itemName = currentView === 'owners' ? item.name : item.name;
+  const handleDelete = async (item) => {
+    const itemName = currentView === 'owners' ? item.shop_owner_name : item.shopName;
     if (window.confirm(`Are you sure you want to delete "${itemName}"?`)) {
+      try {
+        setLoading(true);
+        if (currentView === 'owners') {
+          await deleteShopOwner(item.id);
+          setShopOwners(shopOwners.filter(o => o.id !== item.id));
+          setError(null);
+        } else {
+          await deleteShop(item.id);
+          setShops(shops.filter(s => s.id !== item.id));
+          setError(null);
+        }
+      } catch (error) {
+        setError('Failed to delete. Please try again.');
+        console.error('Error deleting:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleSave = async (formData) => {
+    try {
+      setError(null);
+      setSubmitting(true);
+
       if (currentView === 'owners') {
-        setShopOwners(shopOwners.filter(o => o.id !== item.id));
+        await handleOwnerSave(formData);
       } else {
-        setShops(shops.filter(s => s.id !== item.id));
+        await handleShopSave(formData);
       }
+      
+      setShowModal(false);
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          error.message ||
+                          'Failed to save. Please try again.';
+      setError(`Failed to save: ${errorMessage}`);
+      console.error('Save error:', error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleSave = (itemData) => {
-    if (currentView === 'owners') {
-      if (modalType === 'add') {
-        const newOwner = {
-          ...itemData,
-          id: Math.max(...shopOwners.map(o => o.id)) + 1
-        };
-        setShopOwners([...shopOwners, newOwner]);
-      } else if (modalType === 'edit') {
-        setShopOwners(shopOwners.map(o => 
-          o.id === selectedItem.id ? { ...o, ...itemData } : o
-        ));
-      }
+  // Helper methods
+  const handleOwnerSave = async (formData) => {
+    let response;
+    
+    if (modalType === 'add') {
+      response = await createShopOwner(formData);
+      setShopOwners(prev => [...prev, response.data.shopOwner]);
     } else {
-      if (modalType === 'add') {
-        const newShop = {
-          ...itemData,
-          id: Math.max(...shops.map(s => s.id)) + 1,
-          ownerId: selectedOwner.id
-        };
-        setShops([...shops, newShop]);
-      } else if (modalType === 'edit') {
-        setShops(shops.map(s => 
-          s.id === selectedItem.id ? { ...s, ...itemData } : s
-        ));
-      }
+      response = await updateShopOwner(selectedShopOwner.id, formData);
+      setShopOwners(prev => 
+        prev.map(owner => 
+          owner.id === selectedShopOwner.id ? response.data.shopOwner : owner
+        )
+      );
     }
-    setShowModal(false);
   };
 
-  const filteredShops = selectedOwner ? shops.filter(s => s.ownerId === selectedOwner.id) : [];
+  const handleShopSave = async (formData) => {
+    const response = modalType === 'add'
+      ? await createShop(formData)
+      : await updateShop(selectedShop.id, formData);
+
+    // Refresh shops list to ensure data consistency
+    if (selectedOwner) {
+      await fetchShopsByOwner(selectedOwner.id);
+    }
+  };
+
+  const filteredShops = selectedOwner ? shops : [];
+
+  if (loading) {
+    return <div className="mt-16 p-4">Loading...</div>;
+  }
 
   return (
     <div className="mt-16">
@@ -161,7 +253,7 @@ const ManageShopOwners = () => {
                 ← Back to Shop Owners
               </button>
               <h1 className="text-2xl font-bold text-gray-900">
-                Shops - {selectedOwner?.name}
+                Shops - {selectedOwner?.shop_owner_name}
               </h1>
               <p className="text-gray-600 mt-1">Manage shops for this owner</p>
             </div>
@@ -197,22 +289,27 @@ const ManageShopOwners = () => {
       >
         {modalType === 'view' ? (
           currentView === 'owners' ? (
-            <ShopOwnerView owner={selectedItem} />
+            <ShopOwnerView owner={selectedShopOwner} />
           ) : (
-            <ShopView shop={selectedItem} />
+            <ShopView shop={selectedShop} />
           )
         ) : (
           currentView === 'owners' ? (
             <ShopOwnerForm
-              owner={selectedItem}
+              owner={selectedShopOwner}
               onSave={handleSave}
               onCancel={() => setShowModal(false)}
+              isEditing={modalType === 'edit'}
+              submitting={submitting}
             />
           ) : (
             <ShopForm
-              shop={selectedItem}
+              shop={selectedShop}
               onSave={handleSave}
               onCancel={() => setShowModal(false)}
+              isEditing={modalType === 'edit'}
+              selectedOwner={selectedOwner}
+              submitting={submitting}
             />
           )
         )}

@@ -1,104 +1,106 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DataTable from '../components/common/DataTable';
 import Modal from '../components/common/Modal';
 import ReviewView from '../components/views/ReviewView';
+import { 
+  getReviews, 
+  getWebsiteReviews, 
+  deleteReview, 
+  deleteWebsiteReview 
+} from '../../services/api';
 
 const reviewTypes = [
-  { id: 'websitereview', label: 'Website' },
-  { id: 'locationreview', label: 'Location' },
-  { id: 'guidereview', label: 'Guide' },
-  { id: 'itemreview', label: 'Item' },
-  { id: 'hotelreview', label: 'Hotel' },
-  { id: 'vehiclereview', label: 'Vehicle' }
+  { id: 'websitereview', label: 'Website', apiType: 'website' },
+  { id: 'locationreview', label: 'Location', apiType: 'location' },
+  { id: 'guidereview', label: 'Guide', apiType: 'guide' },
+  { id: 'shopreview', label: 'Shop', apiType: 'shop' },
+  { id: 'hotelreview', label: 'Hotel', apiType: 'hotel' },
+  { id: 'vehiclereview', label: 'Vehicle', apiType: 'vehicle' }
 ];
 
 const ManageReviews = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
   const [activeType, setActiveType] = useState('websitereview');
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      type: 'locationreview',
-      username: 'srashenb',
-      comment: 'Great historical site with amazing views',
-      rating: 4.5,
-      images: ['https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg',
-        'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg',
-        'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg',
-        'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg',
-        'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg'
-      ],
-      date: '20 July 2025',
-      time: '17.30',
-      relatedTo: { id: 'loc123', name: 'Sigiriya Rock Fortress' }
-    },
-    {
-      id: 2,
-      type: 'websitereview',
-      username: 'traveler123',
-      comment: 'Very user-friendly website with great features',
-      rating: 4.0,
-      images: [],
-      date: '21 July 2025',
-      time: '10.15'
-    },
-    {
-      id: 3,
-      type: 'guidereview',
-      username: 'adventurer',
-      comment: 'Knowledgeable and friendly guide',
-      rating: 5.0,
-      date: '22 July 2025',
-      time: '09.00',
-      relatedTo: { id: 'guide456', name: 'John Smith' }
-    },
-    {
-      id: 4,
-      type: 'itemreview',
-      username: 'shopper',
-      comment: 'High quality souvenir, exactly as pictured',
-      rating: 4.0,
-      images: ['https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg',
-        'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg'
-      ],
-      date: '23 July 2025',
-      time: '14.30',
-      relatedTo: { id: 'item789', name: 'Wooden Elephant Carving' }
-    },
-    {
-      id: 5,
-      type: 'hotelreview',
-      username: 'vacationer',
-      comment: 'Excellent service and comfortable rooms',
-      rating: 4.5,
-      images: ['https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg',
-        'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg',
-        'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg',
-        'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg'
-      ],
-      date: '24 July 2025',
-      time: '20.00',
-      relatedTo: { id: 'hotel101', name: 'Grand Colombo Hotel' }
-    },
-    {
-      id: 6,
-      type: 'vehiclereview',
-      username: 'explorer',
-      comment: 'Reliable vehicle for our safari trip',
-      rating: 4.0,
-      images: ['https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg'],
-      date: '25 July 2025',
-      time: '16.45',
-      relatedTo: { id: 'vehicle202', name: 'Toyota Land Cruiser' }
-    },
-  ]);
+  const [reviews, setReviews] = useState([]);
+  const [websiteReviews, setWebsiteReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const filteredReviews = reviews.filter(review => review.type === activeType);
+  useEffect(() => {
+    fetchAllReviews();
+  }, []);
+
+  const fetchAllReviews = async () => {
+    try {
+      setLoading(true);
+      const reviewsResponse = await getReviews();
+      const websiteReviewsResponse = await getWebsiteReviews();
+      
+      setReviews(reviewsResponse.data);
+      setWebsiteReviews(websiteReviewsResponse.data);
+    } catch (err) {
+      console.error('Error fetching reviews:', err);
+      setError('Failed to load reviews. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getFilteredReviews = () => {
+    if (activeType === 'websitereview') {
+      return websiteReviews.map(review => ({
+        ...review,
+        type: 'websitereview',
+        username: review.user?.name || 'Unknown User',
+        relatedTo: null,
+        images: []
+      }));
+    }
+
+    const entityType = reviewTypes.find(t => t.id === activeType)?.apiType;
+    return reviews
+      .filter(review => review.entity_type === entityType)
+      .map(review => ({
+        ...review,
+        type: `${entityType}review`,
+        username: review.user?.name || 'Unknown User',
+        relatedTo: { 
+          id: review.entity_id, 
+          name: `ID: ${review.entity_id}` 
+        },
+        images: review.images || []
+      }));
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const formatTime = (dateString) => {
+    return new Date(dateString).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   const columns = [
     { key: 'username', label: 'Username', sortable: true },
-    { key: 'rating', label: 'Rating', sortable: true },
+    { 
+      key: 'rating', 
+      label: 'Rating', 
+      sortable: true,
+      render: (value) => (
+        <div className="flex items-center">
+          <span className="text-yellow-500">★</span>
+          <span className="ml-1 font-medium">{value}</span>
+        </div>
+      )
+    },
     ...(activeType !== 'websitereview' ? [{
       key: 'relatedTo',
       label: 'Related To',
@@ -111,29 +113,86 @@ const ManageReviews = () => {
       sortable: false,
       render: (value) => (
         <div className="max-w-xs truncate" title={value}>
-          {value}
+          {value || 'No comment'}
         </div>
       )
+    },
+    { 
+      key: 'created_at', 
+      label: 'Date', 
+      sortable: true,
+      render: (value) => formatDate(value)
     },
   ];
 
   const handleView = (review) => {
-    setSelectedReview(review);
+    setSelectedReview({
+      ...review,
+      date: formatDate(review.created_at),
+      time: formatTime(review.created_at)
+    });
     setShowModal(true);
   };
 
-  const handleDelete = (review) => {
+  const handleDelete = async (review) => {
     if (window.confirm(`Are you sure you want to delete this review?`)) {
-      setReviews(reviews.filter(r => r.id !== review.id));
+      try {
+        if (review.type === 'websitereview') {
+          await deleteWebsiteReview(review.id);
+          setWebsiteReviews(prev => prev.filter(r => r.id !== review.id));
+        } else {
+          await deleteReview(review.id);
+          setReviews(prev => prev.filter(r => r.id !== review.id));
+        }
+        alert('Review deleted successfully!');
+      } catch (err) {
+        console.error('Error deleting review:', err);
+        if (err.response?.status === 403) {
+          alert('Permission denied. Only administrators can delete reviews.');
+        } else {
+          alert('Failed to delete review. Please try again.');
+        }
+      }
     }
   };
+
+  const filteredReviews = getFilteredReviews();
+
+  if (loading) {
+    return (
+      <div className="mt-16 flex items-center justify-center min-h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading reviews...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mt-16 flex items-center justify-center min-h-64">
+        <div className="text-center text-red-600">
+          <p>{error}</p>
+          <button
+            onClick={fetchAllReviews}
+            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-16">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Reviews List</h1>
-          <p className="text-gray-600 mt-1">Manage all user reviews in the system</p>
+          <h1 className="text-2xl font-bold text-gray-900">Reviews Management</h1>
+          <p className="text-gray-600 mt-1">
+            Manage all user reviews in the system ({filteredReviews.length} reviews)
+          </p>
 
           {/* Review Type Filter */}
           <div className="flex space-x-2 mt-4 overflow-x-auto pb-2">
@@ -147,20 +206,31 @@ const ManageReviews = () => {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {type.label} Reviews
+                {type.label} Reviews ({type.id === 'websitereview' 
+                  ? websiteReviews.length 
+                  : reviews.filter(r => r.entity_type === type.apiType).length
+                })
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      <DataTable
-        data={filteredReviews}
-        columns={columns}
-        onView={handleView}
-        onDelete={handleDelete}
-        hideEdit={true} // Assuming your DataTable component accepts this prop to hide edit button
-      />
+      {filteredReviews.length === 0 ? (
+        <div className="text-center py-12 bg-gray-50 rounded-lg">
+          <p className="text-gray-500 text-lg">
+            No {reviewTypes.find(t => t.id === activeType)?.label.toLowerCase()} reviews found.
+          </p>
+        </div>
+      ) : (
+        <DataTable
+          data={filteredReviews}
+          columns={columns}
+          onView={handleView}
+          onDelete={handleDelete}
+          hideEdit={true}
+        />
+      )}
 
       <Modal
         isOpen={showModal}
@@ -168,7 +238,12 @@ const ManageReviews = () => {
         title="Review Details"
         size="large"
       >
-        <ReviewView review={selectedReview} />
+        {selectedReview && (
+          <ReviewView 
+            review={selectedReview}
+            onClose={() => setShowModal(false)}
+          />
+        )}
       </Modal>
     </div>
   );

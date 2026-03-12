@@ -1,60 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DataTable from '../components/common/DataTable';
 import Modal from '../components/common/Modal';
 import GuideForm from '../components/forms/GuideForm';
 import GuideView from '../components/views/GuideView';
+import {
+  getGuides,
+  createGuide,
+  updateGuide,
+  deleteGuide
+} from '../../services/api';
 
 const ManageGuides = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('add');
   const [selectedGuide, setSelectedGuide] = useState(null);
-  const [guides, setGuides] = useState([
-    {
-      id: 1,
-      name: 'Ravi Perera',
-      description: 'Experienced tour guide specializing in cultural sites',
-      nic: '198456789V',
-      businessEmail: 'ravi@guides.lk',
-      personalNumber: '+94771234567',
-      whatsappNumber: '+94771234567',
-      languages: ['English', 'Sinhala', 'Tamil'],
-      userId: 'user001',
-      relatedLocations: ['Sigiriya', 'Kandy'],
-      image: 'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg'
-    },
-    {
-      id: 2,
-      name: 'Ravi Perera',
-      description: 'Experienced tour guide specializing in cultural sites',
-      nic: '198456789V',
-      businessEmail: 'ravi@guides.lk',
-      personalNumber: '+94771234567',
-      whatsappNumber: '+94771234567',
-      languages: ['English', 'Sinhala', 'Tamil'],
-      userId: 'user001',
-      relatedLocations: ['Sigiriya', 'Kandy'],
-      image: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg'
-    },
-    {
-      id: 3,
-      name: 'Ravi Perera',
-      description: 'Experienced tour guide specializing in cultural sites',
-      nic: '198456789V',
-      businessEmail: 'ravi@guides.lk',
-      personalNumber: '+94771234567',
-      whatsappNumber: '+94771234567',
-      languages: ['English', 'Sinhala', 'Tamil'],
-      userId: 'user001',
-      relatedLocations: ['Sigiriya', 'Kandy'],
-      image: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg'
+  const [guides, setGuides] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch guides on component mount
+  useEffect(() => {
+    fetchGuides();
+  }, []);
+
+  const fetchGuides = async () => {
+    try {
+      setLoading(true);
+      const response = await getGuides();
+      setGuides(response.data);
+      setError(null);
+    } catch (error) {
+      setError('Failed to fetch guides. Please try again.');
+      console.error('Error fetching guides:', error);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
   const columns = [
-    { key: 'name', label: 'Guide Name', sortable: true },
-    { key: 'nic', label: 'NIC', sortable: true },
-    { key: 'businessEmail', label: 'Email', sortable: true },
-    { key: 'personalNumber', label: 'Phone', sortable: true },
+    { key: 'guide_name', label: 'Guide Name', sortable: true },
+    { key: 'guide_nic', label: 'NIC', sortable: true },
+    { key: 'business_mail', label: 'Email', sortable: true },
+    { key: 'contact_number', label: 'Contact', sortable: true },
+    { key: 'guide_address', label: 'Address', sortable: true },
   ];
 
   const handleAdd = () => {
@@ -75,26 +63,44 @@ const ManageGuides = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (guide) => {
-    if (window.confirm(`Are you sure you want to delete "${guide.name}"?`)) {
-      setGuides(guides.filter(g => g.id !== guide.id));
+  const handleDelete = async (guide) => {
+    if (window.confirm(`Are you sure you want to delete "${guide.guide_name}"?`)) {
+      try {
+        setLoading(true);
+        await deleteGuide(guide.id);
+        setGuides(guides.filter(g => g.id !== guide.id));
+      } catch (error) {
+        console.error('Error deleting guide:', error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const handleSave = (guideData) => {
-    if (modalType === 'add') {
-      const newGuide = {
-        ...guideData,
-        id: Math.max(...guides.map(g => g.id)) + 1
-      };
-      setGuides([...guides, newGuide]);
-    } else if (modalType === 'edit') {
-      setGuides(guides.map(g => 
-        g.id === selectedGuide.id ? { ...g, ...guideData } : g
-      ));
+  const handleSave = async (formData) => {
+    try {
+      if (modalType === 'add') {
+        const response = await createGuide(formData);
+        setGuides([...guides, response.data.guide]);
+      } else if (modalType === 'edit') {
+        const response = await updateGuide(selectedGuide.id, formData);
+        
+        if (response.status === 200) {
+          setGuides(guides.map(g => 
+            g.id === selectedGuide.id ? response.data.guide : g
+          ));
+        }
+      }
+      setShowModal(false);
+      setError(null);
+    } catch (error) {
+      console.error('Error saving guide:', error);
     }
-    setShowModal(false);
   };
+
+  if (loading) {
+    return <div className="mt-16 p-4">Loading guides...</div>;
+  }
 
   return (
     <div className="mt-16">
@@ -110,6 +116,12 @@ const ManageGuides = () => {
           Add New
         </button>
       </div>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
 
       <DataTable
         data={guides}
@@ -135,6 +147,7 @@ const ManageGuides = () => {
             guide={selectedGuide}
             onSave={handleSave}
             onCancel={() => setShowModal(false)}
+            isEditing={modalType === 'edit'}
           />
         )}
       </Modal>

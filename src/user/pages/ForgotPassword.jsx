@@ -1,22 +1,28 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Mail, Send, Check, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { sendResetLink } from '../../services/api';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const response = await sendResetLink({ email });
       setIsSubmitted(true);
-    }, 2000);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to send reset link');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -34,6 +40,13 @@ const ForgotPassword = () => {
 
         {/* Main Card */}
         <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 animate-fade-in [animation-delay:100ms]">
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              {error}
+            </div>
+          )}
+
           {!isSubmitted ? (
             <>
               {/* Header */}

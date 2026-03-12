@@ -1,0 +1,385 @@
+/* Weather Widget Styles */
+.weatherWidget {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Weather Animations */
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInCard {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -8px, 0);
+  }
+  70% {
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sway {
+  0%, 100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Weather-specific animations */
+@keyframes animatesunny {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.5));
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+    filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8));
+  }
+}
+
+@keyframes animatecloudy {
+  0%, 100% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes animaterainy {
+  0% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(2px);
+  }
+}
+
+@keyframes animatesnowy {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(90deg);
+  }
+  50% {
+    transform: translateY(0px) rotate(180deg);
+  }
+  75% {
+    transform: translateY(3px) rotate(270deg);
+  }
+}
+
+@keyframes animatewindy {
+  0%, 100% {
+    transform: translateX(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateX(3px) rotate(5deg);
+  }
+  50% {
+    transform: translateX(-2px) rotate(-3deg);
+  }
+  75% {
+    transform: translateX(2px) rotate(3deg);
+  }
+}
+
+/* Animation Classes */
+.animateSlideInDown {
+  animation: slideInDown 0.6s ease-out;
+}
+
+.animateSlideInUp {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.animateSlideInCard {
+  animation: slideInCard 0.6s ease-out forwards;
+}
+
+.animateFloat {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animatePulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animateBounce {
+  animation: bounce 2s infinite;
+}
+
+.animateStagger1 { animation-delay: 0.1s; }
+.animateStagger2 { animation-delay: 0.2s; }
+.animateStagger3 { animation-delay: 0.3s; }
+
+/* Weather Icon Animations */
+.weatherIcon {
+  transition: all 0.3s ease;
+}
+
+.animatesunny {
+  animation: animatesunny 4s ease-in-out infinite;
+}
+
+.animatecloudy {
+  animation: animatecloudy 3s ease-in-out infinite;
+}
+
+.animaterainy {
+  animation: animaterainy 1s ease-in-out infinite alternate;
+}
+
+.animatesnowy {
+  animation: animatesnowy 3s ease-in-out infinite;
+}
+
+.animatewindy {
+  animation: animatewindy 2s ease-in-out infinite;
+}
+
+/* Current Weather Section */
+.currentWeather {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.currentWeather::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: shimmer 3s infinite;
+}
+
+.temperature {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.temperature:hover {
+  transform: scale(1.05);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Weather Details */
+.weatherDetail {
+  transition: all 0.3s ease;
+}
+
+.weatherDetail:hover {
+  transform: translateY(-2px);
+}
+
+/* Week Navigation */
+.weekNavButton {
+  transition: all 0.3s ease;
+}
+
+.weekNavButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  transform: scale(1.1);
+}
+
+/* Day Buttons */
+.dayButton {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.dayButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.dayButton:hover::before {
+  left: 100%;
+}
+
+.dayButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dayIcon {
+  transition: all 0.3s ease;
+}
+
+.dayButton:hover .dayIcon {
+  transform: scale(1.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .weatherWidget {
+    padding: 1rem;
+  }
+  
+  .currentWeather {
+    padding: 1.5rem;
+  }
+  
+  .dayButton {
+    padding: 0.5rem;
+  }
+  
+  .dayIcon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-cols-7 {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.25rem;
+  }
+  
+  .dayButton {
+    padding: 0.375rem;
+  }
+}
+
+/* Loading States */
+.weatherWidget.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.weatherWidget.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .weatherWidget * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .weatherWidget {
+    border: 2px solid #000000;
+  }
+  
+  .currentWeather {
+    background: #000000;
+    color: #ffffff;
+  }
+  
+  .dayButton {
+    border: 1px solid #000000;
+  }
+}
+
+/* Print styles */
+@media print {
+  .weatherWidget .no-print {
+    display: none !important;
+  }
+}

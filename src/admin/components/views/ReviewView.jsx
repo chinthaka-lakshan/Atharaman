@@ -1,41 +1,55 @@
 import React from 'react';
-import { Star, Image as ImageIcon } from 'lucide-react';
 
-const ReviewView = ({ review }) => {
+const ReviewView = ({ review, onClose }) => {
   if (!review) return null;
 
-  // Filter out null/undefined images
-  const images = (review.images || []).filter(img => img);
-
   return (
-    <div className="space-y-6">
-      {/* Review Header */}
-      <div className="flex flex-col">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">{review.username}</h3>
-        <p className="text-gray-600 mb-2">
-          {review.type === 'websitereview' 
-            ? 'Website Review' 
-            : `${review.type.replace('review', '')} Review for ${review.relatedTo?.name || 'Unknown'}`
-          }
-        </p>
-        <p className="text-gray-600 mb-2">{`${review.date} At ${review.time}`}</p>
-        <div className="flex items-center text-sm text-gray-500">
-          <Star className="w-4 h-4 mr-1" />
-          <span>{review.rating}</span>
+    <div className="p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">User</h3>
+          <p className="text-lg font-semibold">{review.username}</p>
+        </div>
+        
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Rating</h3>
+          <div className="flex items-center">
+            <span className="text-2xl text-yellow-500">★</span>
+            <span className="ml-2 text-xl font-bold">{review.rating}</span>
+            <span className="ml-1 text-gray-500">/5</span>
+          </div>
+        </div>
+
+        {review.relatedTo && (
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Related To</h3>
+            <p className="text-lg font-semibold">{review.relatedTo.name}</p>
+          </div>
+        )}
+
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Date & Time</h3>
+          <p className="text-lg font-semibold">{review.date} at {review.time}</p>
         </div>
       </div>
 
-      {/* Image Gallery - Only show if there are images */}
-      {images.length > 0 && (
-        <div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">Gallery</h4>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {images.map((img, index) => (
-              <div key={index} className="aspect-square overflow-hidden rounded-lg bg-gray-100">
+      {review.comment && (
+        <div className="mb-6">
+          <h3 className="text-sm font-medium text-gray-500 mb-2">Comment</h3>
+          <p className="text-gray-800 bg-gray-50 p-4 rounded-lg">{review.comment}</p>
+        </div>
+      )}
+
+      {review.images && review.images.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-sm font-medium text-gray-500 mb-3">Images ({review.images.length})</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {review.images.map((image, index) => (
+              <div key={index} className="relative group">
                 <img
-                  src={img}
-                  alt={`${review.username} - Image ${index + 1}`}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform"
+                  src={`http://localhost:8000/storage/${image}`}
+                  alt={`Review image ${index + 1}`}
+                  className="w-full h-32 object-cover rounded-lg border border-gray-200"
                 />
               </div>
             ))}
@@ -43,10 +57,13 @@ const ReviewView = ({ review }) => {
         </div>
       )}
 
-      {/* Description */}
-      <div>
-        <h4 className="text-lg font-semibold text-gray-900 mb-2">Comment</h4>
-        <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+        >
+          Close
+        </button>
       </div>
     </div>
   );

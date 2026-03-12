@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { X, Eye, EyeOff } from 'lucide-react';
+import { loginUser } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -7,12 +9,47 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onLogin }) => {
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { login } = useAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.email && formData.password) {
-      onLogin(formData.email.split('@')[0]);
-      onClose();
+    setError('');
+    setLoading(true);
+    
+    try {
+      const response = await loginUser({
+        email: formData.email,
+        password: formData.password
+      });
+      
+      if (response.data.token && response.data.user) {
+        // Use AuthContext to handle login
+        login(response.data.user, response.data.token);
+        
+        onClose();
+        
+        // Call the onLogin callback if provided
+        if (onLogin) {
+          onLogin();
+        }
+        
+        // Redirect based on role
+        setTimeout(() => {
+          if (response.data.user.role === 'Admin') {
+            window.location.href = '/admin';
+          } else {
+            window.location.href = '/';
+          }
+        }, 100);
+      }
+    } catch (err) {
+      console.error('Login error:', err.response?.data);
+      setError(err.response?.data?.error || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,22 +73,29 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onLogin }) => {
           <p className="text-gray-600">Sign in to your account</p>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email Field */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email or Username
+              Email
             </label>
             <input
               id="email"
-              type="text"
+              type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
               placeholder="Enter your email"
               required
-              autoComplete="username"
+              autoComplete="email"
             />
           </div>
 
@@ -90,9 +134,10 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onLogin }) => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transform hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-orange-500/20"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transform hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Sign In
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 

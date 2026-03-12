@@ -1,24 +1,21 @@
 import React from 'react';
-import { MapPin, Globe, Image as ImageIcon } from 'lucide-react';
+import { Globe, Image as ImageIcon, Mountain } from 'lucide-react';
 
 const LocationView = ({ location }) => {
-  if (!location) return null;
+  if (!location) return <div>No location data available</div>;;
 
-  // Combine main image with other images
-  const allImages = [
-    location.mainImage,
-    ...(location.images || [])
-  ].filter(img => img); // Filter out any null/undefined images
+  // Get all images from the relationship
+  const allImages = location.images || [];
 
   return (
     <div className="space-y-6">
-      {/* Location Header with Main Image */}
+      {/* Location Header */}
       <div className="flex flex-col md:flex-row items-start gap-6">
         <div className="w-full md:w-48 flex-shrink-0">
-          {location.mainImage ? (
+          {allImages.length > 0 ? (
             <img
-              src={location.mainImage}
-              alt={location.name}
+              src={`http://localhost:8000/storage/${allImages[0].image_path}`}
+              alt={allImages[0].alt_text}
               className="w-full h-48 object-cover rounded-lg"
             />
           ) : (
@@ -28,11 +25,18 @@ const LocationView = ({ location }) => {
           )}
         </div>
         <div className="flex-1">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">{location.name}</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">{location.locationName}</h3>
           <p className="text-gray-600 mb-4">{location.shortDescription}</p>
           <div className="flex items-center text-sm text-gray-500">
             <Globe className="w-4 h-4 mr-1" />
             <span>{location.province} Province</span>
+          </div>
+          <div className="flex items-center text-sm text-gray-500 mt-2">
+            <Mountain className="w-4 h-4 mr-1" />
+            <span>{location.locationType}</span>
+          </div>
+          <div className="mt-2 text-sm text-gray-500">
+            <span>Coordinates: {location.latitude}, {location.longitude}</span>
           </div>
         </div>
       </div>
@@ -42,19 +46,13 @@ const LocationView = ({ location }) => {
         <div>
           <h4 className="text-lg font-semibold text-gray-900 mb-4">Gallery</h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {allImages.map((img, index) => (
-              <div key={index} className="aspect-square overflow-hidden rounded-lg bg-gray-100">
-                {img ? (
-                  <img
-                    src={img}
-                    alt={`${location.name} - ${index === 0 ? 'Main' : `Image ${index}`}`}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-gray-400" />
-                  </div>
-                )}
+            {allImages.map((img) => (
+              <div key={img.id} className="aspect-square overflow-hidden rounded-lg bg-gray-100">
+                <img
+                  src={`http://localhost:8000/storage/${img.image_path}`}
+                  alt={img.alt_text}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform"
+                />
               </div>
             ))}
           </div>
@@ -66,7 +64,6 @@ const LocationView = ({ location }) => {
         <h4 className="text-lg font-semibold text-gray-900 mb-2">Description</h4>
         <p className="text-gray-700 leading-relaxed">{location.longDescription}</p>
       </div>
-
     </div>
   );
 };

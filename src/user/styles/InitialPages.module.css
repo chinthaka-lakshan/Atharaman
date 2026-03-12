@@ -1,0 +1,355 @@
+/* Initial Page Styles */
+.initialPage {
+  min-height: 100vh;
+}
+
+/* Search and Filter Animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInCard {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -10px, 0);
+  }
+  70% {
+    transform: translate3d(0, -5px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+/* Animation Classes */
+.animateSlideInLeft {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.animateSlideInRight {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.animateSlideInUp {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.animateSlideDown {
+  animation: slideDown 0.3s ease-out;
+}
+
+.animateFadeIn {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animateFadeInUp {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animateZoomIn {
+  animation: zoomIn 0.6s ease-out;
+}
+
+.animateSlideInCard {
+  animation: slideInCard 0.6s ease-out forwards;
+}
+
+.animatePulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animateBounce {
+  animation: bounce 2s infinite;
+}
+
+/* Search Input */
+.searchInput {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Filter Button */
+.filterButton {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  transition: all 0.3s ease;
+}
+
+.filterButton:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Entity Card */
+.entityCard {
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.entityCard:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.cardImage {
+  transition: transform 0.5s ease;
+}
+
+.entityCard:hover .cardImage {
+  transform: scale(1.1);
+}
+
+.categoryBadge {
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.entityCard:hover .categoryBadge {
+  background: rgba(59, 130, 246, 0.9);
+  color: white;
+  transform: scale(1.05);
+}
+
+.ratingBadge {
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.entityCard:hover .ratingBadge {
+  background: rgba(34, 197, 94, 0.9);
+  color: white;
+  transform: scale(1.05);
+}
+
+.cardTitle {
+  transition: color 0.3s ease;
+}
+
+.entityCard:hover .cardTitle {
+  color: #2563eb;
+}
+
+.entityInfo {
+  transition: all 0.3s ease;
+}
+
+.entityCard:hover .entityInfo {
+  color: #059669;
+}
+
+.description {
+  transition: color 0.3s ease;
+}
+
+.entityCard:hover .description {
+  color: #374151;
+}
+
+.bestTime {
+  transition: all 0.3s ease;
+}
+
+.entityCard:hover .bestTime {
+  color: #7c3aed;
+}
+
+.difficultyBadge {
+  transition: all 0.3s ease;
+}
+
+.entityCard:hover .difficultyBadge {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  transform: scale(1.05);
+}
+
+.hoverOverlay {
+  transition: opacity 0.3s ease;
+}
+
+/* Entity Grid */
+.entitiesGrid {
+  gap: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .entitiesGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .entityCard {
+    margin: 0 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .searchInput {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* Loading States */
+.entityCard.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.entityCard.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .initialPage * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .entityCard {
+    border: 2px solid #000000;
+  }
+  
+  .categoryBadge,
+  .ratingBadge {
+    background: #000000;
+    color: #ffffff;
+  }
+}
+
+/* Print styles */
+@media print {
+  .initialPage .no-print {
+    display: none !important;
+  }
+}

@@ -1,0 +1,236 @@
+/* Entity Details Page Styles */
+.entityDetails {
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.heroImage {
+  transition: transform 0.5s ease;
+}
+
+.heroImage:hover {
+  transform: scale(1.05);
+}
+
+.imageNavButton {
+  transition: all 0.3s ease;
+}
+
+.imageNavButton:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+/* Animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Animation Classes */
+.animateSlideInLeft {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.animateSlideInRight {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.animateSlideInUp {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.animateFadeInUp {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animateZoomIn {
+  animation: zoomIn 0.6s ease-out;
+}
+
+.animateFloat {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animatePulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animateShimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Staggered animations */
+.animateStagger1 { animation-delay: 0.1s; }
+.animateStagger2 { animation-delay: 0.2s; }
+.animateStagger3 { animation-delay: 0.3s; }
+
+/* Content Cards */
+.entityDetails .bg-white {
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.entityDetails .bg-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Map Section */
+.entityDetails .bg-gradient-to-br {
+  background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%);
+  transition: all 0.3s ease;
+}
+
+.entityDetails .bg-gradient-to-br:hover {
+  background: linear-gradient(135deg, #bfdbfe 0%, #bbf7d0 100%);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .entityDetails .lg\\:col-span-2 {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .entityDetails .grid-cols-1 {
+    gap: 1.5rem;
+  }
+  
+  .entityDetails .p-8 {
+    padding: 1.5rem;
+  }
+}
+
+/* Loading States */
+.entityDetails .loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.entityDetails .loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .entityDetails * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .entityDetails .bg-white {
+    border: 2px solid #000000;
+  }
+  
+  .entityDetails .text-gray-600 {
+    color: #000000;
+  }
+}
+
+/* Print styles */
+@media print {
+  .entityDetails .no-print {
+    display: none !important;
+  }
+}

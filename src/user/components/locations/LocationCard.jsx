@@ -1,60 +1,119 @@
 import React from 'react';
+import { GlobeIcon, Star } from 'lucide-react';
+import styles from '../../styles/InitialPages.module.css';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Star, ArrowRight } from 'lucide-react';
 
-export const LocationCard = ({ location }) => {
+export const LocationCard = ({ location, rating = 0, reviewCount = 0, animationDelay = 0, isClickable = true }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    sessionStorage.setItem('scrollPosition', window.scrollY.toString());
-    navigate(`/location/${location.id}`);
+    if (isClickable) {
+      navigate(`/locations/${location.id}`);
+    }
   };
 
+  // Function to determine category based on location name or description
+  const getCategory = () => {
+    const type = location.locationType?.toLowerCase() || '';
+    const name = location.locationName?.toLowerCase() || '';
+    
+    if (type.includes('mountain') || name.includes('mountain')) return 'Mountain';
+    if (type.includes('rock') || name.includes('rock')) return 'Rock';
+    if (type.includes('plain') || name.includes('plain')) return 'Plain';
+    if (type.includes('valley') || name.includes('valley')) return 'Valley';
+    if (type.includes('beach') || name.includes('beach')) return 'Beach';
+    if (type.includes('cliff') || name.includes('cliff')) return 'Cliff';
+    if (type.includes('desert') || name.includes('desert')) return 'Desert';
+    if (type.includes('forest') || name.includes('forest')) return 'Forest';
+    if (type.includes('temple') || name.includes('temple')) return 'Temple';
+    if (type.includes('building') || name.includes('building')) return 'Building';
+    if (type.includes('lake') || name.includes('lake')) return 'Lake';
+    if (type.includes('river') || name.includes('river')) return 'River';
+    if (type.includes('island') || name.includes('island')) return 'Island';
+    if (type.includes('road') || name.includes('road')) return 'Road';
+    if (type.includes('village') || name.includes('village')) return 'Village';
+    
+    return 'other';
+  };
+
+  const category = getCategory();
+  
+  const getFirstImage = () => {
+    if (location.images && location.images.length > 0) {
+      return `http://localhost:8000/storage/${location.images[0].image_path}`;
+    } else {
+      return '/default-location.jpg';
+    }
+  };
+
+  const imageUrl = getFirstImage();
+
+  // Handle both string and number ratings
+  const safeRating = typeof rating === 'number' ? rating : 
+                    typeof rating === 'string' ? parseFloat(rating) : 0;
+  const hasRating = safeRating > 0;
+  const displayRating = safeRating.toFixed(1);
+
   return (
-    <div 
+    <div
+      className={`bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl ${styles.entityCard} ${styles.animateSlideInCard}`}
+      style={{ animationDelay: `${animationDelay}s` }}
       onClick={handleClick}
-      className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
     >
-      <div className="relative h-64 overflow-hidden rounded-t-2xl">
+      <div className="relative overflow-hidden h-56">
         <img
-          src={location.mainImage}
-          alt={location.name}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          src={imageUrl}
+          alt={location.locationName || "Location"}
+          className={`w-full h-full object-cover transition-transform duration-500 hover:scale-110 ${styles.cardImage}`}
+          onError={(e) => {
+            e.target.src = '/default-location.jpg';
+          }}
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
         
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center space-x-1">
-          <Star className="w-4 h-4 text-yellow-400 fill-current" />
-          <span className="font-medium text-gray-800">{location.rating}</span>
+        {/* Category Badge */}
+        <div className={`absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-gray-700 ${styles.categoryBadge}`}>
+          {category}
         </div>
-        
-        <div className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-          {location.category}
-        </div>
+
+        {/* Rating Badge - Only show if rating exists */}
+        {hasRating && (
+          <div className="absolute top-4 right-4 px-2 py-1 bg-black/70 backdrop-blur-sm rounded-full flex items-center">
+            <Star size={14} className="text-yellow-400 fill-current mr-1" />
+            <span className="text-xs text-white font-semibold">{displayRating}</span>
+          </div>
+        )}
       </div>
 
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-3">
-          <h3 className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-            {location.name}
-          </h3>
-          <ArrowRight className="w-5 h-5 text-gray-400 transform translate-x-0 group-hover:translate-x-1 group-hover:text-blue-500 transition-all duration-300" />
+      {/* Content */}
+      <div className="p-6 space-y-3">
+        <h3 className={`text-xl font-bold text-gray-900 line-clamp-1 ${styles.cardTitle}`}>
+          {location.locationName}
+        </h3>
+        
+        {/* Province */}
+        <div className={`flex items-center text-gray-600 ${styles.entityInfo}`}>
+          <GlobeIcon size={16} className="mr-2 flex-shrink-0" />
+          <span className="text-sm line-clamp-1">{location.province} Province</span>
         </div>
 
-        <div className="flex items-center space-x-2 text-gray-600 mb-3">
-          <MapPin className="w-4 h-4" />
-          <span className="text-sm">{location.location}</span>
-        </div>
-
-        <p className="text-gray-600 text-sm leading-relaxed">
+        <p className={`text-gray-600 text-sm line-clamp-3 leading-relaxed ${styles.description} mt-2 mb-3`}>
           {location.shortDescription}
         </p>
+
+        {/* Show review count if available */}
+        {reviewCount > 0 && (
+          <div className="flex items-center text-sm text-gray-500 pt-2 border-t border-gray-100">
+            <Star size={14} className="text-yellow-400 fill-current mr-1" />
+            <span>{reviewCount} review{reviewCount !== 1 ? 's' : ''}</span>
+          </div>
+        )}
       </div>
 
-      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-blue-500/20 transition-colors duration-300"></div>
-      
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+      {/* Hover Effect Overlay */}
+      <div className={`absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 hover:opacity-100 transition-opacity duration-300 ${styles.hoverOverlay}`}></div>
     </div>
   );
 };
+
+export default LocationCard;

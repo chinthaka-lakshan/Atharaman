@@ -1,16 +1,51 @@
-import React from 'react';
-import { MapPin, Users, Store, Building2, Car, Hotel, UserCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Users, Store, Building2, Car, Hotel, UserCheck, AlertCircle } from 'lucide-react';
+import api from '../../services/api';
 
 const Dashboard = () => {
+  const [statsData, setStatsData] = useState({
+    locations: 0,
+    shopOwners: 0,
+    hotelOwners: 0,
+    vehicleOwners: 0,
+    guides: 0,
+    shops: 0,
+    hotels: 0,
+    vehicles: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get('/admin/dashboard-stats');
+        if (response.data && response.data.success) {
+          setStatsData(response.data.data);
+        } else {
+          throw new Error('Failed to fetch stats');
+        }
+      } catch (err) {
+        console.error('Error fetching dashboard stats:', err);
+        setError('Could not load dashboard statistics. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   const stats = [
-    { label: 'Locations', count: 156, icon: MapPin, color: 'bg-blue-500' },
-    { label: 'Shop Owners', count: 234, icon: UserCheck, color: 'bg-purple-500' },
-    { label: 'Hotel Owners', count: 78, icon: UserCheck, color: 'bg-teal-500' },
-    { label: 'Vehicle Owners', count: 123, icon: UserCheck, color: 'bg-indigo-500' },
-    { label: 'Guides', count: 89, icon: Users, color: 'bg-green-500' },
-    { label: 'Shops', count: 467, icon: Store, color: 'bg-orange-500' },
-    { label: 'Hotels', count: 145, icon: Hotel, color: 'bg-pink-500' },
-    { label: 'Vehicles', count: 289, icon: Car, color: 'bg-red-500' },
+    { label: 'Locations', count: statsData.locations, icon: MapPin, color: 'bg-blue-500' },
+    { label: 'Shop Owners', count: statsData.shopOwners, icon: UserCheck, color: 'bg-purple-500' },
+    { label: 'Hotel Owners', count: statsData.hotelOwners, icon: UserCheck, color: 'bg-teal-500' },
+    { label: 'Vehicle Owners', count: statsData.vehicleOwners, icon: UserCheck, color: 'bg-indigo-500' },
+    { label: 'Guides', count: statsData.guides, icon: Users, color: 'bg-green-500' },
+    { label: 'Shops', count: statsData.shops, icon: Store, color: 'bg-orange-500' },
+    { label: 'Hotels', count: statsData.hotels, icon: Hotel, color: 'bg-pink-500' },
+    { label: 'Vehicles', count: statsData.vehicles, icon: Car, color: 'bg-red-500' },
   ];
 
   return (
@@ -19,6 +54,13 @@ const Dashboard = () => {
         <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
         <p className="text-gray-600 mt-2">Welcome to the ATHARAMAN Admin Dashboard</p>
       </div>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-700">
+          <AlertCircle className="w-5 h-5 mr-2" />
+          {error}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => {
@@ -31,7 +73,11 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stat.count}</p>
+                  {loading ? (
+                    <div className="h-9 w-16 bg-gray-200 rounded mt-2 animate-pulse"></div>
+                  ) : (
+                    <p className="text-3xl font-bold text-gray-900 mt-2">{stat.count}</p>
+                  )}
                 </div>
                 <div className={`${stat.color} p-3 rounded-lg`}>
                   <Icon className="w-6 h-6 text-white" />
