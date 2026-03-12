@@ -129,48 +129,58 @@ const WeatherWidget = ({ location }) => {
           config:    getConfig(mappedCode),
         });
 
-        // ── Today's hourly — wttr.in station data interpolated to 1-hour resolution ──
+        // ── Today's & Tomorrow's hourly — wttr.in station data interpolated to 1-hour resolution ──
         // wttr.in gives real observations at 3h intervals (0,3,6,9,12,15,18,21).
         // Linear interpolation fills the in-between hours from real data checkpoints.
         const nowHour  = new Date().getHours();
         const liveTemp = parseInt(obs.temp_C, 10);
 
-        // Parse wttr.in 3-hour checkpoints for today
-        const wttrTodayHourly = (wttrData.weather?.[0]?.hourly ?? []).map(h => ({
-          hourOfDay: Math.round(parseInt(h.time, 10) / 100), // "1200" → 12
-          temp:      parseInt(h.tempC, 10),
-          feelsLike: parseInt(h.FeelsLikeC, 10),
-          rain:      parseInt(h.chanceofrain, 10),
-          code:      mapWttrCode(parseInt(h.weatherCode, 10)),
-          desc:      h.weatherDesc?.[0]?.value ?? '',
-        }));
+        // Helper to parse wttr.in 3-hour checkpoints for a specific day
+        const parseWttrDay = (dayData, dayOffset) => {
+          return (dayData?.hourly ?? []).map(h => ({
+            absHour:   Math.round(parseInt(h.time, 10) / 100) + dayOffset, // "1200" → 12, tomorrow is +24
+            hourOfDay: Math.round(parseInt(h.time, 10) / 100),
+            temp:      parseInt(h.tempC, 10),
+            rain:      parseInt(h.chanceofrain, 10),
+            code:      mapWttrCode(parseInt(h.weatherCode, 10)),
+            desc:      h.weatherDesc?.[0]?.value ?? '',
+          }));
+        };
+
+        // Get checkpoints for today (hours 0-21) and tomorrow (hours 24-45)
+        const todayCheckpoints    = parseWttrDay(wttrData.weather?.[0], 0);
+        const tomorrowCheckpoints = parseWttrDay(wttrData.weather?.[1], 24);
+        const allCheckpoints      = [...todayCheckpoints, ...tomorrowCheckpoints];
 
         // Interpolate between 3h checkpoints to produce 1h slots
         const interpHours = [];
-        for (let i = 0; i < wttrTodayHourly.length - 1; i++) {
-          const a = wttrTodayHourly[i];
-          const b = wttrTodayHourly[i + 1];
-          for (let step = 0; step < 3; step++) {
-            const t = step / 3;
+        for (let i = 0; i < allCheckpoints.length - 1; i++) {
+          const a = allCheckpoints[i];
+          const b = allCheckpoints[i + 1];
+          // step is usually 3, but calculate dynamically just in case
+          const steps = b.absHour - a.absHour;
+          for (let step = 0; step < steps; step++) {
+            const t = step / steps;
             interpHours.push({
-              hourOfDay: a.hourOfDay + step,
+              absHour:   a.absHour + step,
+              hourOfDay: (a.hourOfDay + step) % 24, // Wraps around at midnight
               temp:      Math.round(a.temp + (b.temp - a.temp) * t),
               rain:      Math.round(a.rain + (b.rain - a.rain) * t),
-              code:      step < 2 ? a.code : b.code,
-              desc:      step < 2 ? a.desc : b.desc,
+              code:      step < (steps / 2) ? a.code : b.code,
+              desc:      step < (steps / 2) ? a.desc : b.desc,
             });
           }
         }
-        // Add the last checkpoint (21:00)
-        if (wttrTodayHourly.length > 0) {
-          const last = wttrTodayHourly[wttrTodayHourly.length - 1];
-          interpHours.push({ hourOfDay: last.hourOfDay, temp: last.temp, rain: last.rain, code: last.code, desc: last.desc });
+        // Add the very last checkpoint (tomorrow 21:00)
+        if (allCheckpoints.length > 0) {
+          const last = allCheckpoints[allCheckpoints.length - 1];
+          interpHours.push({ absHour: last.absHour, hourOfDay: last.hourOfDay, temp: last.temp, rain: last.rain, code: last.code, desc: last.desc });
         }
 
-        // Filter to current hour and beyond, cap at 12 entries
+        // Filter to current absolute hour and beyond, cap at full 24 hours
         const todayHours = interpHours
-          .filter(h => h.hourOfDay >= nowHour)
-          .slice(0, 12);
+          .filter(h => h.absHour >= nowHour)
+          .slice(0, 24);
 
         // First slot → exact live station reading (most accurate)
         if (todayHours.length > 0) {
