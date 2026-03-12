@@ -68,15 +68,17 @@ const WeatherWidget = ({ location }) => {
       if (!location?.latitude || !location?.longitude) return;
       try {
         setLoading(true); setError(false);
+
+        const lat = location.latitude;
+        const lon = location.longitude;
+
+        // ① wttr.in — REAL station observations (updated every 30 min), no API key
+        const wttrRes  = await fetch(`https://wttr.in/${lat},${lon}?format=j1`);
+        const wttrData = await wttrRes.json();
+
+        // ② Open-Meteo — hourly + daily forecast data
         const params = new URLSearchParams({
-          latitude: location.latitude,
-          longitude: location.longitude,
-          current: [
-            'temperature_2m','apparent_temperature','relative_humidity_2m',
-            'wind_speed_10m','wind_direction_10m','weather_code',
-            'surface_pressure','cloud_cover','uv_index','visibility',
-            'precipitation'
-          ].join(','),
+          latitude: lat, longitude: lon,
           hourly: 'temperature_2m,weather_code,precipitation_probability',
           daily: [
             'temperature_2m_max','temperature_2m_min','weather_code',
@@ -87,62 +89,133 @@ const WeatherWidget = ({ location }) => {
           timezone: 'auto',
           forecast_days: 5,
         });
+        const meteoRes  = await fetch(`${OPEN_METEO_URL}?${params}`);
+        const meteoData = await meteoRes.json();
 
-        const res  = await fetch(`${OPEN_METEO_URL}?${params}`);
-        const data = await res.json();
+        if (!wttrData?.current_condition || !meteoData?.daily) throw new Error('No data');
 
-        if (!data?.daily || !data?.current) throw new Error('No data');
+        // ── Parse wttr.in current conditions (station-based, real observations) ──
+        const obs = wttrData.current_condition[0];
+        const wttrCode = parseInt(obs.weatherCode, 10);
+        // Map wttr.in weather codes to WMO-like codes we have config for
+        const mapWttrCode = (code) => {
+          if (code === 113) return 0;           // Sunny/Clear
+          if ([116].includes(code)) return 2;   // Partly cloudy
+          if ([119, 122].includes(code)) return 3; // Overcast
+          if ([143, 248].includes(code)) return 45; // Mist/Fog
+          if ([176, 263, 266, 293, 296].includes(code)) return 61; // Light rain
+          if ([299, 302, 305, 308].includes(code)) return 63; // Moderate/heavy rain
+          if ([353, 356, 359].includes(code)) return 80; // Rain showers
+          if ([200, 386, 389].includes(code)) return 95; // Thunderstorm
+          if ([179, 182, 185, 281, 284].includes(code)) return 51; // Drizzle/freezing
+          if ([227, 230, 323, 326, 329, 332, 335, 338, 368, 371, 374, 377].includes(code)) return 71; // Snow
+          return 3; // default overcast
+        };
+        const mappedCode = mapWttrCode(wttrCode);
 
-        // Current conditions
-        const c = data.current;
         setCurrent({
-          temp:        Math.round(c.temperature_2m),
-          feelsLike:   Math.round(c.apparent_temperature),
-          humidity:    c.relative_humidity_2m,
-          wind:        Math.round(c.wind_speed_10m),
-          windDir:     windDirection(c.wind_direction_10m),
-          pressure:    Math.round(c.surface_pressure),
-          cloud:       c.cloud_cover,
-          uv:          c.uv_index,
-          visibility:  c.visibility != null ? (c.visibility / 1000).toFixed(1) : '—',
-          precip:      c.precipitation ?? 0,
-          code:        c.weather_code,
-          config:      getConfig(c.weather_code),
+          temp:      parseInt(obs.temp_C, 10),
+          feelsLike: parseInt(obs.FeelsLikeC, 10),
+          humidity:  parseInt(obs.humidity, 10),
+          wind:      parseInt(obs.windspeedKmph, 10),
+          windDir:   obs.winddir16Point,
+          pressure:  parseInt(obs.pressure, 10),
+          cloud:     parseInt(obs.cloudcover, 10),
+          uv:        parseFloat(obs.uvIndex),
+          visibility: obs.visibility,
+          precip:    parseFloat(obs.precipMM ?? 0),
+          desc:      obs.weatherDesc?.[0]?.value ?? '',
+          code:      mappedCode,
+          config:    getConfig(mappedCode),
         });
 
-        // Today's hourly (next 12 hours only)
-        const todayStr = data.daily.time[0];
+        // ── Today's hourly — wttr.in station data interpolated to 1-hour resolution ──
+        // wttr.in gives real observations at 3h intervals (0,3,6,9,12,15,18,21).
+        // Linear interpolation fills the in-between hours from real data checkpoints.
         const nowHour  = new Date().getHours();
-        const hourly   = data.hourly.time
-          .map((t, i) => ({ time: t, temp: Math.round(data.hourly.temperature_2m[i]), code: data.hourly.weather_code[i], rain: data.hourly.precipitation_probability[i] }))
-          .filter(h => h.time.startsWith(todayStr) && new Date(h.time).getHours() >= nowHour)
-          .slice(0, 12);
-        setTodayHourly(hourly);
+        const liveTemp = parseInt(obs.temp_C, 10);
 
-        // Daily cards
+        // Parse wttr.in 3-hour checkpoints for today
+        const wttrTodayHourly = (wttrData.weather?.[0]?.hourly ?? []).map(h => ({
+          hourOfDay: Math.round(parseInt(h.time, 10) / 100), // "1200" → 12
+          temp:      parseInt(h.tempC, 10),
+          feelsLike: parseInt(h.FeelsLikeC, 10),
+          rain:      parseInt(h.chanceofrain, 10),
+          code:      mapWttrCode(parseInt(h.weatherCode, 10)),
+          desc:      h.weatherDesc?.[0]?.value ?? '',
+        }));
+
+        // Interpolate between 3h checkpoints to produce 1h slots
+        const interpHours = [];
+        for (let i = 0; i < wttrTodayHourly.length - 1; i++) {
+          const a = wttrTodayHourly[i];
+          const b = wttrTodayHourly[i + 1];
+          for (let step = 0; step < 3; step++) {
+            const t = step / 3;
+            interpHours.push({
+              hourOfDay: a.hourOfDay + step,
+              temp:      Math.round(a.temp + (b.temp - a.temp) * t),
+              rain:      Math.round(a.rain + (b.rain - a.rain) * t),
+              code:      step < 2 ? a.code : b.code,
+              desc:      step < 2 ? a.desc : b.desc,
+            });
+          }
+        }
+        // Add the last checkpoint (21:00)
+        if (wttrTodayHourly.length > 0) {
+          const last = wttrTodayHourly[wttrTodayHourly.length - 1];
+          interpHours.push({ hourOfDay: last.hourOfDay, temp: last.temp, rain: last.rain, code: last.code, desc: last.desc });
+        }
+
+        // Filter to current hour and beyond, cap at 12 entries
+        const todayHours = interpHours
+          .filter(h => h.hourOfDay >= nowHour)
+          .slice(0, 12);
+
+        // First slot → exact live station reading (most accurate)
+        if (todayHours.length > 0) {
+          todayHours[0].temp   = liveTemp;
+          todayHours[0].isLive = true;
+        }
+
+        setTodayHourly(todayHours);
+
+
+
+
+        // ── Daily cards from Open-Meteo ──
         const DAYS     = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
         const FULLDAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
         const MONTHS   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-        const days = data.daily.time.map((dateStr, i) => {
+        // Apply a bias offset based on what the model thought today's max should be vs the REAL live reading
+        const modelTodayMax = Math.round(meteoData.daily.temperature_2m_max[0]);
+        const biasOffset    = liveTemp > modelTodayMax ? liveTemp - modelTodayMax : 0;
+
+        const days = meteoData.daily.time.map((dateStr, i) => {
           const d    = new Date(dateStr + 'T12:00:00');
-          const code = data.daily.weather_code[i];
+          const code = meteoData.daily.weather_code[i];
+          const rawMax = Math.round(meteoData.daily.temperature_2m_max[i]);
+          const rawMin = Math.round(meteoData.daily.temperature_2m_min[i]);
+          
           return {
             day: DAYS[d.getDay()], fullDay: FULLDAYS[d.getDay()],
             date: d.getDate(), month: MONTHS[d.getMonth()],
-            temp:    i === 0 ? Math.round(c.temperature_2m) : Math.round((data.daily.temperature_2m_max[i] + data.daily.temperature_2m_min[i]) / 2),
-            tempMin: Math.round(data.daily.temperature_2m_min[i]),
-            tempMax: Math.round(data.daily.temperature_2m_max[i]),
-            wind:    Math.round(data.daily.wind_speed_10m_max[i]),
-            precip:  data.daily.precipitation_sum?.[i] ?? 0,
-            rainProb: data.daily.precipitation_probability_max?.[i] ?? 0,
-            uv:      data.daily.uv_index_max?.[i] ?? 0,
-            sunrise: fmt12h(data.daily.sunrise[i]),
-            sunset:  fmt12h(data.daily.sunset[i]),
-            code:    i === 0 ? c.weather_code : code,
-            config:  getConfig(i === 0 ? c.weather_code : code),
+            // Use the biased MAX temperature for daytime reality, completely avoiding "averages"!
+            temp:     i === 0 ? liveTemp : rawMax + biasOffset,
+            tempMin:  rawMin + biasOffset,
+            tempMax:  rawMax + biasOffset,
+            wind:     Math.round(meteoData.daily.wind_speed_10m_max[i]),
+            precip:   meteoData.daily.precipitation_sum?.[i] ?? 0,
+            rainProb: meteoData.daily.precipitation_probability_max?.[i] ?? 0,
+            uv:       meteoData.daily.uv_index_max?.[i] ?? 0,
+            sunrise:  fmt12h(meteoData.daily.sunrise[i]),
+            sunset:   fmt12h(meteoData.daily.sunset[i]),
+            code:     i === 0 ? mappedCode : code,
+            config:   getConfig(i === 0 ? mappedCode : code),
           };
         });
+
         setWeatherData(days);
         setSelectedDay(0);
       } catch { setError(true); }
@@ -150,6 +223,7 @@ const WeatherWidget = ({ location }) => {
     };
     fetchWeather();
   }, [location]);
+
 
   /* ─────────────── Loading / Error states ─────────────── */
   if (loading) return (
@@ -227,7 +301,7 @@ const WeatherWidget = ({ location }) => {
             <div className="relative flex items-start justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest opacity-75 mb-0.5">{day.fullDay}, {day.month} {day.date}</p>
-                <p className="text-sm opacity-80 capitalize mb-2">{label}</p>
+                <p className="text-sm opacity-80 capitalize mb-2">{isToday && current?.desc ? current.desc : label}</p>
                 <motion.div className="text-6xl font-black tracking-tight"
                   initial={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, ease }}>
@@ -342,13 +416,14 @@ const WeatherWidget = ({ location }) => {
                 const HIcon = hConf.Icon;
                 const isNow = i === 0;
                 return (
-                  <motion.div key={h.time}
+                  <motion.div key={h.hourOfDay}
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, ease, delay: i * 0.04 }}
+                    title={h.desc}
                     className={`flex-shrink-0 flex flex-col items-center gap-1 rounded-xl px-3 py-2 ${isNow ? `bg-gradient-to-b ${hConf.gradient} text-white` : 'bg-gray-50 text-gray-700'}`}
                   >
                     <span className={`text-[10px] font-semibold ${isNow ? 'text-white/80' : 'text-gray-400'}`}>
-                      {isNow ? 'Now' : new Date(h.time).getHours() % 12 || 12}{isNow ? '' : (new Date(h.time).getHours() >= 12 ? 'pm' : 'am')}
+                      {isNow ? 'Now' : `${h.hourOfDay % 12 || 12}${h.hourOfDay >= 12 ? 'pm' : 'am'}`}
                     </span>
                     <HIcon size={16} className={isNow ? 'text-white' : hConf.text} />
                     <span className="text-xs font-bold">{h.temp}°</span>
