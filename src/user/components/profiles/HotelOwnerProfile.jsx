@@ -30,12 +30,14 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   });
 
   const [hotelFormData, setHotelFormData] = useState({
-    hotelName: '',
-    hotelAddress: '',
-    businessMail: '',
-    contactNumber: '',
-    whatsappNumber: '',
-    description: '',
+    hotel_name: '',
+    nearest_city: '',
+    hotel_address: '',
+    business_mail: '',
+    contact_number: '',
+    whatsapp_number: '',
+    short_description: '',
+    long_description: '',
     locations: []
   });
 
@@ -114,12 +116,18 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   const handleSaveHotel = async () => {
     try {
       const formData = new FormData();
-      formData.append('hotelName', hotelFormData.hotelName);
-      formData.append('hotelAddress', hotelFormData.hotelAddress);
-      formData.append('businessMail', hotelFormData.businessMail);
-      formData.append('contactNumber', hotelFormData.contactNumber);
-      formData.append('whatsappNumber', hotelFormData.whatsappNumber);
-      formData.append('description', hotelFormData.description);
+      formData.append('hotel_name', hotelFormData.hotel_name);
+      formData.append('nearest_city', hotelFormData.nearest_city);
+      formData.append('hotel_address', hotelFormData.hotel_address);
+      formData.append('business_mail', hotelFormData.business_mail);
+      formData.append('contact_number', hotelFormData.contact_number);
+      if (hotelFormData.whatsapp_number) {
+        formData.append('whatsapp_number', hotelFormData.whatsapp_number);
+      }
+      formData.append('short_description', hotelFormData.short_description);
+      if (hotelFormData.long_description) {
+        formData.append('long_description', hotelFormData.long_description);
+      }
       
       // Only append locations if they exist
       if (hotelFormData.locations && hotelFormData.locations.length > 0) {
@@ -170,12 +178,14 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   const startEditHotel = (hotel) => {
     setEditingHotel(hotel);
     setHotelFormData({
-      hotelName: hotel.hotelName,
-      hotelAddress: hotel.hotelAddress,
-      businessMail: hotel.businessMail,
-      contactNumber: hotel.contactNumber,
-      whatsappNumber: hotel.whatsappNumber,
-      description: hotel.description || '',
+      hotel_name: hotel.hotel_name || '',
+      nearest_city: hotel.nearest_city || '',
+      hotel_address: hotel.hotel_address || '',
+      business_mail: hotel.business_mail || '',
+      contact_number: hotel.contact_number || '',
+      whatsapp_number: hotel.whatsapp_number || '',
+      short_description: hotel.short_description || '',
+      long_description: hotel.long_description || '',
       locations: hotel.locations || []
     });
     setImagePreviews(hotel.hotelImage ? hotel.hotelImage.map(img => `http://localhost:8000/storage/${img}`) : []);
@@ -185,12 +195,14 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
 
   const resetHotelForm = () => {
     setHotelFormData({
-      hotelName: '',
-      hotelAddress: '',
-      businessMail: '',
-      contactNumber: '',
-      whatsappNumber: '',
-      description: '',
+      hotel_name: '',
+      nearest_city: '',
+      hotel_address: '',
+      business_mail: '',
+      contact_number: '',
+      whatsapp_number: '',
+      short_description: '',
+      long_description: '',
       locations: []
     });
     setImages([]);
@@ -409,8 +421,21 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       </label>
                       <input
                         type="text"
-                        value={hotelFormData.hotelName}
-                        onChange={(e) => setHotelFormData({...hotelFormData, hotelName: e.target.value})}
+                        value={hotelFormData.hotel_name}
+                        onChange={(e) => setHotelFormData({...hotelFormData, hotel_name: e.target.value})}
+                        required
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Nearest City *
+                      </label>
+                      <input
+                        type="text"
+                        value={hotelFormData.nearest_city}
+                        onChange={(e) => setHotelFormData({...hotelFormData, nearest_city: e.target.value})}
                         required
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
@@ -459,12 +484,25 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Description
+                        Short Description *
                       </label>
                       <textarea
-                        value={hotelFormData.description}
-                        onChange={(e) => setHotelFormData({...hotelFormData, description: e.target.value})}
-                        rows="3"
+                        value={hotelFormData.short_description}
+                        onChange={(e) => setHotelFormData({...hotelFormData, short_description: e.target.value})}
+                        required
+                        rows="2"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Long Description
+                      </label>
+                      <textarea
+                        value={hotelFormData.long_description}
+                        onChange={(e) => setHotelFormData({...hotelFormData, long_description: e.target.value})}
+                        rows="4"
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
@@ -475,8 +513,8 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       </label>
                       <input
                         type="text"
-                        value={hotelFormData.hotelAddress}
-                        onChange={(e) => setHotelFormData({...hotelFormData, hotelAddress: e.target.value})}
+                        value={hotelFormData.hotel_address}
+                        onChange={(e) => setHotelFormData({...hotelFormData, hotel_address: e.target.value})}
                         required
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
@@ -488,8 +526,8 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       </label>
                       <input
                         type="email"
-                        value={hotelFormData.businessMail}
-                        onChange={(e) => setHotelFormData({...hotelFormData, businessMail: e.target.value})}
+                        value={hotelFormData.business_mail}
+                        onChange={(e) => setHotelFormData({...hotelFormData, business_mail: e.target.value})}
                         required
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
@@ -501,8 +539,8 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       </label>
                       <input
                         type="tel"
-                        value={hotelFormData.contactNumber}
-                        onChange={(e) => setHotelFormData({...hotelFormData, contactNumber: e.target.value})}
+                        value={hotelFormData.contact_number}
+                        onChange={(e) => setHotelFormData({...hotelFormData, contact_number: e.target.value})}
                         required
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
@@ -514,8 +552,8 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       </label>
                       <input
                         type="tel"
-                        value={hotelFormData.whatsappNumber}
-                        onChange={(e) => setHotelFormData({...hotelFormData, whatsappNumber: e.target.value})}
+                        value={hotelFormData.whatsapp_number}
+                        onChange={(e) => setHotelFormData({...hotelFormData, whatsapp_number: e.target.value})}
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
@@ -589,7 +627,7 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       {hotel.hotelImage && hotel.hotelImage.length > 0 ? (
                         <img
                           src={`http://localhost:8000/storage/${hotel.hotelImage[0]}`}
-                          alt={hotel.hotelName}
+                          alt={hotel.hotel_name}
                           className="w-full h-48 object-cover"
                         />
                       ) : (
@@ -598,29 +636,29 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                         </div>
                       )}
                       <div className="p-4">
-                        <h5 className="font-semibold text-lg text-gray-800 mb-2">{hotel.hotelName}</h5>
+                        <h5 className="font-semibold text-lg text-gray-800 mb-2">{hotel.hotel_name}</h5>
                         <div className="flex items-center text-gray-600 mb-2">
                           <MapPin className="size-4 mr-1" />
-                          <span className="text-sm">{hotel.hotelAddress}</span>
+                          <span className="text-sm">{hotel.hotel_address}</span>
                         </div>
                         <div className="space-y-2 mb-3">
                           <div className="flex items-center text-sm text-gray-600">
                             <Mail className="size-4 mr-2" />
-                            <span>{hotel.businessMail}</span>
+                            <span>{hotel.business_mail}</span>
                           </div>
                           <div className="flex items-center text-sm text-gray-600">
                             <Phone className="size-4 mr-2" />
-                            <span>{hotel.contactNumber}</span>
+                            <span>{hotel.contact_number}</span>
                           </div>
-                          {hotel.whatsappNumber && (
+                          {hotel.whatsapp_number && (
                             <div className="flex items-center text-sm text-gray-600">
                               <MessageCircle className="size-4 mr-2" />
-                              <span>{hotel.whatsappNumber}</span>
+                              <span>{hotel.whatsapp_number}</span>
                             </div>
                           )}
                         </div>
                         
-                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{hotel.description}</p>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{hotel.short_description}</p>
                         {hotel.locations && hotel.locations.length > 0 && (
                           <div className="mb-3">
                             <p className="text-xs text-gray-500">Locations:</p>
