@@ -196,7 +196,7 @@ const GuideDetail = ({ guide, onBack }) => {
                 {/* Description */}
                 <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Guide</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6">
+                  <p className="text-gray-600 leading-relaxed mb-6 break-words">
                     {guide.short_description}
                   </p>
                   
@@ -204,7 +204,7 @@ const GuideDetail = ({ guide, onBack }) => {
                   {guide.long_description && (
                     <div className="mt-6">
                       <h3 className="text-xl font-semibold text-gray-900 mb-3">Detailed Information</h3>
-                      <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                      <p className="text-gray-600 leading-relaxed whitespace-pre-line break-words">
                         {guide.long_description}
                       </p>
                     </div>

@@ -252,11 +252,11 @@ const LocationDetail = ({ location, onBack }) => {
                 {/* Description */}
                 <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Location</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6">
+                  <p className="text-gray-600 leading-relaxed mb-6 break-words">
                     {location.shortDescription}
                   </p>
                   <div className="prose prose-lg text-gray-700">
-                    <p>{location.longDescription}</p>
+                    <p className="break-words">{location.longDescription}</p>
                   </div>
                 </div>
 

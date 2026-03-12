@@ -212,7 +212,7 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
                 {/* Description */}
                 <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Vehicle</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6 whitespace-pre-wrap">
+                  <p className="text-gray-600 leading-relaxed mb-6 whitespace-pre-wrap break-words">
                     {vehicle.long_description || vehicle.short_description || vehicle.description}
                   </p>
                   {/* Locations - Added this section similar to languages in GuideDetail */}
