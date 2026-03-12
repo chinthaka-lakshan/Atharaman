@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Globe, CircleDollarSign, UserCheck, Star, Phone, MapPinned, Fuel, Gauge } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  getMainLocationImage, 
+  getMainGuideImage, 
+  getMainShopImage, 
+  getMainHotelImage, 
+  getMainVehicleImage
+} from '../../helpers/ImageHelpers';
 
 const ProductSection = ({ id, title, data, type, onSeeMore }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -145,37 +152,27 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
 
   // Get image URL for locations
   const getLocationImage = (location) => {
-    return location.images && location.images.length > 0 
-      ? `http://localhost:8000/storage/${location.images[0].image_path}`
-      : '/default-location.jpg';
+    return getMainLocationImage(location);
   };
 
   // Get image URL for guides
   const getGuideImage = (guide) => {
-    return guide.guideImage && guide.guideImage.length > 0 
-      ? `http://localhost:8000/storage/${guide.guideImage[0]}`
-      : '/default-guide.jpg';
+    return getMainGuideImage(guide);
   };
 
   // Get image URL for shops
   const getShopImage = (shop) => {
-    return shop.shopImage && shop.shopImage.length > 0 
-      ? `http://localhost:8000/storage/${shop.shopImage[0]}`
-      : '/default-shop.jpg';
+    return getMainShopImage(shop);
   };
 
   // Get image URL for hotels
   const getHotelImage = (hotel) => {
-    return hotel.hotelImage && hotel.hotelImage.length > 0 
-      ? `http://localhost:8000/storage/${hotel.hotelImage[0]}`
-      : '/default-hotel.jpg';
+    return getMainHotelImage(hotel);
   };
 
   // Get image URL for vehicles
   const getVehicleImage = (vehicle) => {
-    return vehicle.vehicleImage && vehicle.vehicleImage.length > 0 
-      ? `http://localhost:8000/storage/${vehicle.vehicleImage[0]}`
-      : '/default-vehicle.jpg';
+    return getMainVehicleImage(vehicle);
   };
 
   // Safely parse rating value to number
@@ -225,14 +222,14 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
             </div>
             
             <div className="p-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.locationName}</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.location_name || item.locationName}</h3>
               <div className="flex items-center text-gray-600 text-sm mb-2">
                 <Globe className="size-4 mr-2" />
                 <span>{item.province} Province</span>
               </div>
               
               <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                {item.shortDescription || item.description}
+                {item.short_description || item.shortDescription || item.description}
               </p>
               
               {locationReviewCount > 0 && (
@@ -272,14 +269,14 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
             </div>
             
             <div className="p-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.guideName}</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.guide_name || item.guideName}</h3>
               <div className="flex items-center text-gray-600 text-sm mb-2">
                 <Phone className="size-4 mr-2" />
-                <span>{item.personalNumber}</span>
+                <span>{item.personal_number || item.personalNumber}</span>
               </div>
               
               <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                {item.description}
+                {item.short_description || item.description}
               </p>
               
               {guideReviewCount > 0 && (
@@ -301,7 +298,7 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
             <div className="relative h-48 overflow-hidden">
               <img 
                 src={getShopImage(item)} 
-                alt={item.shopName} 
+                alt={item.shop_name || item.shopName} 
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
                 loading="lazy"
                 onError={(e) => {
@@ -319,14 +316,14 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
             </div>
 
             <div className="p-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.shopName}</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.shop_name || item.shopName}</h3>
               <div className="flex items-center text-gray-600 text-sm mb-2">
                 <MapPinned className="size-4 mr-2" />
-                <span>{item.shopAddress}</span>
+                <span>{item.shop_address || item.shopAddress}</span>
               </div>
 
               <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                {item.description}
+                {item.short_description || item.description}
               </p>
 
               {shopReviewCount > 0 && (
@@ -348,7 +345,7 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
             <div className="relative h-48 overflow-hidden group">
               <img 
                 src={getHotelImage(item)} 
-                alt={item.hotelName} 
+                alt={item.hotel_name || item.hotelName} 
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
                 loading="lazy"
                 onError={(e) => {
@@ -366,19 +363,19 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
             </div>
 
             <div className="p-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.hotelName}</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.hotel_name || item.hotelName}</h3>
               <div className="flex items-center text-gray-600 text-sm mb-2">
                 <MapPinned className="size-4 mr-2" />
-                <span>{item.hotelAddress}</span>
+                <span>{item.hotel_address || item.hotelAddress}</span>
               </div>
 
               <div className="flex items-center text-gray-600 text-sm mb-2">
                 <Phone className="size-4 mr-2" />
-                <span>{item.contactNumber}</span>
+                <span>{item.contact_number || item.contactNumber}</span>
               </div>
 
               <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                {item.description}
+                {item.short_description || item.description}
               </p>
 
               {hotelReviewCount > 0 && (
@@ -400,7 +397,7 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
             <div className="relative h-48 overflow-hidden group">
               <img 
                 src={getVehicleImage(item)} 
-                alt={item.vehicleName} 
+                alt={item.vehicle_name || item.vehicleName} 
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
                 loading="lazy"
                 onError={(e) => {
@@ -408,26 +405,26 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
                 }}
               />
 
-              {item?.pricePerDay && (
+              {(item?.price_per_day || item?.pricePerDay) && (
                 <div className="absolute bottom-2 right-2 bg-emerald-900 text-white rounded-lg px-2 py-1">
                   <div className="flex items-center gap-1">
                     <CircleDollarSign className="size-4" />
-                    <span className="text-xs">LKR. {item.pricePerDay}/day</span>
+                    <span className="text-xs">LKR. {item.price_per_day || item.pricePerDay}/day</span>
                   </div>
                 </div>
               )}
-              {item?.withDriver && (
+              {(item?.driver_status || item?.withDriver) && (
                 <div className="absolute bottom-2 left-2 bg-cyan-900 text-white rounded-lg px-2 py-1">
                   <div className="flex items-center gap-1">
                     <UserCheck className="size-4" />
-                    <span className="text-xs">{item.withDriver}</span>
+                    <span className="text-xs">{item.driver_status || item.withDriver}</span>
                   </div>
                 </div>
               )}
 
               {/* Category Badge */}
               <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-gray-700">
-                {item.vehicleType}
+                {item.vehicle_type || item.vehicleType}
               </div>
 
               {/* Rating Badge */}
@@ -441,25 +438,25 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
 
             <div className="p-5">
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.vehicleName}</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.vehicle_name || item.vehicleName}</h3>
                 <span className="font-normal text-sm bg-gray-200 text-gray-700 px-2 py-1 rounded whitespace-nowrap">
-                  {item.vehicleNumber}
+                  {item.reg_number || item.vehicleNumber}
                 </span>
               </div>
 
               <div className="flex justify-between items-center text-gray-600 text-sm mb-3">
                 <div className="flex items-center">
                   <Fuel className="size-4 mr-2" />
-                  <span>{item.fuelType}</span>
+                  <span>{item.fuel_type || item.fuelType}</span>
                 </div>
                 <div className="flex items-center">
                   <Gauge className="size-4 mr-2" />
-                  <span>{item.mileagePerDay}</span>
+                  <span>{item.mileage_per_day || item.mileagePerDay} km</span>
                 </div>
               </div>
 
               <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                {item.description}
+                {item.short_description || item.description}
               </p>
 
               {vehicleReviewCount > 0 && (
