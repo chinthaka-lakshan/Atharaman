@@ -43,7 +43,7 @@ const Navbar = ({ onScrollToSection }) => {
 
   return (
     <>
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-lg z-40 transition-all duration-300">
+      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-lg z-[1001] transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -86,7 +86,7 @@ const Navbar = ({ onScrollToSection }) => {
                   
                   {isProfileDropdownOpen && (
                     <div 
-                      className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 transition-all duration-200 origin-top-right"
+                      className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-[1002] transition-all duration-200 origin-top-right"
                       onMouseLeave={() => setIsProfileDropdownOpen(false)}
                     >
                       <a href="/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">

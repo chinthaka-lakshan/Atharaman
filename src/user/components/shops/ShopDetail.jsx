@@ -239,7 +239,7 @@ const ShopDetail = ({ shop, onBack }) => {
                 {/* Description */}
                 <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Shop</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6">
+                  <p className="text-gray-600 leading-relaxed mb-6 break-words">
                     {shop.description}
                   </p>
 
@@ -317,7 +317,7 @@ const ShopDetail = ({ shop, onBack }) => {
                       </div>
                       <div className="p-3">
                         <h4 className="font-semibold text-gray-900 mb-1">{item.itemName || item.name}</h4>
-                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">{item.description}</p>
+                        <p className="text-sm text-gray-600 mb-2 line-clamp-2 break-words">{item.description}</p>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center text-emerald-600 font-semibold">
                             <DollarSign className="size-4" />
