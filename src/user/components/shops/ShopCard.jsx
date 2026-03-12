@@ -72,12 +72,12 @@ export const ShopCard = ({ shop, rating = 0, reviewCount = 0, animationDelay = 0
       {/* Content */}
       <div className="p-6 space-y-3">
         <h3 className={`text-xl font-bold text-gray-900 line-clamp-1 ${styles.cardTitle}`}>
-          {shop.shopName}
+          {shop.shop_name || shop.shopName}
         </h3>
 
         <div className={`flex items-center text-gray-600 ${styles.entityInfo}`}>
           <MapPinned size={16} className="mr-2 flex-shrink-0" />
-          <span className="text-sm line-clamp-1">{shop.shopAddress}</span>
+          <span className="text-sm line-clamp-1">{shop.shop_address || shop.shopAddress}</span>
         </div>
         
         <p className={`text-gray-600 text-sm line-clamp-3 leading-relaxed ${styles.description} mt-2 mb-3`}>

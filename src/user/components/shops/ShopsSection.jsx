@@ -68,8 +68,9 @@ export const ShopsSection = () => {
     // First filter the shops
     const filtered = shops.filter((shop) => {
       const searchLower = searchTerm.toLowerCase();
+      // Updated to use the correct database key: shop_name
       const matchesSearch = 
-        shop.shopName?.toLowerCase().includes(searchLower);
+        (shop.shop_name || shop.shopName || '')?.toLowerCase().includes(searchLower);
       
       // Check if the shop has the selected location in their locations array
       const hasLocation = shop.locations && Array.isArray(shop.locations) && 
@@ -91,8 +92,8 @@ export const ShopsSection = () => {
       }
       
       // If ratings are the same, sort alphabetically by name
-      const nameA = a.shopName?.toLowerCase() || '';
-      const nameB = b.shopName?.toLowerCase() || '';
+      const nameA = (a.shop_name || a.shopName || '')?.toLowerCase();
+      const nameB = (b.shop_name || b.shopName || '')?.toLowerCase();
       
       if (nameA < nameB) return -1;
       if (nameA > nameB) return 1;

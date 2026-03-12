@@ -169,7 +169,7 @@ const ShopDetail = ({ shop, onBack }) => {
               {shopImages.length > 0 ? (
                 <img
                   src={getImageUrl(shopImages[currentImageIndex]?.image_path)}
-                  alt={shopImages[currentImageIndex]?.alt_text || shop.shopName}
+                  alt={shopImages[currentImageIndex]?.alt_text || shop.shop_name || shop.shopName}
                   className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
                 />
               ) : (
@@ -222,7 +222,7 @@ const ShopDetail = ({ shop, onBack }) => {
 
             {/* Shop Title Overlay */}
             <div className={`absolute bottom-8 left-8 text-white ${styles.animateSlideInUp}`}>
-              <h1 className="text-4xl font-bold mb-2">{shop.shopName}</h1>
+              <h1 className="text-4xl font-bold mb-2">{shop.shop_name || shop.shopName}</h1>
               {shopImages.length > 0 && (
                 <div className="text-white/80 text-sm">
                   Image {currentImageIndex + 1} of {shopImages.length}
@@ -265,10 +265,10 @@ const ShopDetail = ({ shop, onBack }) => {
                 <div className={`bg-white rounded-2xl shadow-lg p-6 ${styles.animateSlideInRight} ${styles.animateStagger1}`}>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Info</h3>
                   <div className="space-y-3">
-                    {shop.shopAddress && (
+                    {(shop.shop_address || shop.shopAddress) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <MapPinned className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{shop.shopAddress}</span>
+                        <span>{shop.shop_address || shop.shopAddress}</span>
                       </div>
                     )}
                     {reviews.length > 0 && (
