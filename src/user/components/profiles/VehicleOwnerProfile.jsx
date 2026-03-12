@@ -10,6 +10,7 @@ import {
   deleteMyVehicle,
   getLocations,
 } from '../../../services/api';
+import { getMainVehicleImage, getVehicleImageUrls } from '../../../helpers/ImageHelpers';
 
 const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   const [vehicleOwner, setVehicleOwner] = useState(null);
@@ -197,7 +198,7 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
       short_description: vehicle.short_description || vehicle.description || '',
       locations: vehicle.locations || []
     });
-    setImagePreviews(vehicle.vehicleImage ? vehicle.vehicleImage.map(img => `http://localhost:8000/storage/${img}`) : []);
+    setImagePreviews(getVehicleImageUrls(vehicle));
     setImages([]);
     setShowVehicleForm(true);
   };
@@ -746,17 +747,14 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {vehicles.map((vehicle) => (
                     <div key={vehicle.id} className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-                      {vehicle.vehicleImage && vehicle.vehicleImage.length > 0 ? (
-                        <img
-                          src={`http://localhost:8000/storage/${vehicle.vehicleImage[0]}`}
-                          alt={vehicle.vehicle_name || vehicle.vehicleName}
-                          className="w-full h-48 object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                          <Car className="size-12 text-gray-400" />
-                        </div>
-                      )}
+                      <img
+                        src={getMainVehicleImage(vehicle)}
+                        alt={vehicle.vehicle_name || vehicle.vehicleName}
+                        className="w-full h-48 object-cover"
+                        onError={(e) => {
+                          e.target.src = "/default-vehicle.jpg";
+                        }}
+                      />
                       <div className="p-4">
                         <h5 className="font-semibold text-lg text-gray-800 mb-2">{vehicle.vehicle_name || vehicle.vehicleName}</h5>
                         <div className="flex items-center text-gray-600 mb-2">
