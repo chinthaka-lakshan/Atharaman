@@ -1,3 +1,28 @@
+export const getLocationImageUrls = (location) => {
+  if (!location) return [];
+  
+  // Handle new format (array of objects with image_path)
+  if (location.images && Array.isArray(location.images) && location.images.length > 0) {
+    return location.images.map(img => {
+      const path = img.image_path;
+      if (path && path.startsWith('locations/')) {
+        return `http://localhost:8000/storage/${path}`;
+      } else if (path) {
+        return `http://localhost:8000/storage/locations/${path}`;
+      }
+      return "/default-location.jpg";
+    });
+  }
+  
+  // Fallback
+  return [];
+};
+
+export const getMainLocationImage = (location) => {
+  const urls = getLocationImageUrls(location);
+  return urls[0] || "/default-location.jpg";
+};
+
 export const getGuideImageUrls = (guide) => {
   if (!guide || !guide.guideImage) return [];
   
