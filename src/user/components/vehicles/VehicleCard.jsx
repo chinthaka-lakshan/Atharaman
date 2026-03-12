@@ -31,25 +31,25 @@ export const VehicleCard = ({ vehicle, rating = 0, reviewCount = 0, animationDel
       <div className="relative overflow-hidden h-56">
         <img
           src={mainImage}
-          alt={vehicle.vehicleName || "Vehicle"}
+          alt={vehicle.vehicle_name || vehicle.vehicleName || "Vehicle"}
           className={`w-full h-full object-cover transition-transform duration-500 hover:scale-110 ${styles.cardImage}`}
           onError={(e) => {
             e.target.src = "/default-vehicle.jpg";
           }}
         />
-        {vehicle?.pricePerDay && (
+        {(vehicle?.price_per_day || vehicle?.pricePerDay) && (
           <div className="absolute bottom-2 right-2 bg-emerald-900 text-white rounded-lg px-2 py-1">
             <div className="flex items-center gap-1">
               <CircleDollarSign className="size-4" />
-              <span className="text-xs">LKR. {vehicle.pricePerDay}/day</span>
+              <span className="text-xs">LKR. {vehicle.price_per_day || vehicle.pricePerDay}/day</span>
             </div>
           </div>
         )}
-        {vehicle?.withDriver && (
+        {(vehicle?.driver_status || vehicle?.withDriver) && (
           <div className="absolute bottom-2 left-2 bg-cyan-900 text-white rounded-lg px-2 py-1">
             <div className="flex items-center gap-1">
               <UserCheck className="size-4" />
-              <span className="text-xs">{vehicle.withDriver}</span>
+              <span className="text-xs">{vehicle.driver_status || vehicle.withDriver}</span>
             </div>
           </div>
         )}
@@ -57,7 +57,7 @@ export const VehicleCard = ({ vehicle, rating = 0, reviewCount = 0, animationDel
 
         {/* Category Badge */}
         <div className={`absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-gray-700 ${styles.categoryBadge}`}>
-          {vehicle.vehicleType}
+          {vehicle.vehicle_type || vehicle.vehicleType}
         </div>
 
         {/* Rating Badge - Only show if rating exists */}
@@ -72,29 +72,29 @@ export const VehicleCard = ({ vehicle, rating = 0, reviewCount = 0, animationDel
       {/* Content */}
       <div className="p-6 space-y-3">
         <h3 className={`flex justify-between text-xl font-bold text-gray-900 line-clamp-1 ${styles.cardTitle}`}>
-          {vehicle.vehicleName}
+          {vehicle.vehicle_name || vehicle.vehicleName}
           <span className="font-normal text-sm bg-gray-200 text-gray-700 px-2 py-1 rounded">
-            {vehicle.vehicleNumber}
+            {vehicle.reg_number || vehicle.vehicleNumber}
           </span>
         </h3>
 
         <div className={`flex items-center justify-between text-gray-600 ${styles.entityInfo}`}>
-          {vehicle?.fuelType && (
+          {(vehicle?.fuel_type || vehicle?.fuelType) && (
             <div className="flex items-center">
               <Fuel size={16} className="mr-2 flex-shrink-0" />
-              <span>{vehicle.fuelType}</span>
+              <span>{vehicle.fuel_type || vehicle.fuelType}</span>
             </div>
           )}
-          {vehicle?.mileagePerDay && (
+          {(vehicle?.mileage_per_day || vehicle?.mileagePerDay) && (
             <div className="flex items-center">
               <Gauge size={16} className="mr-2 flex-shrink-0" />
-              <span>{vehicle.mileagePerDay}</span>
+              <span>{vehicle.mileage_per_day || vehicle.mileagePerDay} km</span>
             </div>
           )}
         </div>
 
         <p className={`text-gray-600 text-sm line-clamp-3 leading-relaxed ${styles.description} mt-2 mb-3`}>
-          {vehicle.description}
+          {vehicle.short_description || vehicle.description}
         </p>
 
         {/* Show review count if available */}

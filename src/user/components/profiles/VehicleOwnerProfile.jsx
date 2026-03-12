@@ -37,14 +37,15 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   });
 
   const [vehicleFormData, setVehicleFormData] = useState({
-    vehicleName: '',
-    vehicleType: '',
-    vehicleNumber: '',
-    pricePerDay: '',
-    mileagePerDay: '',
-    fuelType: '',
-    withDriver: '',
-    description: '',
+    vehicle_name: '',
+    vehicle_type: '',
+    reg_number: '',
+    no_of_passengers: '',
+    price_per_day: '',
+    mileage_per_day: '',
+    fuel_type: '',
+    driver_status: '',
+    short_description: '',
     locations: []
   });
 
@@ -126,14 +127,15 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   const handleSaveVehicle = async () => {
     try {
       const formData = new FormData();
-      formData.append('vehicleName', vehicleFormData.vehicleName);
-      formData.append('vehicleType', vehicleFormData.vehicleType);
-      formData.append('vehicleNumber', vehicleFormData.vehicleNumber);
-      formData.append('pricePerDay', vehicleFormData.pricePerDay);
-      formData.append('mileagePerDay', vehicleFormData.mileagePerDay);
-      formData.append('fuelType', vehicleFormData.fuelType);
-      formData.append('withDriver', vehicleFormData.withDriver);
-      formData.append('description', vehicleFormData.description);
+      formData.append('vehicle_name', vehicleFormData.vehicle_name);
+      formData.append('vehicle_type', vehicleFormData.vehicle_type);
+      formData.append('reg_number', vehicleFormData.reg_number);
+      formData.append('no_of_passengers', vehicleFormData.no_of_passengers);
+      formData.append('price_per_day', vehicleFormData.price_per_day);
+      formData.append('mileage_per_day', vehicleFormData.mileage_per_day);
+      formData.append('fuel_type', vehicleFormData.fuel_type);
+      formData.append('driver_status', vehicleFormData.driver_status);
+      formData.append('short_description', vehicleFormData.short_description);
       
       // Only append locations if they exist
       if (vehicleFormData.locations && vehicleFormData.locations.length > 0) {
@@ -184,14 +186,15 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   const startEditVehicle = (vehicle) => {
     setEditingVehicle(vehicle);
     setVehicleFormData({
-      vehicleName: vehicle.vehicleName,
-      vehicleType: vehicle.vehicleType,
-      vehicleNumber: vehicle.vehicleNumber,
-      pricePerDay: vehicle.pricePerDay,
-      mileagePerDay: vehicle.mileagePerDay,
-      fuelType: vehicle.fuelType,
-      withDriver: vehicle.withDriver,
-      description: vehicle.description || '',
+      vehicle_name: vehicle.vehicle_name || vehicle.vehicleName || '',
+      vehicle_type: vehicle.vehicle_type || vehicle.vehicleType || '',
+      reg_number: vehicle.reg_number || vehicle.vehicleNumber || '',
+      no_of_passengers: vehicle.no_of_passengers || '',
+      price_per_day: vehicle.price_per_day || vehicle.pricePerDay || '',
+      mileage_per_day: vehicle.mileage_per_day || vehicle.mileagePerDay || '',
+      fuel_type: vehicle.fuel_type || vehicle.fuelType || '',
+      driver_status: vehicle.driver_status || vehicle.withDriver || '',
+      short_description: vehicle.short_description || vehicle.description || '',
       locations: vehicle.locations || []
     });
     setImagePreviews(vehicle.vehicleImage ? vehicle.vehicleImage.map(img => `http://localhost:8000/storage/${img}`) : []);
@@ -201,14 +204,15 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
 
   const resetVehicleForm = () => {
     setVehicleFormData({
-      vehicleName: '',
-      vehicleType: '',
-      vehicleNumber: '',
-      pricePerDay: '',
-      mileagePerDay: '',
-      fuelType: '',
-      withDriver: '',
-      description: '',
+      vehicle_name: '',
+      vehicle_type: '',
+      reg_number: '',
+      no_of_passengers: '',
+      price_per_day: '',
+      mileage_per_day: '',
+      fuel_type: '',
+      driver_status: '',
+      short_description: '',
       locations: []
     });
     setImages([]);
@@ -510,8 +514,8 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       </label>
                       <input
                         type="text"
-                        value={vehicleFormData.vehicleName}
-                        onChange={(e) => setVehicleFormData({...vehicleFormData, vehicleName: e.target.value})}
+                        value={vehicleFormData.vehicle_name}
+                        onChange={(e) => setVehicleFormData({...vehicleFormData, vehicle_name: e.target.value})}
                         required
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
@@ -523,8 +527,8 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                           Vehicle Type *
                         </label>
                         <select
-                          value={vehicleFormData.vehicleType}
-                          onChange={(e) => setVehicleFormData({...vehicleFormData, vehicleType: e.target.value})}
+                          value={vehicleFormData.vehicle_type}
+                          onChange={(e) => setVehicleFormData({...vehicleFormData, vehicle_type: e.target.value})}
                           required
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
@@ -540,23 +544,36 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                         </label>
                         <input
                           type="text"
-                          value={vehicleFormData.vehicleNumber}
-                          onChange={(e) => setVehicleFormData({...vehicleFormData, vehicleNumber: e.target.value})}
+                          value={vehicleFormData.reg_number}
+                          onChange={(e) => setVehicleFormData({...vehicleFormData, reg_number: e.target.value})}
                           required
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          No. of Passengers *
+                        </label>
+                        <input
+                          type="number"
+                          value={vehicleFormData.no_of_passengers}
+                          onChange={(e) => setVehicleFormData({...vehicleFormData, no_of_passengers: e.target.value})}
+                          required
+                          min="1"
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Price Per Day (LKR) *
                         </label>
                         <input
-                          type="text"
-                          value={vehicleFormData.pricePerDay}
-                          onChange={(e) => setVehicleFormData({...vehicleFormData, pricePerDay: e.target.value})}
+                          type="number"
+                          value={vehicleFormData.price_per_day}
+                          onChange={(e) => setVehicleFormData({...vehicleFormData, price_per_day: e.target.value})}
                           required
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
@@ -566,9 +583,9 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                           Mileage Per Day (km) *
                         </label>
                         <input
-                          type="text"
-                          value={vehicleFormData.mileagePerDay}
-                          onChange={(e) => setVehicleFormData({...vehicleFormData, mileagePerDay: e.target.value})}
+                          type="number"
+                          value={vehicleFormData.mileage_per_day}
+                          onChange={(e) => setVehicleFormData({...vehicleFormData, mileage_per_day: e.target.value})}
                           required
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
@@ -581,8 +598,8 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                           Fuel Type *
                         </label>
                         <select
-                          value={vehicleFormData.fuelType}
-                          onChange={(e) => setVehicleFormData({...vehicleFormData, fuelType: e.target.value})}
+                          value={vehicleFormData.fuel_type}
+                          onChange={(e) => setVehicleFormData({...vehicleFormData, fuel_type: e.target.value})}
                           required
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
@@ -597,8 +614,8 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                           Driver Option *
                         </label>
                         <select
-                          value={vehicleFormData.withDriver}
-                          onChange={(e) => setVehicleFormData({...vehicleFormData, withDriver: e.target.value})}
+                          value={vehicleFormData.driver_status}
+                          onChange={(e) => setVehicleFormData({...vehicleFormData, driver_status: e.target.value})}
                           required
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
@@ -656,8 +673,8 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                         Description
                       </label>
                       <textarea
-                        value={vehicleFormData.description}
-                        onChange={(e) => setVehicleFormData({...vehicleFormData, description: e.target.value})}
+                        value={vehicleFormData.short_description}
+                        onChange={(e) => setVehicleFormData({...vehicleFormData, short_description: e.target.value})}
                         rows="3"
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
@@ -732,7 +749,7 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                       {vehicle.vehicleImage && vehicle.vehicleImage.length > 0 ? (
                         <img
                           src={`http://localhost:8000/storage/${vehicle.vehicleImage[0]}`}
-                          alt={vehicle.vehicleName}
+                          alt={vehicle.vehicle_name || vehicle.vehicleName}
                           className="w-full h-48 object-cover"
                         />
                       ) : (
@@ -741,33 +758,36 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                         </div>
                       )}
                       <div className="p-4">
-                        <h5 className="font-semibold text-lg text-gray-800 mb-2">{vehicle.vehicleName}</h5>
+                        <h5 className="font-semibold text-lg text-gray-800 mb-2">{vehicle.vehicle_name || vehicle.vehicleName}</h5>
                         <div className="flex items-center text-gray-600 mb-2">
                           <Car className="size-4 mr-1" />
-                          <span className="text-sm">{vehicle.vehicleType} - {vehicle.vehicleNumber}</span>
+                          <span className="text-sm">{vehicle.vehicle_type || vehicle.vehicleType} - {vehicle.reg_number || vehicle.vehicleNumber}</span>
                         </div>
                         
-                        {/* Vehicle details */}
                         <div className="space-y-2 mb-3">
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Price/Day:</span>
-                            <span className="font-medium">LKR {vehicle.pricePerDay}</span>
+                            <span className="font-medium">LKR {vehicle.price_per_day || vehicle.pricePerDay}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Mileage/Day:</span>
-                            <span className="font-medium">{vehicle.mileagePerDay} km</span>
+                            <span className="font-medium">{vehicle.mileage_per_day || vehicle.mileagePerDay} km</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Passengers:</span>
+                            <span className="font-medium">{vehicle.no_of_passengers || '-'}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Fuel Type:</span>
-                            <span className="font-medium">{vehicle.fuelType}</span>
+                            <span className="font-medium">{vehicle.fuel_type || vehicle.fuelType}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Driver:</span>
-                            <span className="font-medium">{vehicle.withDriver}</span>
+                            <span className="font-medium">{vehicle.driver_status || vehicle.withDriver}</span>
                           </div>
                         </div>
                         
-                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{vehicle.description}</p>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{vehicle.short_description || vehicle.description}</p>
                         {vehicle.locations && vehicle.locations.length > 0 && (
                           <div className="mb-3">
                             <p className="text-xs text-gray-500">Operating Locations:</p>

@@ -66,7 +66,7 @@ export const VehiclesSection = () => {
     const filtered = vehicles.filter((vehicle) => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch = 
-        vehicle.vehicleName?.toLowerCase().includes(searchLower);
+        (vehicle.vehicle_name || vehicle.vehicleName)?.toLowerCase().includes(searchLower);
       
       // Check if the vehicle has the selected location in their locations array
       const hasLocation = vehicle.locations && Array.isArray(vehicle.locations) && 
@@ -88,8 +88,8 @@ export const VehiclesSection = () => {
       }
       
       // If ratings are the same, sort alphabetically by name
-      const nameA = a.vehicleName?.toLowerCase() || '';
-      const nameB = b.vehicleName?.toLowerCase() || '';
+      const nameA = (a.vehicle_name || a.vehicleName)?.toLowerCase() || '';
+      const nameB = (b.vehicle_name || b.vehicleName)?.toLowerCase() || '';
       
       if (nameA < nameB) return -1;
       if (nameA > nameB) return 1;
