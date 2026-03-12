@@ -188,7 +188,7 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
       long_description: hotel.long_description || '',
       locations: hotel.locations || []
     });
-    setImagePreviews(hotel.hotelImage ? hotel.hotelImage.map(img => `http://localhost:8000/storage/${img}`) : []);
+    setImagePreviews(hotel.images && hotel.images.length > 0 ? hotel.images.map(img => `http://localhost:8000/storage/${img.image_path}`) : []);
     setImages([]);
     setShowHotelForm(true);
   };
@@ -624,9 +624,9 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {hotels.map((hotel) => (
                     <div key={hotel.id} className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-                      {hotel.hotelImage && hotel.hotelImage.length > 0 ? (
+                      {hotel.images && hotel.images.length > 0 ? (
                         <img
-                          src={`http://localhost:8000/storage/${hotel.hotelImage[0]}`}
+                          src={`http://localhost:8000/storage/${hotel.images[0].image_path}`}
                           alt={hotel.hotel_name}
                           className="w-full h-48 object-cover"
                         />
