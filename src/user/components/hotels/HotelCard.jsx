@@ -31,7 +31,7 @@ export const HotelCard = ({ hotel, rating = 0, reviewCount = 0, animationDelay =
       <div className="relative overflow-hidden h-56">
         <img
           src={mainImage}
-          alt={hotel.hotelName || "Hotel"}
+          alt={hotel.hotel_name || hotel.hotelName || "Hotel"}
           className={`w-full h-full object-cover transition-transform duration-500 hover:scale-110 ${styles.cardImage}`}
           onError={(e) => {
             e.target.src = "/default-hotel.jpg";
@@ -51,21 +51,21 @@ export const HotelCard = ({ hotel, rating = 0, reviewCount = 0, animationDelay =
       {/* Content */}
       <div className="p-6 space-y-3">
         <h3 className={`text-xl font-bold text-gray-900 line-clamp-1 ${styles.cardTitle}`}>
-          {hotel.hotelName}
+          {hotel.hotel_name || hotel.hotelName}
         </h3>
 
         <div className={`flex items-center text-gray-600 ${styles.entityInfo}`}>
           <MapPinned size={16} className="mr-2 flex-shrink-0" />
-          <span className="text-sm line-clamp-1">{hotel.hotelAddress}</span>
+          <span className="text-sm line-clamp-1">{hotel.hotel_address || hotel.hotelAddress}</span>
         </div>
 
         <div className={`flex items-center text-gray-600 ${styles.entityInfo}`}>
           <Phone size={16} className="mr-2 flex-shrink-0" />
-          <span className="text-sm line-clamp-1">{hotel.contactNumber}</span>
+          <span className="text-sm line-clamp-1">{hotel.contact_number || hotel.contactNumber}</span>
         </div>
         
         <p className={`text-gray-600 text-sm line-clamp-3 leading-relaxed ${styles.description} mt-2 mb-3`}>
-          {hotel.description}
+          {hotel.short_description || hotel.description}
         </p>
 
         {/* Show review count if available */}

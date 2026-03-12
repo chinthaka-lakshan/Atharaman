@@ -66,7 +66,7 @@ export const HotelsSection = () => {
     const filtered = hotels.filter((hotel) => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch = 
-        hotel.hotelName?.toLowerCase().includes(searchLower);
+        (hotel.hotel_name || hotel.hotelName)?.toLowerCase().includes(searchLower);
       
       // Check if the hotel has the selected location in their locations array
       const hasLocation = hotel.locations && Array.isArray(hotel.locations) && 
@@ -88,8 +88,8 @@ export const HotelsSection = () => {
       }
       
       // If ratings are the same, sort alphabetically by name
-      const nameA = a.hotelName?.toLowerCase() || '';
-      const nameB = b.hotelName?.toLowerCase() || '';
+      const nameA = (a.hotel_name || a.hotelName)?.toLowerCase() || '';
+      const nameB = (b.hotel_name || b.hotelName)?.toLowerCase() || '';
       
       if (nameA < nameB) return -1;
       if (nameA > nameB) return 1;
