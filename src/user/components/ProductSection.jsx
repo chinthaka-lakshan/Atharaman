@@ -128,8 +128,8 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
 
   // Function to determine category for locations
   const getCategory = (location) => {
-    const type = location.locationType?.toLowerCase() || '';
-    const name = location.locationName?.toLowerCase() || '';
+    const type = (location.location_type || location.locationType || '').toLowerCase();
+    const name = (location.location_name || location.locationName || '').toLowerCase();
     
     if (type.includes('mountain') || name.includes('mountain')) return 'Mountain';
     if (type.includes('rock') || name.includes('rock')) return 'Rock';
@@ -199,7 +199,7 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
             <div className="relative h-48 overflow-hidden">
               <img 
                 src={getLocationImage(item)} 
-                alt={item.locationName} 
+                alt={item.location_name || item.locationName} 
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
                 loading="lazy"
                 onError={(e) => {
@@ -251,7 +251,7 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
             <div className="relative h-48 overflow-hidden">
               <img 
                 src={getGuideImage(item)} 
-                alt={item.guideName} 
+                alt={item.guide_name || item.guideName} 
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
                 loading="lazy"
                 onError={(e) => {
@@ -272,7 +272,7 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
               <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.guide_name || item.guideName}</h3>
               <div className="flex items-center text-gray-600 text-sm mb-2">
                 <Phone className="size-4 mr-2" />
-                <span>{item.personal_number || item.personalNumber}</span>
+                <span>{item.contact_number || item.contactNumber || item.personal_number || item.personalNumber}</span>
               </div>
               
               <p className="text-gray-600 text-sm line-clamp-2 mb-3">
