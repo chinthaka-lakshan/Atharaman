@@ -14,7 +14,8 @@ export const GuideCard = ({ guide, rating = 0, reviewCount = 0, animationDelay =
 
   const getFirstImage = () => {
     if (guide.images && guide.images.length > 0) {
-      return `http://localhost:8000/storage/${guide.images[0].image_path}`;
+      const path = guide.images[0].image_path;
+      return path.startsWith('http') ? path : `http://localhost:8000/storage/${path}`;
     } else {
       return '/default-guide.jpg';
     }
