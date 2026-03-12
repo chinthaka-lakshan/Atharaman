@@ -24,7 +24,23 @@ export const getMainLocationImage = (location) => {
 };
 
 export const getGuideImageUrls = (guide) => {
-  if (!guide || !guide.guideImage) return [];
+  if (!guide) return [];
+  
+  // Use new backend `images` relation if available
+  if (guide.images && Array.isArray(guide.images) && guide.images.length > 0) {
+    return guide.images.map(img => {
+      const path = img.image_path;
+      if (path && path.startsWith('guides/')) {
+        return `http://localhost:8000/storage/${path}`;
+      } else if (path) {
+        return `http://localhost:8000/storage/guides/${path}`;
+      }
+      return "/default-guide.jpg";
+    });
+  }
+
+  // Fallback to old property
+  if (!guide.guideImage) return [];
   
   let images = [];
   
@@ -52,7 +68,23 @@ export const getMainGuideImage = (guide) => {
 };
 
 export const getShopImageUrls = (shop) => {
-  if (!shop || !shop.shopImage) return [];
+  if (!shop) return [];
+  
+  // Use new backend `images` relation if available
+  if (shop.images && Array.isArray(shop.images) && shop.images.length > 0) {
+    return shop.images.map(img => {
+      const path = img.image_path;
+      if (path && path.startsWith('shops/')) {
+        return `http://localhost:8000/storage/${path}`;
+      } else if (path) {
+        return `http://localhost:8000/storage/shops/${path}`;
+      }
+      return "/default-shop.jpg";
+    });
+  }
+
+  // Fallback to old property
+  if (!shop.shopImage) return [];
   
   let images = [];
   
