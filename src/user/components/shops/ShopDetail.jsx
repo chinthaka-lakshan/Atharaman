@@ -305,14 +305,18 @@ const ShopDetail = ({ shop, onBack }) => {
                     >
                       <div className="h-32 overflow-hidden">
                         <img
-                          src={getImageUrl(item.image)}
-                          alt={item.name}
+                          src={getImageUrl(
+                            (item.itemImage && typeof item.itemImage === 'string' && item.itemImage.startsWith('['))
+                              ? JSON.parse(item.itemImage)[0]
+                              : (Array.isArray(item.itemImage) ? item.itemImage[0] : item.image)
+                          )}
+                          alt={item.itemName || item.name}
                           className="w-full h-full object-cover hover:scale-105 transition-transform"
                           loading="lazy"
                         />
                       </div>
                       <div className="p-3">
-                        <h4 className="font-semibold text-gray-900 mb-1">{item.name}</h4>
+                        <h4 className="font-semibold text-gray-900 mb-1">{item.itemName || item.name}</h4>
                         <p className="text-sm text-gray-600 mb-2 line-clamp-2">{item.description}</p>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center text-emerald-600 font-semibold">
