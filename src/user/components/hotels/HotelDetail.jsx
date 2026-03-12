@@ -80,17 +80,17 @@ const HotelDetail = ({ hotel, onBack }) => {
   };
 
   const nextImage = () => {
-    if (hotel?.hotelImage?.length) {
+    if (hotel?.images?.length) {
       setCurrentImageIndex((prev) => 
-        prev === hotel.hotelImage.length - 1 ? 0 : prev + 1
+        prev === hotel.images.length - 1 ? 0 : prev + 1
       );
     }
   };
 
   const prevImage = () => {
-    if (hotel?.hotelImage?.length) {
+    if (hotel?.images?.length) {
       setCurrentImageIndex((prev) => 
-        prev === 0 ? hotel.hotelImage.length - 1 : prev - 1
+        prev === 0 ? hotel.images.length - 1 : prev - 1
       );
     }
   };
@@ -126,10 +126,10 @@ const HotelDetail = ({ hotel, onBack }) => {
           {/* Hero Section */}
           <div className="relative h-128 overflow-hidden">
             <div className="relative w-full h-full">
-              {hotel.hotelImage && hotel.hotelImage.length > 0 ? (
+              {hotel.images && hotel.images.length > 0 ? (
                 <img
-                  src={`http://localhost:8000/storage/${hotel.hotelImage[currentImageIndex]}`}
-                  alt={hotel.hotelName}
+                  src={`http://localhost:8000/storage/${hotel.images[currentImageIndex]?.image_path}`}
+                  alt={hotel.hotel_name || hotel.hotelName}
                   className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
                 />
               ) : (
@@ -147,7 +147,7 @@ const HotelDetail = ({ hotel, onBack }) => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 
               {/* Image Navigation */}
-              {hotel.hotelImage && hotel.hotelImage.length > 1 && (
+              {hotel.images && hotel.images.length > 1 && (
                 <>
                   <button
                     onClick={prevImage}
@@ -165,9 +165,9 @@ const HotelDetail = ({ hotel, onBack }) => {
               )}
 
               {/* Image Indicators */}
-              {hotel.hotelImage && hotel.hotelImage.length > 1 && (
+              {hotel.images && hotel.images.length > 1 && (
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {hotel.hotelImage.map((_, index) => (
+                  {hotel.images.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
@@ -182,7 +182,7 @@ const HotelDetail = ({ hotel, onBack }) => {
 
             {/* Hotel Title Overlay */}
             <div className={`absolute bottom-8 left-8 text-white ${styles.animateSlideInUp}`}>
-              <h1 className="text-4xl font-bold mb-2">{hotel.hotelName}</h1>
+              <h1 className="text-4xl font-bold mb-2">{hotel.hotel_name || hotel.hotelName}</h1>
             </div>
           </div>
 
@@ -194,8 +194,8 @@ const HotelDetail = ({ hotel, onBack }) => {
                 {/* Description */}
                 <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Hotel</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6">
-                    {hotel.description}
+                  <p className="text-gray-600 leading-relaxed mb-6 whitespace-pre-wrap">
+                    {hotel.long_description || hotel.short_description || hotel.description}
                   </p>
 
                   {/* Locations */}
@@ -220,33 +220,33 @@ const HotelDetail = ({ hotel, onBack }) => {
                 <div className={`bg-white rounded-2xl shadow-lg p-6 ${styles.animateSlideInRight} ${styles.animateStagger1}`}>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Info</h3>
                   <div className="space-y-3">
-                    {hotel.hotelAddress && (
+                    {(hotel.hotel_address || hotel.hotelAddress) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <MapPinned className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{hotel.hotelAddress}</span>
+                        <span>{hotel.hotel_address || hotel.hotelAddress}</span>
                       </div>
                     )}
-                    {hotel.contactNumber && (
+                    {(hotel.contact_number || hotel.contactNumber) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <Phone className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{hotel.contactNumber}</span>
+                        <span>{hotel.contact_number || hotel.contactNumber}</span>
                       </div>
                     )}
-                    {hotel.businessMail && (
+                    {(hotel.business_mail || hotel.businessMail) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <Mail className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                         <a 
-                          href={`mailto:${hotel.businessMail}`} 
+                          href={`mailto:${hotel.business_mail || hotel.businessMail}`} 
                           className="hover:text-emerald-600 transition-colors break-all"
                         >
-                          {hotel.businessMail}
+                          {hotel.business_mail || hotel.businessMail}
                         </a>
                       </div>
                     )}
-                    {hotel.whatsappNumber && (
+                    {(hotel.whatsapp_number || hotel.whatsappNumber) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <FaWhatsapp className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{hotel.whatsappNumber}</span>
+                        <span>{hotel.whatsapp_number || hotel.whatsappNumber}</span>
                       </div>
                     )}
                     {reviews.length > 0 && (
@@ -272,21 +272,21 @@ const HotelDetail = ({ hotel, onBack }) => {
             </div>
 
             {/* Contact Button */}
-            {(hotel.businessMail || hotel.personalNumber) && (
+            {(hotel.business_mail || hotel.businessMail || hotel.contact_number || hotel.contactNumber) && (
               <div className="mt-8 pt-5 border-t mb-5">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Contact This Hotel</h2>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  {hotel.businessMail && (
+                  {(hotel.business_mail || hotel.businessMail) && (
                     <a 
-                      href={`mailto:${hotel.businessMail}`} 
+                      href={`mailto:${hotel.business_mail || hotel.businessMail}`} 
                       className="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                     >
                       Send Email
                     </a>
                   )}
-                  {hotel.contactNumber && (
+                  {(hotel.contact_number || hotel.contactNumber) && (
                     <a 
-                      href={`tel:${hotel.contactNumber}`} 
+                      href={`tel:${hotel.contact_number || hotel.contactNumber}`} 
                       className="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                     >
                       Call Now

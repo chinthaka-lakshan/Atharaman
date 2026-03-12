@@ -55,7 +55,23 @@ export const getMainShopImage = (shop) => {
 };
 
 export const getHotelImageUrls = (hotel) => {
-  if (!hotel || !hotel.hotelImage) return [];
+  if (!hotel) return [];
+  
+  // Use new backend `images` relation if available
+  if (hotel.images && Array.isArray(hotel.images) && hotel.images.length > 0) {
+    return hotel.images.map(img => {
+      const path = img.image_path;
+      if (path && path.startsWith('hotels/')) {
+        return `http://localhost:8000/storage/${path}`;
+      } else if (path) {
+        return `http://localhost:8000/storage/hotels/${path}`;
+      }
+      return "/default-hotel.jpg";
+    });
+  }
+
+  // Fallback to old property
+  if (!hotel.hotelImage) return [];
   
   let images = [];
   
