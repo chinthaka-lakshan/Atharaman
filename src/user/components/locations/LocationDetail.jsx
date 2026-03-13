@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronLeft, ChevronRight, Star, GlobeIcon, MountainIcon} from 'lucide-react';
+import { 
+  ArrowLeft, ChevronLeft, ChevronRight, Star, 
+  MapPin, Wind, Cloud, Droplets, 
+  Globe, Compass, Mountain, Map as MapIcon
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import WeatherWidget from './WeatherWidget';
 import LocationMap from './LocationMap';
-import styles from '../../styles/DetailPages.module.css';
 import Navbar from '../Navbar';
 import ReviewSection from '../ReviewSection';
 import { getRelatedData } from '../../../services/api';
 import { GuideCard } from '../guides/GuideCard';
-import GuideDetail from '../guides/GuideDetail';
 import { ShopCard } from '../shops/ShopCard';
-import ShopDetail from '../shops/ShopDetail';
 import { HotelCard } from '../hotels/HotelCard';
-import HotelDetail from '../hotels/HotelDetail';
 import { VehicleCard } from '../vehicles/VehicleCard';
-import VehicleDetail from '../vehicles/VehicleDetail';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 const LocationDetail = ({ location, onBack }) => {
   const reviews = location.reviews || location.reviews?.data || [];
@@ -27,25 +28,18 @@ const LocationDetail = ({ location, onBack }) => {
   const [hotels, setHotels] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedGuide, setSelectedGuide] = useState(null);
-  const [selectedShop, setSelectedShop] = useState(null);
-  const [selectedHotel, setSelectedHotel] = useState(null);
-  const [selectedVehicle, setSelectedVehicle] = useState(null);
   const navigate = useNavigate();
 
   // Normalize image data
   const getImages = () => {
     if (location.images && location.images.length > 0) {
-      // Images array with image_path
       return location.images.map(img => img.image_path);
-    } else {
-      return [];
     }
+    return [];
   };
 
   const images = getImages();
 
-  // Fetch all related data in a single API call
   useEffect(() => {
     const fetchRelatedData = async () => {
       if (location?.id) {
@@ -65,33 +59,8 @@ const LocationDetail = ({ location, onBack }) => {
         }
       }
     };
-
     fetchRelatedData();
   }, [location]);
-
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const navbarHeight = 64;
-      const elementPosition =
-        element.getBoundingClientRect().top + window.scrollY - navbarHeight;
-      window.scrollTo({
-        top: elementPosition,
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  const renderStars = (rating) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <span
-        key={i}
-        className={`text-lg ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
-      >
-        ★
-      </span>
-    ));
-  };
 
   const handleBack = () => {
     if (onBack) {
@@ -102,421 +71,277 @@ const LocationDetail = ({ location, onBack }) => {
   };
 
   const nextImage = () => {
-    if (location?.locationImage?.length) {
-      setCurrentImageIndex((prev) => 
-        prev === location.locationImage.length - 1 ? 0 : prev + 1
-      );
+    if (images.length) {
+      setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     }
   };
 
   const prevImage = () => {
-    if (location?.locationImage?.length) {
-      setCurrentImageIndex((prev) => 
-        prev === 0 ? location.locationImage.length - 1 : prev - 1
-      );
+    if (images.length) {
+      setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
     }
   };
 
-  const handleGuideClick = (guide) => {
-    setSelectedGuide(guide);
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
   };
 
-  const handleGuideBack = () => {
-    setSelectedGuide(null);
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
   };
 
-  const handleShopClick = (shop) => {
-    setSelectedShop(shop);
-  };
-
-  const handleShopBack = () => {
-    setSelectedShop(null);
-  };
-
-  const handleHotelClick = (hotel) => {
-    setSelectedHotel(hotel);
-  };
-
-  const handleHotelBack = () => {
-    setSelectedHotel(null);
-  };
-
-  const handleVehicleClick = (vehicle) => {
-    setSelectedVehicle(vehicle);
-  };
-
-  const handleVehicleBack = () => {
-    setSelectedVehicle(null);
-  };
-
-  if (selectedGuide) {
-    return <GuideDetail guide={selectedGuide} onBack={handleGuideBack} />;
-  }
-
-  if (selectedShop) {
-    return <ShopDetail shop={selectedShop} onBack={handleShopBack} />;
-  }
-
-  if (selectedHotel) {
-    return <HotelDetail hotel={selectedHotel} onBack={handleHotelBack} />;
-  }
-
-  if (selectedVehicle) {
-    return <VehicleDetail vehicle={selectedVehicle} onBack={handleVehicleBack} />;
-  }
-
-  if (!location) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading location details...</p>
-        </div>
-      </div>
-    );
-  }
+  if (!location) return null;
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-purple-50 pt-16 ${styles.entityDetails}`}>
-      <Navbar onScrollToSection={scrollToSection} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Hero Section */}
-          <div className="relative h-128 overflow-hidden">
-            <div className="relative w-full h-full">
-              {images.length > 0 ? (
-                <img
-                  src={`http://localhost:8000/storage/${images[currentImageIndex]}`}
-                  alt={location.locationName}
-                  className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      <Navbar />
+      
+      {/* Global Pattern Overlay */}
+      <div 
+        className="fixed inset-0 opacity-[0.03] pointer-events-none z-0"
+        style={{ 
+          backgroundImage: 'url("https://www.transparenttextures.com/patterns/natural-paper.png")',
+          backgroundRepeat: 'repeat'
+        }}
+      ></div>
+
+      {/* Decorative Background Elements */}
+      <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-3xl -z-10 -translate-y-1/2 translate-x-1/2" />
+      <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-emerald-50/50 rounded-full blur-3xl -z-10 translate-y-1/2 -translate-x-1/2" />
+
+      {/* Hero Section */}
+      <div className="relative h-[70vh] min-h-[500px] overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentImageIndex}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            src={images.length > 0 ? `${STORAGE_BASE_URL}/${images[currentImageIndex]}` : '/placeholder-location.jpg'}
+            alt={location.locationName}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </AnimatePresence>
+        
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-white" />
+        
+        {/* Back Button */}
+        <button
+          onClick={handleBack}
+          className="absolute top-24 left-8 z-30 p-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all group"
+        >
+          <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+        </button>
+
+        {/* Hero Content */}
+        <div className="absolute bottom-24 left-8 right-8 z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-7xl mx-auto"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <span className="px-4 py-1.5 bg-orange-500 text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg shadow-orange-500/30">
+                {location.locationType || 'Destinations'}
+              </span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-white text-sm font-medium border border-white/20">
+                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                {averageRating.toFixed(1)} ({reviewCount} Reviews)
+              </div>
+            </div>
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-4 tracking-tight">
+              {location.locationName}
+            </h1>
+            <p className="text-lg md:text-xl text-gray-700 max-w-2xl font-medium leading-relaxed">
+              {location.shortDescription}
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Image Nav Buttons */}
+        {images.length > 1 && (
+          <div className="absolute bottom-24 right-8 z-30 flex gap-3">
+            <button onClick={prevImage} className="p-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all">
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button onClick={nextImage} className="p-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all">
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-8 relative -mt-12 z-20 pb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          
+          {/* Left Column - Details */}
+          <div className="lg:col-span-8 space-y-12">
+            {/* About Section */}
+            <motion.section 
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-2xl border border-white/50"
+            >
+              <div className="flex items-center gap-4 mb-8">
+                <div className="p-4 bg-orange-100 rounded-2xl text-orange-600">
+                  <Compass className="w-8 h-8" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900">Experience the Magic</h2>
+                  <p className="text-gray-500 font-medium">Everything you need to know about {location.locationName}</p>
+                </div>
+              </div>
+              <div className="prose prose-lg prose-orange max-w-none text-gray-700 leading-relaxed space-y-6">
+                <p className="text-xl font-medium leading-relaxed">
+                  {location.longDescription}
+                </p>
+              </div>
+            </motion.section>
+
+            {/* Interactive Map Section */}
+            <motion.section 
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="bg-white/80 backdrop-blur-xl p-6 rounded-[2.5rem] shadow-2xl border border-white/50 h-[500px] overflow-hidden"
+            >
+              <div className="w-full h-full rounded-[2rem] overflow-hidden">
+                <LocationMap
+                  latitude={location.latitude}
+                  longitude={location.longitude}
+                  name={location.locationName}
                 />
-              ) : (
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-500">No image available</span>
-                </div>
-              )}
-              <button
-                onClick={handleBack}
-                className="absolute top-4 left-4 bg-white/90 hover:bg-white rounded-full p-2 transition-all duration-200"
-              >
-                <ArrowLeft className="w-5 h-5 text-gray-700" />
-              </button>
+              </div>
+            </motion.section>
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-              
-              {/* Image Navigation */}
-              {images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-md rounded-full p-2 hover:bg-white/30 transition-all ${styles.imageNavButton}`}
-                  >
-                    <ChevronLeft size={24} className="text-white" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-md rounded-full p-2 hover:bg-white/30 transition-all ${styles.imageNavButton}`}
-                  >
-                    <ChevronRight size={24} className="text-white" />
-                  </button>
-                </>
-              )}
-
-              {/* Image Indicators */}
-              {images.length > 1 && (
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-3 h-3 rounded-full transition-all ${
-                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                      }`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Location Title Overlay */}
-            <div className={`absolute bottom-8 left-8 text-white ${styles.animateSlideInUp}`}>
-              <h1 className="text-4xl font-bold mb-2">{location.locationName}</h1>
-            </div>
           </div>
 
-          {/* Content */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-8">
-              {/* Main Content */}
-              <div className="lg:col-span-2 space-y-8">
-                {/* Description */}
-                <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Location</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6 break-words">
-                    {location.shortDescription}
-                  </p>
-                  <div className="prose prose-lg text-gray-700">
-                    <p className="break-words">{location.longDescription}</p>
-                  </div>
-                </div>
-
-                {/* Map Section */}
-                <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft} ${styles.animateStagger1}`}>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Location Map</h2>
-                  <LocationMap
-                    latitude={location.latitude}
-                    longitude={location.longitude}
-                    name={location.locationName}
-                  />
-                </div>
-              </div>
-
-              {/* Sidebar */}
-              <div className="space-y-8">
-                {/* Quick Info */}
-                <div className={`bg-white rounded-2xl shadow-lg p-6 ${styles.animateSlideInRight} ${styles.animateStagger1}`}>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Info</h3>
-                  <div className="space-y-3">
-                    {location.locationType && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <MountainIcon className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{location.locationType}</span>
-                      </div>
-                    )}
-                    {location.province && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <GlobeIcon className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{location.province} Province</span>
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Latitude</span>
-                      <span className="font-medium">{location.latitude}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Longitude</span>
-                      <span className="font-medium">{location.longitude}</span>
-                    </div>
-                    {reviews.length > 0 && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-600"><strong>Rating</strong></span>
-                        <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={16}
-                              className={`${
-                                i < Math.round(averageRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                          <span className="text-sm text-gray-600 ml-1">({averageRating ? averageRating.toFixed(1) : '0.0'})</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Weather Widget */}
-                <div className={`${styles.animateSlideInRight}`}>
-                  <WeatherWidget location={{ latitude: location.latitude, longitude: location.longitude }} />
-                </div>
-              </div>
-            </div>
-
-            {/* Guides Section */}
-            <div className="mb-8">
-              <div className="pt-5 border-t">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Guides</h2>
-                {loading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                  </div>
-                ) : guides.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Sort guides by rating (highest first) */}
-                    {guides
-                      .sort((a, b) => {
-                        const ratingA = a.reviews_avg_rating || 0;
-                        const ratingB = b.reviews_avg_rating || 0;
-                        return ratingB - ratingA;
-                      })
-                      .map(guide => (
-                        <GuideCard
-                          key={guide.id}
-                          guide={guide}
-                          rating={guide.reviews_avg_rating || 0}
-                          reviewCount={guide.reviews_count || 0}
-                          onClick={handleGuideClick}
-                          isClickable={false}
-                        />
-                      ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-8">No guides available for this location.</p>
-                )}
-              </div>
-            </div>
-
-            {/* Shops Section */}
-            <div className="mb-8">
-              <div className="pt-5 border-t">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Nearby Shops</h2>
-                {loading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                  </div>
-                ) : shops.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Sort shops by rating (highest first) */}
-                    {shops
-                      .sort((a, b) => {
-                        const ratingA = a.reviews_avg_rating || 0;
-                        const ratingB = b.reviews_avg_rating || 0;
-                        return ratingB - ratingA;
-                      })
-                      .map(shop => (
-                        <ShopCard
-                          key={shop.id}
-                          shop={shop}
-                          rating={shop.reviews_avg_rating || 0}
-                          reviewCount={shop.reviews_count || 0}
-                          onClick={handleShopClick}
-                          isClickable={false}
-                        />
-                      ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-8">No shops nearby for this location.</p>
-                )}
-              </div>
-            </div>
-
-            {/* Hotels Section */}
-            <div className="mb-8">
-              <div className="pt-5 border-t">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Nearby Hotels</h2>
-                {loading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                  </div>
-                ) : hotels.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Sort hotels by rating (highest first) */}
-                    {hotels
-                      .sort((a, b) => {
-                        const ratingA = a.reviews_avg_rating || 0;
-                        const ratingB = b.reviews_avg_rating || 0;
-                        return ratingB - ratingA;
-                      })
-                      .map(hotel => (
-                        <HotelCard
-                          key={hotel.id}
-                          hotel={hotel}
-                          rating={hotel.reviews_avg_rating || 0}
-                          reviewCount={hotel.reviews_count || 0}
-                          onClick={handleHotelClick}
-                          isClickable={false}
-                        />
-                      ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-8">No hotels nearby for this location.</p>
-                )}
-              </div>
-            </div>
-
-            {/* Vehicles Section */}
-            <div className="mb-8">
-              <div className="pt-5 border-t">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Vehicles</h2>
-                {loading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                  </div>
-                ) : vehicles.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Sort vehicles by rating (highest first) */}
-                    {vehicles
-                      .sort((a, b) => {
-                        const ratingA = a.reviews_avg_rating || 0;
-                        const ratingB = b.reviews_avg_rating || 0;
-                        return ratingB - ratingA;
-                      })
-                      .map(vehicle => (
-                        <VehicleCard
-                          key={vehicle.id}
-                          vehicle={vehicle}
-                          rating={vehicle.reviews_avg_rating || 0}
-                          reviewCount={vehicle.reviews_count || 0}
-                          onClick={handleVehicleClick}
-                          isClickable={false}
-                        />
-                      ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-8">No vehicles available for this location.</p>
-                )}
-              </div>
-            </div>
-
-            {/* Reviews Section */}
-            <div className="mt-12 pt-5 border-t">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
+          {/* Right Column - Sidebar Widgets */}
+          <aside className="lg:col-span-4 space-y-8">
+            {/* High-Tech Weather Widget */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="sticky top-24"
+            >
+              <WeatherWidget location={{ latitude: location.latitude, longitude: location.longitude }} />
               
-              {/* Reviews Summary */}
-              {reviewCount > 0 ? (
-                <div className="bg-gray-50 rounded-lg p-6 mb-6">
-                  <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="text-center">
-                      <div className="text-4xl font-bold text-emerald-600">
-                        {averageRating ? averageRating.toFixed(1) : '0.0'}
-                      </div>
-                      <div className="flex justify-center mt-1">
-                        {renderStars(Math.round(averageRating))}
-                      </div>
-                      <div className="text-sm text-gray-500 mt-1">
-                        {reviewCount} review{reviewCount !== 1 ? 's' : ''}
-                      </div>
-                    </div>
-                    
-                    <div className="flex-1 space-y-2">
-                      {[5, 4, 3, 2, 1].map((star) => {
-                        const count = reviews.filter(review => review.rating === star).length;
-                        const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0;
-                        
-                        return (
-                          <div key={star} className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600 w-4">{star}</span>
-                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                            <div className="flex-1 bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-yellow-400 h-2 rounded-full transition-all duration-300" 
-                                style={{ width: `${percentage}%` }}
-                              ></div>
-                            </div>
-                            <span className="text-sm text-gray-600 w-8 text-right">
-                              {count}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+              {/* Quick Info Grid */}
+              <div className="mt-8 bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-2xl border border-white/50 space-y-6">
+                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+                  <Globe className="w-5 h-5 text-blue-500" />
+                  Travel Pass
+                </h3>
+                <div className="space-y-4">
+                  <InfoItem icon={<MapPin className="text-red-500" />} label="Province" value={location.province} />
+                  <InfoItem icon={<Mountain className="text-emerald-500" />} label="Terrain" value={location.locationType} />
+                  <InfoItem icon={<Compass className="text-blue-500" />} label="Lat / Long" value={`${location.latitude}, ${location.longitude}`} />
                 </div>
-              ) : (
-                <div className="bg-gray-50 rounded-lg p-6 mb-6 text-center">
-                  <p className="text-gray-500">No reviews yet. Be the first to review this location!</p>
-                </div>
-              )}
+                <button className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all flex items-center justify-center gap-2 group shadow-xl shadow-gray-900/10">
+                  <MapIcon className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                  Get Directions
+                </button>
+              </div>
+            </motion.div>
+          </aside>
+        </div>
 
-              {/* ReviewSection Component */}
-              <ReviewSection entityType="location" entityId={location?.id} />
+        {/* Landscape Sections (Full Width) */}
+        <div className="mt-16 space-y-16">
+          {/* Reviews Section */}
+          <motion.section 
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-2xl border border-white/50"
+          >
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Traveler Stories</h2>
+                <p className="text-gray-500">Real experiences from our community</p>
+              </div>
+              <div className="text-right">
+                <div className="text-4xl font-bold text-gray-900">{averageRating.toFixed(1)}</div>
+                <div className="flex gap-0.5 text-yellow-400">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-5 h-5 ${i < Math.round(averageRating) ? 'fill-current' : ''}`} />
+                  ))}
+                </div>
+              </div>
             </div>
+            <ReviewSection entityType="location" entityId={location?.id} />
+          </motion.section>
+
+          {/* Related Entities Tabs/Sections */}
+          <div className="space-y-12">
+            <EntityGrid title="Expert Area Guides" items={guides} type="guide" loading={loading} />
+            <EntityGrid title="Exclusive Accommodations" items={hotels} type="hotel" loading={loading} />
+            <EntityGrid title="Artisanal Finds" items={shops} type="shop" loading={loading} />
+            <EntityGrid title="Adventure Rides" items={vehicles} type="vehicle" loading={loading} />
           </div>
         </div>
       </main>
     </div>
+  );
+};
+
+const InfoItem = ({ icon, label, value }) => (
+  <div className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50">
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 flex items-center justify-center">
+        {icon}
+      </div>
+      <div>
+        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider leading-none mb-1">{label}</p>
+        <p className="text-gray-900 font-bold leading-none">{value || 'Not Specified'}</p>
+      </div>
+    </div>
+  </div>
+);
+
+const EntityGrid = ({ title, items, type, loading }) => {
+  if (!loading && items.length === 0) return null;
+
+  return (
+    <motion.section 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="space-y-8"
+    >
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold text-gray-900 tracking-tight">{title}</h2>
+        <span className="text-sm font-bold text-orange-500 uppercase tracking-widest">{items.length} Options</span>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {loading ? (
+          [...Array(4)].map((_, i) => (
+            <div key={i} className="h-[400px] bg-gray-100 animate-pulse rounded-[2.5rem]" />
+          ))
+        ) : (
+          items.map(item => (
+            <div key={item.id} className="transform hover:scale-[1.02] transition-all duration-300">
+              {type === 'guide' && <GuideCard guide={item} rating={item.reviews_avg_rating || 0} reviewCount={item.reviews_count || 0} isClickable={false} />}
+              {type === 'hotel' && <HotelCard hotel={item} rating={item.reviews_avg_rating || 0} reviewCount={item.reviews_count || 0} isClickable={false} />}
+              {type === 'shop' && <ShopCard shop={item} rating={item.reviews_avg_rating || 0} reviewCount={item.reviews_count || 0} isClickable={false} />}
+              {type === 'vehicle' && <VehicleCard vehicle={item} rating={item.reviews_avg_rating || 0} reviewCount={item.reviews_count || 0} isClickable={false} />}
+            </div>
+          ))
+        )}
+      </div>
+    </motion.section>
   );
 };
 
