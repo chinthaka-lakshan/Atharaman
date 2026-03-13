@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Menu, X, User, ChevronDown, LogOut, Settings, Shield, FileText } from 'lucide-react';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar = ({ onScrollToSection }) => {
@@ -10,9 +10,24 @@ const Navbar = ({ onScrollToSection }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isHomePage = location.pathname === '/';
+  const forceSolidBg = !isHomePage;
+  
+  const effectiveScrolled = isScrolled || forceSolidBg;
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navItems = [
     { name: 'Home', path: '/' },
@@ -43,27 +58,35 @@ const Navbar = ({ onScrollToSection }) => {
 
   return (
     <>
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-lg z-[1001] transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className={`fixed top-0 w-full z-[1001] transition-all duration-500 ${
+        effectiveScrolled 
+          ? 'bg-white/80 backdrop-blur-xl shadow-xl py-2' 
+          : 'bg-transparent py-6'
+      }`}>
+        <div className="max-w-full px-6 lg:px-12 mx-auto">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex-shrink-0">
               <h1 
                 onClick={() => navigate('/')}
-                className="text-2xl font-bold text-green-800 cursor-pointer hover:text-green-600 transition-colors"
+                className={`text-3xl font-black cursor-pointer transition-all duration-300 ${
+                  effectiveScrolled ? 'text-gray-900' : 'text-white'
+                }`}
               >
-                Atharaman
+                Athar<span className="text-orange-500">aman</span>
               </h1>
             </div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline gap-4">
+              <div className="ml-10 flex items-baseline gap-8">
                 {navItems.map((item) => (
                   <button
                     key={item.name}
                     onClick={() => handleNavClick(item.path)}
-                    className="text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                    className={`px-3 py-2 rounded-md text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-110 ${
+                      effectiveScrolled ? 'text-gray-700 hover:text-orange-600' : 'text-white/90 hover:text-white'
+                    }`}
                   >
                     {item.name}
                   </button>
@@ -129,7 +152,9 @@ const Navbar = ({ onScrollToSection }) => {
             <div className="md:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-orange-600 hover:bg-gray-100 focus:outline-none transition-colors"
+                className={`inline-flex items-center justify-center p-2 rounded-md transition-colors ${
+                  effectiveScrolled ? 'text-gray-700' : 'text-white'
+                } hover:text-orange-600 hover:bg-gray-100 focus:outline-none`}
                 aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
               >
                 {isMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}

@@ -5,6 +5,7 @@ import LocationCard from './LocationCard';
 import Navbar from '../Navbar';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const LocationsPage = () => {
   const [locations, setLocations] = useState([]);
@@ -12,66 +13,33 @@ export const LocationsPage = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const locationsPerPage = 9;
+  const locationsPerPage = 8; // Changed to 8 for neat 2x4 grid
   const navigate = useNavigate();
 
-  // Unified category system - define categories in one place
+  // Unified category system
   const categoryFilters = [
-    { value: 'all', label: 'All Locations' },
+    { value: 'all', label: 'All' },
     { value: 'mountain', label: 'Mountains', keywords: ['mountain'] },
-    { value: 'rock', label: 'Rocks', keywords: ['rock'] },
-    { value: 'plain', label: 'Plains', keywords: ['plain'] },
-    { value: 'valley', label: 'Valleys', keywords: ['valley'] },
     { value: 'beach', label: 'Beaches', keywords: ['beach'] },
-    { value: 'cliff', label: 'Cliffs', keywords: ['cliff'] },
-    { value: 'desert', label: 'Deserts', keywords: ['desert'] },
     { value: 'forest', label: 'Forests', keywords: ['forest'] },
     { value: 'temple', label: 'Temples', keywords: ['temple'] },
-    { value: 'building', label: 'Historic Buildings', keywords: ['building'] },
-    { value: 'lake', label: 'Lakes', keywords: ['lake'] },
-    { value: 'river', label: 'Rivers', keywords: ['river'] },
-    { value: 'island', label: 'Islands', keywords: ['island'] },
-    { value: 'road', label: 'Roads', keywords: ['road'] },
     { value: 'village', label: 'Villages', keywords: ['village'] },
-    { value: 'other', label: 'Other', keywords: [] }
+    { value: 'waterfall', label: 'Waterfalls', keywords: ['waterfall'] },
+    { value: 'historic', label: 'Historic', keywords: ['historic', 'building'] }
   ];
 
-  // Function to determine category using the unified system
-  const getCategory = (location) => {
-    const type = location.locationType?.toLowerCase() || '';
-    const name = location.locationName?.toLowerCase() || '';
-    
-    // Find the first category that matches keywords
-    for (const category of categoryFilters) {
-      if (category.value === 'all' || category.value === 'other') continue;
-      
-      if (category.keywords.some(keyword => 
-        type.includes(keyword) || name.includes(keyword)
-      )) {
-        return category.value;
-      }
-    }
-    
-    return 'other';
-  };
-
-  // Fetch locations from API
+  // Fetch locations
   useEffect(() => {
     const fetchLocations = async () => {
       try {
         setIsLoading(true);
         const response = await axios.get('http://localhost:8000/api/locations');
-        // Add category to each location using our unified system
         const locationsWithCategory = response.data.map(location => ({
           ...location,
-          category: getCategory(location),
-          // Ratings are now included in the response
           averageRating: location.reviews_avg_rating || 0,
           reviewCount: location.reviews_count || 0,
-          // Include images in the response
           locationImage: location.images ? location.images.map(img => img.image_path) : (location.locationImage || [])
         }));
-        
         setLocations(locationsWithCategory);
       } catch (error) {
         console.error('Error fetching locations:', error);
@@ -79,46 +47,22 @@ export const LocationsPage = () => {
         setIsLoading(false);
       }
     };
-
     fetchLocations();
   }, []);
 
-  // Filtering and sorting
   const filteredLocations = useMemo(() => {
-    // First filter the locations
     const filtered = locations.filter((location) => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch = 
         location.locationName?.toLowerCase().includes(searchLower) ||
         location.locationType?.toLowerCase().includes(searchLower);
-      
-      const matchesFilter =
-        selectedFilter === 'all' || location.category === selectedFilter;
-      
+      const matchesFilter = selectedFilter === 'all' || 
+        location.locationType?.toLowerCase().includes(selectedFilter.toLowerCase());
       return matchesSearch && matchesFilter;
     });
-
-    // Then sort by rating (descending) and then by name (ascending)
-    return filtered.sort((a, b) => {
-      const ratingA = a.averageRating || 0;
-      const ratingB = b.averageRating || 0;
-      
-      // First sort by rating (higher ratings first)
-      if (ratingB !== ratingA) {
-        return ratingB - ratingA;
-      }
-      
-      // If ratings are the same, sort alphabetically by name
-      const nameA = a.locationName?.toLowerCase() || '';
-      const nameB = b.locationName?.toLowerCase() || '';
-      
-      if (nameA < nameB) return -1;
-      if (nameA > nameB) return 1;
-      return 0;
-    });
+    return filtered.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
   }, [searchTerm, selectedFilter, locations]);
 
-  // Pagination
   const totalPages = Math.ceil(filteredLocations.length / locationsPerPage);
   const startIndex = (currentPage - 1) * locationsPerPage;
   const currentLocations = filteredLocations.slice(startIndex, startIndex + locationsPerPage);
@@ -127,130 +71,170 @@ export const LocationsPage = () => {
     setCurrentPage(1);
   }, [searchTerm, selectedFilter]);
 
-  const handleLocationClick = (location) => {
-    navigate(`/locations/${location.id}`);
-  };
-
-  const handleLoadMore = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const navbarHeight = 64;
-      const elementPosition =
-        element.getBoundingClientRect().top + window.scrollY - navbarHeight;
-      window.scrollTo({
-        top: elementPosition,
-        behavior: 'smooth',
-      });
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
     }
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-purple-50 pt-16 ${styles.initialPage}`}>
-      <Navbar onScrollToSection={scrollToSection} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Discover Your Next Adventure
-          </h2>
-          <p className="text-gray-600">
-            Explore our curated list of breathtaking locations around the world.
-          </p>
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-100/50 rounded-full blur-3xl -z-10 -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-50/50 rounded-full blur-3xl -z-10 translate-y-1/2 -translate-x-1/2" />
+
+      {/* Immersive Hero Header */}
+      <div className="relative h-[45vh] min-h-[400px] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          <img 
+            src="https://images.pexels.com/photos/1591373/pexels-photo-1591373.jpeg?auto=compress&cs=tinysrgb&w=1600"
+            alt="Nature Background"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-white" />
         </div>
 
+        <div className="relative z-10 text-center px-4 max-w-4xl">
+          <motion.span 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-orange-400 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block"
+          >
+            Explore Sri Lanka
+          </motion.span>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
+          >
+            Discover Your Next <span className="text-orange-500">Adventure</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-white/80 text-lg md:text-xl font-medium max-w-2xl mx-auto"
+          >
+            Our curated list of breathtaking locations awaits you. From misty mountains to golden shores.
+          </motion.p>
+        </div>
+      </div>
+
+      <main className="max-w-full px-6 lg:px-12 mx-auto relative -mt-16 z-20">
         {/* Search and Filters */}
-        <SearchAndFilter
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          selectedLocation={selectedFilter}
-          onLocationChange={setSelectedFilter}
-          filterOptions={categoryFilters}
-          placeholder='Search locations...'
-          isLocationPage={true}
-        />
+        <div className="bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-2xl border border-white/50 mb-12">
+          <SearchAndFilter
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            selectedLocation={selectedFilter}
+            onLocationChange={setSelectedFilter}
+            filterOptions={categoryFilters}
+            placeholder='Search locations...'
+            isLocationPage={true}
+          />
+        </div>
 
-        {/* Loading State */}
-        {isLoading && (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">🏕️🌄🏝️🗻</div>
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">Loading locations...</h3>
-            <p className="text-gray-600">Please wait while we organize the best destinations for you</p>
-          </div>
-        )}
-
-        {/* Locations Grid */}
-        {!isLoading && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ${styles.entitiesGrid}`}>
-              {currentLocations.map((location, index) => (
-                <LocationCard
-                  key={location.id}
-                  location={location}
-                  rating={location.averageRating || 0}
-                  onClick={() => handleLocationClick(location)}
-                  animationDelay={index * 0.1}
-                />
-              ))}
-            </div>
-
-            {/* No Results */}
-            {currentLocations.length === 0 && (
-              <div className={`text-center py-16 ${styles.animateFadeInUp}`}>
-                <div className="text-6xl mb-4">🏔️</div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-2">No locations found</h3>
-                <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+        {/* Status Messages */}
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div 
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center py-24"
+            >
+              <div className="flex justify-center space-x-2 mb-8">
+                {[0, 1, 2].map((i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                    className="w-4 h-4 bg-orange-500 rounded-full"
+                  />
+                ))}
               </div>
-            )}
+              <h3 className="text-2xl font-bold text-gray-900">Finding the best spots...</h3>
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="content"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {currentLocations.map((location, index) => (
+                  <motion.div
+                    key={location.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 }
+                    }}
+                  >
+                    <LocationCard
+                      location={location}
+                      rating={location.averageRating || 0}
+                      onClick={() => navigate(`/locations/${location.id}`)}
+                    />
+                  </motion.div>
+                ))}
+              </div>
 
-            {/* Pagination */}
-            {filteredLocations.length > locationsPerPage && (
-              <div className={`flex justify-center items-center space-x-4 mt-12 ${styles.animateSlideInUp}`}>
-                <button
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  className="px-6 py-3 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  Previous
-                </button>
-                
-                <div className="flex items-center space-x-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`w-10 h-10 rounded-lg transition-all ${
-                        currentPage === page
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-white border border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
+              {/* No Results */}
+              {currentLocations.length === 0 && (
+                <div className="text-center py-24">
+                  <div className="inline-flex items-center justify-center size-24 bg-gray-100 rounded-full mb-6">
+                    <span className="text-4xl">🏔️</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">No locations found</h3>
+                  <p className="text-gray-500">Try broading your search or selecting a different category.</p>
                 </div>
+              )}
 
-                <button
-                  onClick={handleLoadMore}
-                  disabled={currentPage === totalPages}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  Load More
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+              {/* Pagination */}
+              {filteredLocations.length > locationsPerPage && (
+                <div className="flex justify-center items-center space-x-4 mt-20 pb-20">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="group flex items-center space-x-2 px-6 py-3 bg-white border-2 border-gray-100 rounded-2xl font-bold transition-all hover:border-orange-500 hover:text-orange-500 disabled:opacity-30"
+                  >
+                    <span>Previous</span>
+                  </button>
+                  
+                  <div className="flex items-center space-x-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-12 h-12 rounded-xl font-bold transition-all ${
+                          currentPage === page
+                            ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
+                            : 'bg-white border-2 border-gray-100 hover:border-orange-200'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="group flex items-center space-x-2 px-6 py-3 bg-orange-500 text-white rounded-2xl font-bold shadow-lg shadow-orange-500/20 transition-all hover:bg-orange-600 disabled:opacity-30"
+                  >
+                    <span>Next</span>
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
     </div>
   );
