@@ -4,7 +4,9 @@ import { Bot, Sparkles, X, Send, Loader2, MapPin, Hotel, User, Car, ShoppingBag,
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 
-const genAI = new GoogleGenerativeAI("AIzaSyAiNZsdbodK3NIQm26k7OSA5UPuetr7pT8");
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+const genAI = new GoogleGenerativeAI(API_KEY);
 const model = genAI.getGenerativeModel({
     model: "gemini-2.5-flash",
     systemInstruction: `You are Atharaman AI, an expert Sri Lankan travel guide.
