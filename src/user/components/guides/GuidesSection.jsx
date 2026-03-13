@@ -97,6 +97,15 @@ export const GuidesSection = () => {
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-orange-50/50 rounded-full blur-3xl -z-10 -translate-y-1/2 -translate-x-1/2" />
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-amber-50/50 rounded-full blur-3xl -z-10 translate-y-1/2 translate-x-1/2" />
+      
+      {/* Global Pattern Overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] -z-10"
+        style={{ 
+          backgroundImage: 'url("https://www.transparenttextures.com/patterns/natural-paper.png")',
+          backgroundRepeat: 'repeat'
+        }}
+      ></div>
 
       {/* Immersive Hero Header */}
       <div className="relative h-[55vh] min-h-[480px] flex items-center justify-center overflow-hidden">
@@ -136,7 +145,7 @@ export const GuidesSection = () => {
         </div>
       </div>
 
-      <main className="max-w-full px-6 lg:px-12 mx-auto relative -mt-12 z-20">
+      <main className="max-w-full px-6 lg:px-12 mx-auto relative -mt-12 z-20 pb-32">
         {/* Search and Filters */}
         <div className="bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-2xl border border-white/50 mb-12">
           <SearchAndFilter
