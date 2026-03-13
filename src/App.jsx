@@ -38,7 +38,6 @@ import ShopDetailPage from './user/pages/ShopDetailPage';
 import HotelDetailPage from './user/pages/HotelDetailPage';
 import VehicleDetailPage from './user/pages/VehicleDetailPage';
 
-import PageLoader from './user/components/PageLoader';
 
 function AppContent() {
   const location = useLocation();
@@ -46,13 +45,12 @@ function AppContent() {
   const { isLoading } = useAuth();
 
   if (isLoading) {
-    return <PageLoader isInitialLoading={true} />;
+    return null; // or a minimal blank state
   }
 
   return (
     <div className="App relative">
-      {/* Show travel animation on user route transitions */}
-      {!isAdminRoute && <PageLoader />}
+      {/* No travel animation on user route transitions */}
       
       <AnimatePresence mode="wait">
         {isAdminRoute ? (
