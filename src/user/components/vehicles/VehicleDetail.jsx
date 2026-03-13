@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Star, Fuel, Gauge, UserCheck, CarFront, CircleDollarSign, IdCard, ChevronLeft, ChevronRight } from "lucide-react";
-import styles from '../../styles/DetailPages.module.css';
+import { 
+  ArrowLeft, MapPin, Star, Fuel, Gauge, 
+  UserCheck, CarFront, CircleDollarSign, 
+  IdCard, ChevronLeft, ChevronRight,
+  ShieldCheck, Zap, Navigation
+} from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from "../Navbar";
 import ReviewSection from "../ReviewSection";
 import { getLocations } from '../../../services/api';
 import { LocationCard } from '../locations/LocationCard';
-import LocationDetail from '../locations/LocationDetail';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 export const VehicleDetail = ({ vehicle, onBack }) => {
   const reviews = vehicle.reviews || vehicle.reviews?.data || [];
@@ -16,18 +21,17 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedLocation, setSelectedLocation] = useState(null);
   const navigate = useNavigate();
+
+  const images = vehicle.images || [];
 
   useEffect(() => {
     const fetchVehicleLocations = async () => {
       if (vehicle?.locations && vehicle.locations.length > 0) {
         try {
           setLoading(true);
-          // Use existing index endpoint and filter client-side
           const response = await getLocations();
           const allLocations = response.data;
-          // Filter locations based on vehicle's locations array
           const vehicleLocations = allLocations.filter(location => 
             vehicle.locations.includes(location.locationName)
           );
@@ -45,31 +49,6 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
     fetchVehicleLocations();
   }, [vehicle]);
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const navbarHeight = 64;
-      const elementPosition =
-        element.getBoundingClientRect().top + window.scrollY - navbarHeight;
-      window.scrollTo({
-        top: elementPosition,
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  const renderStars = (rating) => {
-    const numericRating = typeof rating === 'number' ? rating : parseFloat(rating) || 0;
-    return Array.from({ length: 5 }, (_, i) => (
-      <span
-        key={i}
-        className={`text-lg ${i < Math.round(numericRating) ? 'text-yellow-400' : 'text-gray-300'}`}
-      >
-        ★
-      </span>
-    ));
-  };
-
   const handleBack = () => {
     if (onBack) {
       onBack();
@@ -79,316 +58,266 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
   };
 
   const nextImage = () => {
-    if (vehicle?.images?.length) {
-      setCurrentImageIndex((prev) => 
-        prev === vehicle.images.length - 1 ? 0 : prev + 1
-      );
+    if (images.length) {
+      setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     }
   };
 
   const prevImage = () => {
-    if (vehicle?.images?.length) {
-      setCurrentImageIndex((prev) => 
-        prev === 0 ? vehicle.images.length - 1 : prev - 1
-      );
+    if (images.length) {
+      setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
     }
   };
 
-  const handleLocationClick = (location) => {
-    setSelectedLocation(location);
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
   };
 
-  const handleLocationBack = () => {
-    setSelectedLocation(null);
-  };
-
-  if (selectedLocation) {
-    return <LocationDetail location={selectedLocation} onBack={handleLocationBack} />;
-  }
-
-  if (!vehicle) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading vehicle details...</p>
-        </div>
-      </div>
-    );
-  }
+  if (!vehicle) return null;
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-purple-50 pt-16 ${styles.entityDetails}`}>
-      <Navbar onScrollToSection={scrollToSection} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Hero Section */}
-          <div className="relative h-128 overflow-hidden">
-            <div className="relative w-full h-full">
-              {vehicle.images && vehicle.images.length > 0 ? (
-                <img
-                  src={`http://localhost:8000/storage/${vehicle.images[currentImageIndex]?.image_path}`}
-                  alt={vehicle.vehicle_name || vehicle.vehicleName}
-                  className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
-                />
-              ) : (
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-500">No image available</span>
-                </div>
-              )}
-              <button
-                onClick={handleBack}
-                className="absolute top-4 left-4 bg-white/90 hover:bg-white rounded-full p-2 transition-all duration-200"
-              >
-                <ArrowLeft className="w-5 h-5 text-gray-700" />
-              </button>
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      <Navbar />
+      
+      {/* Global Pattern Overlay */}
+      <div 
+        className="fixed inset-0 opacity-[0.03] pointer-events-none z-0"
+        style={{ 
+          backgroundImage: 'url("https://www.transparenttextures.com/patterns/natural-paper.png")',
+          backgroundRepeat: 'repeat'
+        }}
+      ></div>
 
-              {/* Vehicle Type Badge */}
-              {(vehicle?.vehicle_type || vehicle?.vehicleType) && (
-                <div className="absolute top-5 right-5 bg-neutral-100 text-black rounded-lg px-2 py-1">
-                  <div className="flex items-center gap-1">
-                    <CarFront className="size-6" />
-                    <span className="text-xl font-medium">{vehicle.vehicle_type || vehicle.vehicleType}</span>
-                  </div>
-                </div>
-              )}
-              {/* Price Badge */}
-              {(vehicle?.price_per_day || vehicle?.pricePerDay) && (
-                <div className="absolute bottom-5 right-5 bg-neutral-50 text-black rounded-lg px-2 py-1">
-                  <div className="flex items-center gap-1">
-                    <CircleDollarSign className="size-6" />
-                    <span className="text-xl font-medium">LKR. {vehicle.price_per_day || vehicle.pricePerDay}/day</span>
-                  </div>
-                </div>
-              )}
+      {/* Decorative Background Elements */}
+      <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-slate-50/50 rounded-full blur-3xl -z-10 -translate-y-1/2 translate-x-1/2" />
+      <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-amber-50/50 rounded-full blur-3xl -z-10 translate-y-1/2 -translate-x-1/2" />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+      {/* Hero Section */}
+      <div className="relative h-[65vh] min-h-[450px] overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentImageIndex}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            src={images.length > 0 ? `${STORAGE_BASE_URL}/${images[currentImageIndex]?.image_path}` : '/placeholder-vehicle.jpg'}
+            alt={vehicle.vehicle_name || vehicle.vehicleName}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </AnimatePresence>
+        
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-white" />
+        
+        {/* Back Button */}
+        <button
+          onClick={handleBack}
+          className="absolute top-24 left-8 z-30 p-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all group"
+        >
+          <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+        </button>
+
+        {/* Badges/Price Floating */}
+        <div className="absolute top-24 right-8 z-30 flex flex-col gap-4">
+           {(vehicle?.vehicle_type || vehicle?.vehicleType) && (
+              <div className="px-6 py-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white flex items-center gap-3 shadow-xl">
+                 <CarFront className="w-6 h-6" />
+                 <span className="font-bold tracking-wider">{vehicle.vehicle_type || vehicle.vehicleType}</span>
+              </div>
+           )}
+           {(vehicle?.price_per_day || vehicle?.pricePerDay) && (
+              <div className="px-6 py-3 bg-orange-500 text-white rounded-2xl flex items-center gap-3 shadow-xl shadow-orange-500/30">
+                 <CircleDollarSign className="w-6 h-6" />
+                 <span className="font-bold text-xl">LKR {vehicle.price_per_day || vehicle.pricePerDay}<span className="text-xs font-normal">/day</span></span>
+              </div>
+           )}
+        </div>
+
+        {/* Hero Content */}
+        <div className="absolute bottom-24 left-8 right-8 z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-7xl mx-auto"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <span className="px-4 py-1.5 bg-gray-900 text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg shadow-gray-900/30">
+                Rugged Explorer
+              </span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-white text-sm font-medium border border-white/20">
+                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                {averageRating.toFixed(1)} ({reviewCount} Reviews)
+              </div>
+            </div>
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-4 tracking-tight uppercase">
+              {vehicle.vehicle_name || vehicle.vehicleName}
+            </h1>
+          </motion.div>
+        </div>
+
+        {/* Image Nav Buttons */}
+        {images.length > 1 && (
+          <div className="absolute bottom-24 right-8 z-30 flex gap-3">
+            <button onClick={prevImage} className="p-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all">
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button onClick={nextImage} className="p-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all">
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-8 relative -mt-12 z-20 pb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          
+          {/* Left Column - Details */}
+          <div className="lg:col-span-8 space-y-12">
+            {/* Description Section */}
+            <motion.section 
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-2xl border border-white/50 border-l-orange-500 border-l-4"
+            >
+              <div className="flex items-center gap-4 mb-8">
+                <div className="p-4 bg-orange-100 rounded-2xl text-orange-600">
+                  <Zap className="w-8 h-8" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900 uppercase">Specifications & Bio</h2>
+                  <p className="text-gray-500 font-medium tracking-wide">Performance and utility details</p>
+                </div>
+              </div>
+              <div className="prose prose-lg text-gray-700 max-w-none space-y-6">
+                <p className="text-xl font-medium leading-relaxed italic">
+                  {vehicle.long_description || vehicle.short_description || vehicle.description}
+                </p>
+              </div>
+
+              {/* Technical Specs Grid */}
+              <div className="mt-10 pt-10 border-t border-gray-100 grid grid-cols-2 md:grid-cols-4 gap-6">
+                 <SpecItem icon={<Fuel className="w-5 h-5" />} label="Fuel" value={vehicle.fuel_type || vehicle.fuelType} />
+                 <SpecItem icon={<Gauge className="w-5 h-5" />} label="Mileage" value={`${vehicle.mileage_per_day || vehicle.mileagePerDay}km`} />
+                 <SpecItem icon={<UserCheck className="w-5 h-5" />} label="Capacity" value={vehicle.no_of_passengers} />
+                 <SpecItem icon={<ShieldCheck className="w-5 h-5" />} label="Driver" value={vehicle.driver_status || vehicle.withDriver} />
+              </div>
+            </motion.section>
+
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <aside className="lg:col-span-4 space-y-8">
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="sticky top-24 space-y-8"
+            >
+              {/* Quick Info Card */}
+              <div className="bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-2xl border border-white/50 space-y-8">
+                <h3 className="text-2xl font-bold text-gray-900 tracking-tight uppercase">Base Camp</h3>
                 
-              {/* Image Navigation */}
-              {vehicle.images && vehicle.images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-md rounded-full p-2 hover:bg-white/30 transition-all ${styles.imageNavButton}`}
-                  >
-                    <ChevronLeft size={24} className="text-white" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-md rounded-full p-2 hover:bg-white/30 transition-all ${styles.imageNavButton}`}
-                  >
-                    <ChevronRight size={24} className="text-white" />
-                  </button>
-                </>
-              )}
+                <div className="space-y-4">
+                  {(vehicle.reg_number || vehicle.vehicleNumber) && <ContactItem icon={<IdCard className="text-orange-500" />} label="Reg Number" value={vehicle.reg_number || vehicle.vehicleNumber} />}
+                </div>
 
-              {/* Image Indicators */}
-              {vehicle.images && vehicle.images.length > 1 && (
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {vehicle.images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-3 h-3 rounded-full transition-all ${
-                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                      }`}
-                    />
+                <div className="flex flex-col gap-3">
+                  <button className="w-full py-4 bg-orange-600 text-white rounded-2xl font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-orange-600/20 uppercase tracking-widest">
+                    Request Booking
+                  </button>
+                  <button className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all flex items-center justify-center gap-2 group shadow-xl shadow-gray-900/10 uppercase tracking-widest">
+                    Inquire Spec
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </aside>
+        </div>
+
+        {/* Landscape Sections (Full Width) */}
+        <div className="mt-16 space-y-16">
+          {/* Reviews Section */}
+          <motion.section 
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-2xl border border-white/50"
+          >
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Experience Logs</h2>
+                <p className="text-gray-500">Reviews from recent explorers</p>
+              </div>
+              <div className="text-right">
+                <div className="text-4xl font-bold text-gray-900">{averageRating.toFixed(1)}</div>
+                <div className="flex gap-0.5 text-yellow-400">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-5 h-5 ${i < Math.round(averageRating) ? 'fill-current' : ''}`} />
                   ))}
                 </div>
-              )}
-            </div>
-
-            {/* Vehicle Title Overlay */}
-            <div className={`absolute bottom-8 left-8 text-white ${styles.animateSlideInUp}`}>
-              <h1 className="text-4xl font-bold mb-2">{vehicle.vehicle_name || vehicle.vehicleName}</h1>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-5">
-              {/* Main Content */}
-              <div className="lg:col-span-2 space-y-8">
-                {/* Description */}
-                <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Vehicle</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6 whitespace-pre-wrap break-words">
-                    {vehicle.long_description || vehicle.short_description || vehicle.description}
-                  </p>
-                  {/* Locations - Added this section similar to languages in GuideDetail */}
-                  {vehicle.locations && vehicle.locations.length > 0 && (
-                    <div className="mb-8">
-                      <h2 className="text-xl font-semibold text-gray-900 mb-3">Available Locations</h2>
-                      <div className="flex flex-wrap gap-2">
-                        {vehicle.locations.map((location, index) => (
-                          <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                            {location}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Sidebar */}
-              <div className="space-y-8">
-                {/* Quick Info */}
-                <div className={`bg-white rounded-2xl shadow-lg p-6 ${styles.animateSlideInRight} ${styles.animateStagger1}`}>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Info</h3>
-                  <div className="space-y-3">
-                    {(vehicle.reg_number || vehicle.vehicleNumber) && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <IdCard className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span><strong>Registration No:</strong> {vehicle.reg_number || vehicle.vehicleNumber}</span>
-                      </div>
-                    )}
-                    {vehicle.no_of_passengers && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <UserCheck className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span><strong>Passengers:</strong> {vehicle.no_of_passengers}</span>
-                      </div>
-                    )}
-                    {(vehicle.driver_status || vehicle.withDriver) && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <UserCheck className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span><strong>Driver Status:</strong> {vehicle.driver_status || vehicle.withDriver}</span>
-                      </div>
-                    )}
-                    {(vehicle.fuel_type || vehicle.fuelType) && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Fuel className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span><strong>Fuel Type:</strong> {vehicle.fuel_type || vehicle.fuelType}</span>
-                      </div>
-                    )}
-                    {(vehicle.mileage_per_day || vehicle.mileagePerDay) && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Gauge className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span><strong>Mileage Per Day:</strong> {vehicle.mileage_per_day || vehicle.mileagePerDay} km</span>
-                      </div>
-                    )}
-                    {reviews.length > 0 && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-600"><strong>Rating</strong></span>
-                        <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={16}
-                              className={`${
-                                i < Math.round(averageRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                          <span className="text-sm text-gray-600 ml-1">({averageRating ? averageRating.toFixed(1) : '0.0'})</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
+            <ReviewSection entityType="vehicle" entityId={vehicle?.id} />
+          </motion.section>
 
-            {/* Related Locations Section */}
-            <div className="mb-5">
-              <div className="pt-5 border-t">
-                <h2 className="text-2xl font-bold text-gray-900 mb-5">Available Locations</h2>
-                {loading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          {/* Available Locations */}
+          <motion.section 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-8"
+          >
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+              <Navigation className="w-8 h-8 text-blue-500" /> Operating Areas
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {loading ? (
+                [...Array(4)].map((_, i) => (
+                  <div key={i} className="h-[400px] bg-gray-100 animate-pulse rounded-[2.5rem]" />
+                ))
+              ) : locations.length > 0 ? (
+                locations.map(loc => (
+                  <div key={loc.id} className="transform hover:scale-[1.02] transition-all duration-300">
+                    <LocationCard location={loc} rating={loc.reviews_avg_rating || 0} reviewCount={loc.reviews_count || 0} isClickable={false} />
                   </div>
-                ) : locations.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Sort locations by rating (highest first) */}
-                    {locations
-                      .sort((a, b) => {
-                        const ratingA = a.reviews_avg_rating || 0;
-                        const ratingB = b.reviews_avg_rating || 0;
-                        return ratingB - ratingA;
-                      })
-                      .map(location => (
-                        <LocationCard
-                          key={location.id}
-                          location={location}
-                          rating={location.reviews_avg_rating || 0}
-                          reviewCount={location.reviews_count || 0}
-                          // Make location cards read-only (non-clickable)
-                          isClickable={false}
-                        />
-                      ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">No locations available for this vehicle.</p>
-                    {vehicle.locations && vehicle.locations.length > 0 && (
-                      <p className="text-sm text-gray-400 mt-2">
-                        This vehicle is available on: {vehicle.locations.join(', ')}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Reviews Section */}
-            <div className="mt-12 pt-5 border-t">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
-              
-              {/* Reviews Summary */}
-              {reviewCount > 0 ? (
-                <div className="bg-gray-50 rounded-lg p-6 mb-6">
-                  <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="text-center">
-                      <div className="text-4xl font-bold text-emerald-600">
-                        {averageRating ? averageRating.toFixed(1) : '0.0'}
-                      </div>
-                      <div className="flex justify-center mt-1">
-                        {renderStars(Math.round(averageRating))}
-                      </div>
-                      <div className="text-sm text-gray-500 mt-1">
-                        {reviewCount} review{reviewCount !== 1 ? 's' : ''}
-                      </div>
-                    </div>
-                    
-                    <div className="flex-1 space-y-2">
-                      {[5, 4, 3, 2, 1].map((star) => {
-                        const count = reviews.filter(review => review.rating === star).length;
-                        const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0;
-                        
-                        return (
-                          <div key={star} className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600 w-4">{star}</span>
-                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                            <div className="flex-1 bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-yellow-400 h-2 rounded-full transition-all duration-300" 
-                                style={{ width: `${percentage}%` }}
-                              ></div>
-                            </div>
-                            <span className="text-sm text-gray-600 w-8 text-right">
-                              {count}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
+                ))
               ) : (
-                <div className="bg-gray-50 rounded-lg p-6 mb-6 text-center">
-                  <p className="text-gray-500">No reviews yet. Be the first to review this vehicle!</p>
+                <div className="md:col-span-2 text-center py-20 bg-gray-50/50 rounded-[2.5rem] border border-dashed border-gray-200">
+                  <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 font-medium">Ready for any terrain.</p>
                 </div>
               )}
-
-              {/* ReviewSection Component */}
-              <ReviewSection entityType="vehicle" entityId={vehicle?.id} />
             </div>
-          </div>
+          </motion.section>
         </div>
       </main>
     </div>
   );
 };
+
+const SpecItem = ({ icon, label, value }) => (
+  <div className="flex flex-col items-center gap-2 p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50 text-gray-600">
+    <div className="p-3 bg-white rounded-xl shadow-sm border border-gray-100">
+      {icon}
+    </div>
+    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{label}</span>
+    <span className="font-bold text-gray-900 text-sm">{value || 'N/A'}</span>
+  </div>
+);
+
+const ContactItem = ({ icon, label, value }) => (
+  <div className="flex items-center gap-4 p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50">
+    <div className="w-10 h-10 flex items-center justify-center">
+      {icon}
+    </div>
+    <div className="min-w-0">
+      <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider leading-none mb-1">{label}</p>
+      <p className="text-gray-900 font-bold leading-none truncate">{value}</p>
+    </div>
+  </div>
+);
 
 export default VehicleDetail;
