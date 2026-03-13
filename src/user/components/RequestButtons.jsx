@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Compass, Building, Store, Car, Clock, CheckCircle } from 'lucide-react';
 
 const RequestButtons = ({
@@ -11,33 +12,37 @@ const RequestButtons = ({
       id: 'guide', 
       label: 'Guide', 
       icon: Compass,
-      description: 'Lead camping expeditions and share your expertise',
-      color: 'from-green-500 to-green-600',
-      hoverColor: 'hover:from-green-600 hover:to-green-700'
+      description: 'Lead cinematic expeditions and share local expertise',
+      color: 'from-emerald-500 to-teal-600',
+      lightColor: 'bg-emerald-50',
+      textColor: 'text-emerald-700'
     },
     { 
       id: 'shop_owner', 
       label: 'Shop Owner', 
       icon: Store,
-      description: 'Sell camping gear and outdoor equipment',
-      color: 'from-red-500 to-red-600',
-      hoverColor: 'hover:from-red-600 hover:to-red-700'
+      description: 'Showcase artisanal products and camping gear',
+      color: 'from-rose-500 to-orange-600',
+      lightColor: 'bg-rose-50',
+      textColor: 'text-rose-700'
     },
     { 
       id: 'hotel_owner', 
       label: 'Hotel Owner', 
       icon: Building,
-      description: 'List and manage your accommodation properties',
-      color: 'from-blue-500 to-blue-600',
-      hoverColor: 'hover:from-blue-600 hover:to-blue-700'
+      description: 'Host travelers in exclusive accommodation',
+      color: 'from-blue-500 to-indigo-600',
+      lightColor: 'bg-blue-50',
+      textColor: 'text-blue-700'
     },
     { 
       id: 'vehicle_owner', 
       label: 'Vehicle Owner', 
       icon: Car,
-      description: 'Rent out vehicles for camping adventures',
-      color: 'from-orange-500 to-orange-600',
-      hoverColor: 'hover:from-orange-600 hover:to-orange-700'
+      description: 'Provide rugged transport for adventure',
+      color: 'from-amber-500 to-orange-600',
+      lightColor: 'bg-amber-50',
+      textColor: 'text-amber-700'
     }
   ];
 
@@ -47,68 +52,52 @@ const RequestButtons = ({
     return 'available';
   };
 
-  const getButtonContent = (role) => {
-    const state = getButtonState(role.id);
-    const IconComponent = role.icon;
-
-    switch (state) {
-      case 'approved':
-        return (
-          <>
-            <CheckCircle className="size-5 mr-2" />
-            Approved as {role.label}
-          </>
-        );
-      case 'pending':
-        return (
-          <>
-            <Clock className="size-5 mr-2 animate-spin" />
-            Request Pending
-          </>
-        );
-      default:
-        return (
-          <>
-            <IconComponent className="size-5 mr-2" />
-            Request as {role.label}
-          </>
-        );
-    }
-  };
-
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-      <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Available Roles</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="bg-white/40 backdrop-blur-xl rounded-[3rem] p-4 md:p-10 border border-white/50 shadow-2xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {roles.map((role) => {
           const state = getButtonState(role.id);
           const IconComponent = role.icon;
 
           return (
-            <div key={role.id} className="group">
-              <div className="bg-gray-50 rounded-xl p-4 mb-3 group-hover:bg-gray-100 transition-colors duration-200">
-                <div className={`size-12 bg-gradient-to-br ${role.color} rounded-lg flex items-center justify-center mb-3 mx-auto`}>
-                  <IconComponent className="size-6 text-white" />
+            <motion.div 
+              key={role.id}
+              whileHover={{ y: -8 }}
+              className="flex flex-col h-full"
+            >
+              <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-8 flex-1 flex flex-col items-center text-center border border-white group relative overflow-hidden transition-all duration-500 hover:shadow-2xl">
+                {/* Background Glow */}
+                <div className={`absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br ${role.color} opacity-0 group-hover:opacity-10 blur-3xl transition-opacity duration-700`} />
+                
+                <div className={`p-4 ${role.lightColor} rounded-[1.5rem] mb-6 shadow-sm`}>
+                  <IconComponent className={`size-8 ${role.textColor}`} />
                 </div>
-                <h4 className="font-semibold text-gray-800 text-center">{role.label}</h4>
-                <p className="text-sm text-gray-600 text-center mt-1">{role.description}</p>
+                
+                <h4 className="text-xl font-black text-gray-900 mb-3 tracking-tight">{role.label}</h4>
+                <p className="text-gray-500 text-sm font-medium leading-relaxed mb-8 flex-1">
+                  {role.description}
+                </p>
+
+                {state === 'approved' ? (
+                  <div className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-emerald-50 text-emerald-600 rounded-2xl font-bold uppercase tracking-widest text-[10px] border border-emerald-100">
+                    <CheckCircle className="size-4" />
+                    Verified Partner
+                  </div>
+                ) : state === 'pending' ? (
+                  <div className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-amber-50 text-amber-600 rounded-2xl font-bold uppercase tracking-widest text-[10px] border border-amber-100">
+                    <Clock className="size-4 animate-spin-slow" />
+                    Pending Review
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => onRoleRequest(role.id)}
+                    className={`w-full py-4 px-6 bg-gradient-to-r ${role.color} text-white rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2`}
+                  >
+                    Launch Portfolio <Compass className="size-4" />
+                  </button>
+                )}
               </div>
-              
-              <button
-                onClick={() => onRoleRequest(role.id)}
-                disabled={state !== 'available'}
-                className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center text-sm ${
-                  state === 'approved'
-                    ? 'bg-green-100 text-green-700 cursor-default'
-                    : state === 'pending'
-                    ? 'bg-yellow-100 text-yellow-700 cursor-default'
-                    : `bg-gradient-to-r ${role.color} ${role.hoverColor} text-white hover:shadow-lg transform hover:scale-105`
-                }`}
-                aria-label={`Request ${role.label} role`}
-              >
-                {getButtonContent(role)}
-              </button>
-            </div>
+            </motion.div>
           );
         })}
       </div>

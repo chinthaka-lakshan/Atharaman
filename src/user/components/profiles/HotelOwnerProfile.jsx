@@ -10,6 +10,7 @@ import {
   deleteMyHotel,
   getLocations,
 } from '../../../services/api';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
   const [hotelOwner, setHotelOwner] = useState(null);
@@ -188,7 +189,7 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
       long_description: hotel.long_description || '',
       locations: hotel.locations || []
     });
-    setImagePreviews(hotel.images && hotel.images.length > 0 ? hotel.images.map(img => `http://localhost:8000/storage/${img.image_path}`) : []);
+    setImagePreviews(hotel.images && hotel.images.length > 0 ? hotel.images.map(img => `${STORAGE_BASE_URL}/${img.image_path}`) : []);
     setImages([]);
     setShowHotelForm(true);
   };
@@ -626,7 +627,7 @@ const HotelOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                     <div key={hotel.id} className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
                       {hotel.images && hotel.images.length > 0 ? (
                         <img
-                          src={`http://localhost:8000/storage/${hotel.images[0].image_path}`}
+                          src={`${STORAGE_BASE_URL}/${hotel.images[0].image_path}`}
                           alt={hotel.hotel_name}
                           className="w-full h-48 object-cover"
                         />

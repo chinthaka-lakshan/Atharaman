@@ -2,6 +2,7 @@ import React from 'react';
 import { Star, Phone } from 'lucide-react';
 import styles from '../../styles/InitialPages.module.css';
 import { useNavigate } from 'react-router-dom';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 export const GuideCard = ({ guide, rating = 0, reviewCount = 0, animationDelay = 0, isClickable = true }) => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export const GuideCard = ({ guide, rating = 0, reviewCount = 0, animationDelay =
   const getFirstImage = () => {
     if (guide.images && guide.images.length > 0) {
       const path = guide.images[0].image_path;
-      return path.startsWith('http') ? path : `http://localhost:8000/storage/${path}`;
+      return path.startsWith('http') ? path : `${STORAGE_BASE_URL}/${path}`;
     } else {
       return '/default-guide.jpg';
     }

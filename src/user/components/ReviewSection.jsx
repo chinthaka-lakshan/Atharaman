@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, MessageSquare, PenLine, ChevronDown, ChevronUp, Image as ImageIcon, X, Star } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { 
   getReviewsByEntity, 
@@ -6,6 +8,7 @@ import {
   updateReview, 
   deleteReview 
 } from '../../services/api';
+import { STORAGE_BASE_URL } from '../../config/runtimeConfig';
 
 const ReviewSection = ({ entityType, entityId }) => {
   const { user, isAuthenticated } = useAuth();
@@ -17,6 +20,7 @@ const ReviewSection = ({ entityType, entityId }) => {
   const [newImages, setNewImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
   const [imagesToRemove, setImagesToRemove] = useState([]);
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   useEffect(() => {
     fetchReviews();
@@ -88,6 +92,7 @@ const ReviewSection = ({ entityType, entityId }) => {
       setReviews(prev => [response.data.review, ...prev]);
       setNewReview({ rating: 5, comment: '' });
       setNewImages([]);
+      setIsFormVisible(false); // Hide form after submission
     } catch (error) {
       console.error('Error submitting review:', error);
       if (error.response?.status === 400) {
@@ -109,6 +114,7 @@ const ReviewSection = ({ entityType, entityId }) => {
     setExistingImages(review.images || []);
     setImagesToRemove([]);
     setNewImages([]);
+    setIsFormVisible(true); // Show form when editing
   };
 
   const handleUpdateReview = async (e) => {
@@ -266,23 +272,62 @@ const ReviewSection = ({ entityType, entityId }) => {
     <div className="mt-12 pt-8 border-t border-gray-200">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Reviews</h3>
+          <h3 className="text-3xl font-bold text-gray-900 mb-2">Guest Feedback</h3>
           {reviews.length > 0 && (
-            <div className="flex items-center gap-2">
-              <div className="flex">{renderStars(Math.round(averageRating))}</div>
-              <span className="text-lg font-semibold text-gray-700">{averageRating}</span>
-              <span className="text-gray-500">({reviews.length} review{reviews.length !== 1 ? 's' : ''})</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center px-3 py-1 bg-yellow-400/10 text-yellow-600 rounded-full font-bold text-sm">
+                <Star className="w-4 h-4 mr-1 fill-current" />
+                {averageRating}
+              </div>
+              <span className="text-gray-500 font-medium">({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})</span>
             </div>
           )}
         </div>
+
+        {isAuthenticated && (
+          <button
+            onClick={() => setIsFormVisible(!isFormVisible)}
+            className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all duration-300 ${
+              isFormVisible 
+                ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' 
+                : 'bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-500/25'
+            }`}
+          >
+            {isFormVisible ? (
+              <>
+                <X className="w-5 h-5" />
+                Cancel Review
+              </>
+            ) : (
+              <>
+                <PenLine className="w-5 h-5" />
+                Write a Review
+              </>
+            )}
+          </button>
+        )}
       </div>
 
-      {isAuthenticated && (
-        <div className="bg-gray-50 p-6 rounded-lg mb-8">
-          <h4 className="text-lg font-semibold mb-4">
-            {editingReview ? 'Edit Review' : 'Write a Review'}
-          </h4>
-          <form onSubmit={editingReview ? handleUpdateReview : handleSubmitReview}>
+      <AnimatePresence>
+        {isAuthenticated && isFormVisible && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, y: -20 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -20 }}
+            className="overflow-hidden mb-12"
+          >
+            <div className="bg-white/80 backdrop-blur-xl p-10 rounded-[2rem] shadow-2xl border border-white/50 relative overflow-hidden">
+              {/* Decorative background for the form */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full blur-3xl -z-10 -translate-y-1/2 translate-x-1/2 opacity-50" />
+              
+              <h4 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                <div className="p-3 bg-orange-100 rounded-xl text-orange-600">
+                  {editingReview ? <PenLine className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
+                </div>
+                {editingReview ? 'Update Your Experience' : 'Share Your Experience'}
+              </h4>
+
+              <form onSubmit={editingReview ? handleUpdateReview : handleSubmitReview} className="space-y-8">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Rating
@@ -333,7 +378,7 @@ const ReviewSection = ({ entityType, entityId }) => {
                       {removedImages.map((img) => (
                         <div key={img.id} className="relative h-32 border-2 border-dashed border-yellow-300 rounded-lg flex items-center justify-center opacity-60">
                           <img 
-                            src={`http://localhost:8000/storage/${img.image_path}`}
+                            src={`${STORAGE_BASE_URL}/${img.image_path}`}
                             alt={img.alt_text || 'Review image'}
                             className="h-full w-full object-cover rounded-lg"
                           />
@@ -364,7 +409,7 @@ const ReviewSection = ({ entityType, entityId }) => {
                       {existingImages.map((img) => (
                         <div key={img.id} className="relative h-32 border border-gray-300 rounded-lg flex items-center justify-center group">
                           <img 
-                            src={`http://localhost:8000/storage/${img.image_path}`}
+                            src={`${STORAGE_BASE_URL}/${img.image_path}`}
                             alt={img.alt_text || 'Review image'}
                             className="h-full w-full object-cover rounded-lg"
                           />
@@ -448,7 +493,7 @@ const ReviewSection = ({ entityType, entityId }) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-orange-500 text-white px-8 py-4 rounded-2xl font-bold hover:bg-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20"
               >
                 {isSubmitting ? 'Submitting...' : (editingReview ? 'Update Review' : 'Submit Review')}
               </button>
@@ -456,7 +501,7 @@ const ReviewSection = ({ entityType, entityId }) => {
                 <button
                   type="button"
                   onClick={cancelEdit}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-600 transition-colors"
+                  className="bg-gray-100 text-gray-600 px-8 py-4 rounded-2xl font-bold hover:bg-gray-200 transition-all"
                 >
                   Cancel
                 </button>
@@ -464,7 +509,9 @@ const ReviewSection = ({ entityType, entityId }) => {
             </div>
           </form>
         </div>
-      )}
+      </motion.div>
+    )}
+  </AnimatePresence>
 
       {!isAuthenticated && (
         <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-8">
@@ -497,7 +544,7 @@ const ReviewSection = ({ entityType, entityId }) => {
                         {review.images.map((image, index) => (
                           <img
                             key={index}
-                            src={`http://localhost:8000/storage/${image.image_path}`}
+                            src={`${STORAGE_BASE_URL}/${image.image_path}`}
                             alt={image.alt_text || `Review image ${index + 1}`}
                             className="w-20 h-20 object-cover rounded"
                           />

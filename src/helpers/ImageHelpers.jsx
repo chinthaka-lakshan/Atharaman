@@ -1,3 +1,5 @@
+import { STORAGE_BASE_URL } from '../config/runtimeConfig';
+
 export const getLocationImageUrls = (location) => {
   if (!location) return [];
   
@@ -6,9 +8,9 @@ export const getLocationImageUrls = (location) => {
     return location.images.map(img => {
       const path = img.image_path;
       if (path && path.startsWith('locations/')) {
-        return `http://localhost:8000/storage/${path}`;
+        return `${STORAGE_BASE_URL}/${path}`;
       } else if (path) {
-        return `http://localhost:8000/storage/locations/${path}`;
+        return `${STORAGE_BASE_URL}/locations/${path}`;
       }
       return "/default-location.jpg";
     });
@@ -31,9 +33,9 @@ export const getGuideImageUrls = (guide) => {
     return guide.images.map(img => {
       const path = img.image_path;
       if (path && path.startsWith('guides/')) {
-        return `http://localhost:8000/storage/${path}`;
+        return `${STORAGE_BASE_URL}/${path}`;
       } else if (path) {
-        return `http://localhost:8000/storage/guides/${path}`;
+        return `${STORAGE_BASE_URL}/guides/${path}`;
       }
       return "/default-guide.jpg";
     });
@@ -54,9 +56,9 @@ export const getGuideImageUrls = (guide) => {
   
   return images.map(image => {
     if (image && image.startsWith('guides/')) {
-      return `http://localhost:8000/storage/${image}`;
+      return `${STORAGE_BASE_URL}/${image}`;
     } else if (image) {
-      return `http://localhost:8000/storage/guides/${image}`;
+      return `${STORAGE_BASE_URL}/guides/${image}`;
     }
     return "/default-guide.jpg";
   });
@@ -75,9 +77,9 @@ export const getShopImageUrls = (shop) => {
     return shop.images.map(img => {
       const path = img.image_path;
       if (path && path.startsWith('shops/')) {
-        return `http://localhost:8000/storage/${path}`;
+        return `${STORAGE_BASE_URL}/${path}`;
       } else if (path) {
-        return `http://localhost:8000/storage/shops/${path}`;
+        return `${STORAGE_BASE_URL}/shops/${path}`;
       }
       return "/default-shop.jpg";
     });
@@ -98,9 +100,9 @@ export const getShopImageUrls = (shop) => {
   
   return images.map(image => {
     if (image && image.startsWith('shops/')) {
-      return `http://localhost:8000/storage/${image}`;
+      return `${STORAGE_BASE_URL}/${image}`;
     } else if (image) {
-      return `http://localhost:8000/storage/shops/${image}`;
+      return `${STORAGE_BASE_URL}/shops/${image}`;
     }
     return "/default-shop.jpg";
   });
@@ -119,9 +121,9 @@ export const getHotelImageUrls = (hotel) => {
     return hotel.images.map(img => {
       const path = img.image_path;
       if (path && path.startsWith('hotels/')) {
-        return `http://localhost:8000/storage/${path}`;
+        return `${STORAGE_BASE_URL}/${path}`;
       } else if (path) {
-        return `http://localhost:8000/storage/hotels/${path}`;
+        return `${STORAGE_BASE_URL}/hotels/${path}`;
       }
       return "/default-hotel.jpg";
     });
@@ -142,9 +144,9 @@ export const getHotelImageUrls = (hotel) => {
   
   return images.map(image => {
     if (image && image.startsWith('hotels/')) {
-      return `http://localhost:8000/storage/${image}`;
+      return `${STORAGE_BASE_URL}/${image}`;
     } else if (image) {
-      return `http://localhost:8000/storage/hotels/${image}`;
+      return `${STORAGE_BASE_URL}/hotels/${image}`;
     }
     return "/default-hotel.jpg";
   });
@@ -163,9 +165,9 @@ export const getVehicleImageUrls = (vehicle) => {
     return vehicle.images.map(img => {
       const path = img.image_path;
       if (path && path.startsWith('vehicles/')) {
-        return `http://localhost:8000/storage/${path}`;
+        return `${STORAGE_BASE_URL}/${path}`;
       } else if (path) {
-        return `http://localhost:8000/storage/vehicles/${path}`;
+        return `${STORAGE_BASE_URL}/vehicles/${path}`;
       }
       return "/default-vehicle.jpg";
     });
@@ -190,9 +192,9 @@ export const getVehicleImageUrls = (vehicle) => {
   
   return images.map(image => {
     if (image && typeof image === 'string' && image.startsWith('vehicles/')) {
-      return `http://localhost:8000/storage/${image}`;
+      return `${STORAGE_BASE_URL}/${image}`;
     } else if (image && typeof image === 'string') {
-      return `http://localhost:8000/storage/vehicles/${image}`;
+      return `${STORAGE_BASE_URL}/vehicles/${image}`;
     }
     return "/default-vehicle.jpg";
   });

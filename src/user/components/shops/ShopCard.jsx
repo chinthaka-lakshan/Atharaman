@@ -2,12 +2,13 @@ import React from 'react';
 import { Star, MapPinned, ShoppingBag, ArrowRight, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 export const ShopCard = ({ shop, rating = 0, onClick }) => {
   const navigate = useNavigate();
 
   const imageUrl = shop.images && shop.images.length > 0
-    ? `http://localhost:8000/storage/${shop.images[0].image_path}`
+    ? `${STORAGE_BASE_URL}/${shop.images[0].image_path}`
     : 'https://images.pexels.com/photos/1036857/pexels-photo-1036857.jpeg?auto=compress&cs=tinysrgb&w=800';
 
   const safeRating = typeof rating === 'number' ? rating : parseFloat(rating) || 0;

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Bot, Sparkles, X, Send, Loader2, MapPin, Hotel, User, Car, ShoppingBag, ArrowRight, Star, RotateCcw } from 'lucide-react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 
+
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const genAI = new GoogleGenerativeAI(API_KEY);
+
 const model = genAI.getGenerativeModel({
     model: "gemini-2.5-flash",
     systemInstruction: `You are Atharaman AI, an expert Sri Lankan travel guide.
@@ -28,6 +30,7 @@ EXAMPLE RESPONSE FORMAT:
 
 IMPORTANT: Return ONLY the raw JSON object. No markdown fences, no extra text.`
 });
+*/
 
 const TYPE_CONFIG = {
     location: { icon: MapPin,      color: 'from-orange-400 to-red-500',    bg: 'bg-orange-50',   text: 'text-orange-600',  border: 'border-orange-100', label: 'Location', path: '/locations/' },
@@ -155,8 +158,11 @@ const AtharamanChat = () => {
                 Vehicles: ${JSON.stringify(vehicles.data.slice(0, 5))}
                 Shops: ${JSON.stringify(shops.data.slice(0, 5))}`;
 
+            /*
             const result = await model.generateContent([context, input]);
             const raw = result.response.text().trim();
+            */
+            const raw = '{"message": "AI Chat is currently disabled for maintenance.", "cards": []}';
 
             let text = '';
             let cards = [];
