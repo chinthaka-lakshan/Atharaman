@@ -8,6 +8,7 @@ import ReviewSection from '../ReviewSection';
 import { getLocations } from '../../../services/api';
 import { LocationCard } from '../locations/LocationCard';
 import LocationDetail from '../locations/LocationDetail';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 const HotelDetail = ({ hotel, onBack }) => {
   const reviews = hotel.reviews || hotel.reviews?.data || [];
@@ -128,7 +129,7 @@ const HotelDetail = ({ hotel, onBack }) => {
             <div className="relative w-full h-full">
               {hotel.images && hotel.images.length > 0 ? (
                 <img
-                  src={`http://localhost:8000/storage/${hotel.images[currentImageIndex]?.image_path}`}
+                  src={`${STORAGE_BASE_URL}/${hotel.images[currentImageIndex]?.image_path}`}
                   alt={hotel.hotel_name || hotel.hotelName}
                   className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
                 />

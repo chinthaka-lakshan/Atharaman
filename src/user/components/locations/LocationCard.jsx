@@ -2,12 +2,13 @@ import React from 'react';
 import { GlobeIcon, Star, MapPin, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 export const LocationCard = ({ location, rating = 0, onClick }) => {
   const navigate = useNavigate();
 
   const imageUrl = location.images && location.images.length > 0
-    ? `http://localhost:8000/storage/${location.images[0].image_path}`
+    ? `${STORAGE_BASE_URL}/${location.images[0].image_path}`
     : 'https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&cs=tinysrgb&w=800';
 
   const safeRating = typeof rating === 'number' ? rating : parseFloat(rating) || 0;

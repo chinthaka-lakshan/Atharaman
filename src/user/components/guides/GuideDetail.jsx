@@ -8,6 +8,7 @@ import ReviewSection from '../ReviewSection';
 import { getLocations } from '../../../services/api';
 import { LocationCard } from '../locations/LocationCard';
 import LocationDetail from '../locations/LocationDetail';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 const GuideDetail = ({ guide, onBack }) => {
   const reviews = guide.reviews || guide.reviews?.data || [];
@@ -130,7 +131,7 @@ const GuideDetail = ({ guide, onBack }) => {
             <div className="relative w-full h-full">
               {images.length > 0 ? (
                 <img
-                  src={`http://localhost:8000/storage/${images[currentImageIndex].image_path}`}
+                  src={`${STORAGE_BASE_URL}/${images[currentImageIndex].image_path}`}
                   alt={guide.guide_name}
                   className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
                 />

@@ -7,6 +7,7 @@ import ReviewSection from "../ReviewSection";
 import { getLocations } from '../../../services/api';
 import { LocationCard } from '../locations/LocationCard';
 import LocationDetail from '../locations/LocationDetail';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 export const VehicleDetail = ({ vehicle, onBack }) => {
   const reviews = vehicle.reviews || vehicle.reviews?.data || [];
@@ -127,7 +128,7 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
             <div className="relative w-full h-full">
               {vehicle.images && vehicle.images.length > 0 ? (
                 <img
-                  src={`http://localhost:8000/storage/${vehicle.images[currentImageIndex]?.image_path}`}
+                  src={`${STORAGE_BASE_URL}/${vehicle.images[currentImageIndex]?.image_path}`}
                   alt={vehicle.vehicle_name || vehicle.vehicleName}
                   className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
                 />
