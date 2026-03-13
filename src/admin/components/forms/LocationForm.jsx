@@ -324,7 +324,7 @@ const LocationForm = ({ location, onSave, onCancel }) => {
               {removedImages.map((img) => (
                 <div key={img.id} className="relative h-40 border-2 border-dashed border-yellow-300 rounded-lg flex items-center justify-center opacity-60">
                   <img 
-                    src={`http://localhost:8000/storage/${img.image_path}`}
+                    src={`${STORAGE_BASE_URL}/${img.image_path}`}
                     alt={img.alt_text}
                     className="h-full w-full object-cover rounded-lg"
                   />
