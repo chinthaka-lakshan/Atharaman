@@ -157,14 +157,20 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
 
         {/* Image Nav Buttons */}
         {images.length > 1 && (
-          <div className="absolute bottom-24 right-8 z-30 flex gap-3">
-            <button onClick={prevImage} className="p-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all">
+          <>
+            <button 
+              onClick={prevImage} 
+              className="absolute left-8 top-1/2 -translate-y-1/2 z-30 p-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all"
+            >
               <ChevronLeft className="w-6 h-6" />
             </button>
-            <button onClick={nextImage} className="p-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all">
+            <button 
+              onClick={nextImage} 
+              className="absolute right-8 top-1/2 -translate-y-1/2 z-30 p-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all"
+            >
               <ChevronRight className="w-6 h-6" />
             </button>
-          </div>
+          </>
         )}
       </div>
 
