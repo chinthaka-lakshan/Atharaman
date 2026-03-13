@@ -164,16 +164,16 @@ const LocationMap = ({ latitude, longitude, name }) => {
         
         {/* ── Header bar ── */}
         <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100 bg-white">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex-shrink-0 flex items-center justify-center">
               <MapPin size={14} className="text-white" />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-800">{name}</p>
-              <p className="text-xs text-gray-400">{lat.toFixed(5)}°N, {lng.toFixed(5)}°E</p>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-gray-800 truncate">{name}</p>
+              <p className="text-xs text-gray-400 truncate">{lat.toFixed(5)}°N, {lng.toFixed(5)}°E</p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
             {/* Copy coords */}
             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={handleCopyCoords}

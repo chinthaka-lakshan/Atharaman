@@ -113,13 +113,13 @@ const GuideDetail = ({ guide, onBack }) => {
         {/* Back Button */}
         <button
           onClick={handleBack}
-          className="absolute top-24 left-8 z-30 p-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all group"
+          className="absolute top-24 left-24 z-30 p-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all group"
         >
           <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
         </button>
 
         {/* Hero Content */}
-        <div className="absolute bottom-24 left-8 right-8 z-20">
+        <div className="absolute bottom-24 left-24 right-24 z-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
