@@ -23,6 +23,8 @@ import {GuidesSection} from './user/components/guides/GuidesSection';
 import {HotelsSection} from './user/components/hotels/HotelsSection';
 import {ShopsSection} from './user/components/shops/ShopsSection';
 import {VehiclesSection} from './user/components/vehicles/VehiclesSection';
+import Footer from './user/components/Footer';
+
 // User Pages
 import Home from './user/pages/Home';
 import UserProfilePage from './user/pages/UserProfilePage';
@@ -43,10 +45,29 @@ function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const { isLoading } = useAuth();
+  
+  // Scroll to top on every route change
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   if (isLoading) {
     return null; // or a minimal blank state
   }
+
+  const scrollToSection = (sectionId) => {
+    if (location.pathname !== '/') {
+      window.location.href = `/#${sectionId}`;
+      return;
+    }
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const navbarHeight = 64;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.scrollY - navbarHeight;
+      window.scrollTo({ top: elementPosition, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="App relative">
@@ -138,6 +159,7 @@ function AppContent() {
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
             </Routes>
+            <Footer onScrollToSection={scrollToSection} />
           </div>
         )}
       </AnimatePresence>

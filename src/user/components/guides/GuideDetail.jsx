@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Star, Mail, Phone, ChevronLeft, ChevronRight, IdCardIcon } from 'lucide-react';
+import { 
+  ArrowLeft, MapPin, Star, Mail, Phone, 
+  ChevronLeft, ChevronRight, IdCardIcon, 
+  Languages, GraduationCap, Map
+} from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa6';
-import styles from '../../styles/DetailPages.module.css';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../Navbar';
 import ReviewSection from '../ReviewSection';
 import { getLocations } from '../../../services/api';
 import { LocationCard } from '../locations/LocationCard';
-import LocationDetail from '../locations/LocationDetail';
 import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 const GuideDetail = ({ guide, onBack }) => {
@@ -18,7 +21,6 @@ const GuideDetail = ({ guide, onBack }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedLocation, setSelectedLocation] = useState(null);
   const navigate = useNavigate();
 
   // Get images directly from backend structure
@@ -31,7 +33,6 @@ const GuideDetail = ({ guide, onBack }) => {
           setLoading(true);
           const response = await getLocations();
           const allLocations = response.data;
-          // Filter locations based on guide's locations array
           const guideLocations = allLocations.filter(location => 
             guide.locations.includes(location.locationName || location.name)
           );
@@ -49,31 +50,6 @@ const GuideDetail = ({ guide, onBack }) => {
     fetchGuideLocations();
   }, [guide]);
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const navbarHeight = 64;
-      const elementPosition =
-        element.getBoundingClientRect().top + window.scrollY - navbarHeight;
-      window.scrollTo({
-        top: elementPosition,
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  const renderStars = (rating) => {
-    const numericRating = typeof rating === 'number' ? rating : parseFloat(rating) || 0;
-    return Array.from({ length: 5 }, (_, i) => (
-      <span
-        key={i}
-        className={`text-lg ${i < Math.round(numericRating) ? 'text-yellow-400' : 'text-gray-300'}`}
-      >
-        ★
-      </span>
-    ));
-  };
-
   const handleBack = () => {
     if (onBack) {
       onBack();
@@ -84,345 +60,292 @@ const GuideDetail = ({ guide, onBack }) => {
 
   const nextImage = () => {
     if (images.length > 0) {
-      setCurrentImageIndex((prev) => 
-        prev === images.length - 1 ? 0 : prev + 1
-      );
+      setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     }
   };
 
   const prevImage = () => {
     if (images.length > 0) {
-      setCurrentImageIndex((prev) => 
-        prev === 0 ? images.length - 1 : prev - 1
-      );
+      setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
     }
   };
 
-  const handleLocationClick = (location) => {
-    setSelectedLocation(location);
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
   };
 
-  const handleLocationBack = () => {
-    setSelectedLocation(null);
-  };
-
-  if (selectedLocation) {
-    return <LocationDetail location={selectedLocation} onBack={handleLocationBack} />;
-  }
-
-  if (!guide) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading guide details...</p>
-        </div>
-      </div>
-    );
-  }
+  if (!guide) return null;
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-purple-50 pt-16 ${styles.entityDetails}`}>
-      <Navbar onScrollToSection={scrollToSection} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Hero Section */}
-          <div className="relative h-128 overflow-hidden">
-            <div className="relative w-full h-full">
-              {images.length > 0 ? (
-                <img
-                  src={`${STORAGE_BASE_URL}/${images[currentImageIndex].image_path}`}
-                  alt={guide.guide_name}
-                  className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
-                />
-              ) : (
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-500">No image available</span>
-                </div>
-              )}
-              <button
-                onClick={handleBack}
-                className="absolute top-4 left-4 bg-white/90 hover:bg-white rounded-full p-2 transition-all duration-200"
-              >
-                <ArrowLeft className="w-5 h-5 text-gray-700" />
-              </button>
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      <Navbar />
+      
+      {/* Global Pattern Overlay */}
+      <div 
+        className="fixed inset-0 opacity-[0.03] pointer-events-none z-0"
+        style={{ 
+          backgroundImage: 'url("https://www.transparenttextures.com/patterns/natural-paper.png")',
+          backgroundRepeat: 'repeat'
+        }}
+      ></div>
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                
-              {/* Image Navigation */}
-              {images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-md rounded-full p-2 hover:bg-white/30 transition-all ${styles.imageNavButton}`}
-                  >
-                    <ChevronLeft size={24} className="text-white" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-md rounded-full p-2 hover:bg-white/30 transition-all ${styles.imageNavButton}`}
-                  >
-                    <ChevronRight size={24} className="text-white" />
-                  </button>
-                </>
-              )}
+      {/* Decorative Background Elements */}
+      <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-emerald-50/50 rounded-full blur-3xl -z-10 -translate-y-1/2 translate-x-1/2" />
+      <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl -z-10 translate-y-1/2 -translate-x-1/2" />
 
-              {/* Image Indicators */}
-              {images.length > 1 && (
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-3 h-3 rounded-full transition-all ${
-                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                      }`}
-                    />
-                  ))}
-                </div>
-              )}
+      {/* Hero Section */}
+      <div className="relative h-[60vh] min-h-[400px] overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentImageIndex}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            src={images.length > 0 ? `${STORAGE_BASE_URL}/${images[currentImageIndex].image_path}` : '/placeholder-guide.jpg'}
+            alt={guide.guide_name}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </AnimatePresence>
+        
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-white" />
+        
+        {/* Back Button */}
+        <button
+          onClick={handleBack}
+          className="absolute top-24 left-8 z-30 p-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all group"
+        >
+          <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+        </button>
+
+        {/* Hero Content */}
+        <div className="absolute bottom-24 left-8 right-8 z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-7xl mx-auto"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <span className="px-4 py-1.5 bg-emerald-500 text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg shadow-emerald-500/30">
+                Professional Guide
+              </span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-white text-sm font-medium border border-white/20">
+                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                {averageRating.toFixed(1)} ({reviewCount} Reviews)
+              </div>
             </div>
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-4 tracking-tight">
+              {guide.guide_name}
+            </h1>
+          </motion.div>
+        </div>
 
-            {/* Guide Title Overlay */}
-            <div className={`absolute bottom-8 left-8 text-white ${styles.animateSlideInUp}`}>
-              <h1 className="text-4xl font-bold mb-2">{guide.guide_name}</h1>
-            </div>
+        {/* Image Nav Buttons */}
+        {images.length > 1 && (
+          <div className="absolute bottom-24 right-8 z-30 flex gap-3">
+            <button onClick={prevImage} className="p-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all">
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button onClick={nextImage} className="p-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl text-white hover:bg-white/40 transition-all">
+              <ChevronRight className="w-6 h-6" />
+            </button>
           </div>
+        )}
+      </div>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-8 relative -mt-12 z-20 pb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
-          {/* Content */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-              {/* Main Content */}
-              <div className="lg:col-span-2 space-y-8">
-                {/* Description */}
-                <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Guide</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6 break-words">
-                    {guide.short_description}
+          {/* Left Column - Details */}
+          <div className="lg:col-span-8 space-y-12">
+            {/* Bio Section */}
+            <motion.section 
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-2xl border border-white/50"
+            >
+              <div className="flex items-center gap-4 mb-8">
+                <div className="p-4 bg-emerald-100 rounded-2xl text-emerald-600">
+                  <GraduationCap className="w-8 h-8" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900">About the Guide</h2>
+                  <p className="text-gray-500 font-medium">Passion, expertise, and local stories</p>
+                </div>
+              </div>
+              <div className="prose prose-lg text-gray-700 max-w-none space-y-6">
+                <p className="text-xl font-medium leading-relaxed">
+                  {guide.short_description}
+                </p>
+                {guide.long_description && (
+                  <p className="text-gray-600 whitespace-pre-line leading-relaxed">
+                    {guide.long_description}
                   </p>
-                  
-                  {/* Long Description */}
-                  {guide.long_description && (
-                    <div className="mt-6">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-3">Detailed Information</h3>
-                      <p className="text-gray-600 leading-relaxed whitespace-pre-line break-words">
-                        {guide.long_description}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {/* Languages */}
-                  {guide.languages && guide.languages.length > 0 && (
-                    <div className="mb-8 mt-6">
-                      <h2 className="text-xl font-semibold text-gray-900 mb-3">Languages Spoken</h2>
-                      <div className="flex flex-wrap gap-2">
-                        {guide.languages.map((language, index) => (
-                          <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                            {language}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Locations */}
-                  {guide.locations && guide.locations.length > 0 && (
-                    <div className="mb-8">
-                      <h2 className="text-xl font-semibold text-gray-900 mb-3">Service Locations</h2>
-                      <div className="flex flex-wrap gap-2">
-                        {guide.locations.map((location, index) => (
-                          <span key={index} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                            {location}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
 
-              {/* Sidebar */}
-              <div className="space-y-8">
-                {/* Quick Info */}
-                <div className={`bg-white rounded-2xl shadow-lg p-6 ${styles.animateSlideInRight} ${styles.animateStagger1}`}>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Info</h3>
-                  <div className="space-y-3">
-                    {guide.guide_nic && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <IdCardIcon className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{guide.guide_nic}</span>
-                      </div>
-                    )}
-                    {guide.contact_number && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Phone className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{guide.contact_number}</span>
-                      </div>
-                    )}
-                    {guide.business_mail && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Mail className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <a 
-                          href={`mailto:${guide.business_mail}`} 
-                          className="hover:text-emerald-600 transition-colors break-all"
-                        >
-                          {guide.business_mail}
-                        </a>
-                      </div>
-                    )}
-                    {guide.whatsapp_number && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <FaWhatsapp className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{guide.whatsapp_number}</span>
-                      </div>
-                    )}
-                    {reviews.length > 0 && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-600">Rating</span>
-                        <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={16}
-                              className={`${
-                                i < Math.round(averageRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                          <span className="text-sm text-gray-600 ml-1">({averageRating ? averageRating.toFixed(1) : '0.0'})</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Button */}
-            {(guide.business_mail || guide.contact_number) && (
-              <div className="mt-8 pt-5 border-t mb-5">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Contact This Guide</h2>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  {guide.business_mail && (
-                    <a 
-                      href={`mailto:${guide.business_mail}`} 
-                      className="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                    >
-                      Send Email
-                    </a>
-                  )}
-                  {guide.contact_number && (
-                    <a 
-                      href={`tel:${guide.contact_number}`} 
-                      className="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                    >
-                      Call Now
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Related Locations Section */}
-            <div className="mb-5">
-              <div className="pt-5 border-t">
-                <h2 className="text-2xl font-bold text-gray-900 mb-5">Specialized Locations</h2>
-                {loading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                  </div>
-                ) : locations.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Sort locations by rating (highest first) */}
-                    {locations
-                      .sort((a, b) => {
-                        const ratingA = a.reviews_avg_rating || 0;
-                        const ratingB = b.reviews_avg_rating || 0;
-                        return ratingB - ratingA;
-                      })
-                      .map(location => (
-                        <LocationCard
-                          key={location.id}
-                          location={location}
-                          rating={location.reviews_avg_rating || 0}
-                          reviewCount={location.reviews_count || 0}
-                          // Make location cards read-only (non-clickable)
-                          isClickable={false}
-                        />
+              {/* Badges Section */}
+              <div className="mt-10 pt-10 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-6">
+                {guide.languages && guide.languages.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <Languages className="w-4 h-4" /> Languages
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {guide.languages.map((lang, i) => (
+                        <span key={i} className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl font-bold text-sm">
+                          {lang}
+                        </span>
                       ))}
+                    </div>
                   </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">No locations available for this guide.</p>
-                    {guide.locations && guide.locations.length > 0 && (
-                      <p className="text-sm text-gray-400 mt-2">
-                        The guide specializes in: {guide.locations.join(', ')}
-                      </p>
-                    )}
+                )}
+                {guide.locations && guide.locations.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <Map className="w-4 h-4" /> Service Areas
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {guide.locations.map((loc, i) => (
+                        <span key={i} className="px-4 py-2 bg-blue-50 text-blue-700 rounded-xl font-bold text-sm">
+                          {loc}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
-            </div>
+            </motion.section>
 
-            {/* Reviews Section */}
-            <div className="mt-12 pt-5 border-t">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
-              
-              {/* Reviews Summary */}
-              {reviewCount > 0 ? (
-                <div className="bg-gray-50 rounded-lg p-6 mb-6">
-                  <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="text-center">
-                      <div className="text-4xl font-bold text-emerald-600">
-                        {averageRating ? averageRating.toFixed(1) : '0.0'}
-                      </div>
-                      <div className="flex justify-center mt-1">
-                        {renderStars(Math.round(averageRating))}
-                      </div>
-                      <div className="text-sm text-gray-500 mt-1">
-                        {reviewCount} review{reviewCount !== 1 ? 's' : ''}
-                      </div>
-                    </div>
-                    
-                    <div className="flex-1 space-y-2">
-                      {[5, 4, 3, 2, 1].map((star) => {
-                        const count = reviews.filter(review => review.rating === star).length;
-                        const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0;
-                        
-                        return (
-                          <div key={star} className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600 w-4">{star}</span>
-                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                            <div className="flex-1 bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-yellow-400 h-2 rounded-full transition-all duration-300" 
-                                style={{ width: `${percentage}%` }}
-                              ></div>
-                            </div>
-                            <span className="text-sm text-gray-600 w-8 text-right">
-                              {count}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <aside className="lg:col-span-4 space-y-8">
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="sticky top-24 space-y-8"
+            >
+              {/* Contact Card */}
+              <div className="bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-2xl border border-white/50 space-y-8">
+                <div className="text-center group">
+                  <div className="w-24 h-24 mx-auto mb-4 rounded-3xl overflow-hidden shadow-xl transform group-hover:scale-105 transition-transform">
+                    <img 
+                      src={images.length > 0 ? `${STORAGE_BASE_URL}/${images[0].image_path}` : '/placeholder-avatar.jpg'} 
+                      className="w-full h-full object-cover"
+                      alt={guide.guide_name}
+                    />
                   </div>
+                  <h3 className="text-2xl font-bold text-gray-900 tracking-tight">{guide.guide_name}</h3>
+                  <p className="text-emerald-600 font-bold text-sm uppercase tracking-widest mt-1">Verified Guide</p>
                 </div>
+
+                <div className="space-y-4">
+                  {guide.guide_nic && <ContactItem icon={<IdCardIcon className="text-blue-500" />} label="Guide ID" value={guide.guide_nic} />}
+                  {guide.contact_number && <ContactItem icon={<Phone className="text-emerald-500" />} label="Direct Call" value={guide.contact_number} isLink href={`tel:${guide.contact_number}`} />}
+                  {guide.business_mail && <ContactItem icon={<Mail className="text-orange-500" />} label="Email" value={guide.business_mail} isLink href={`mailto:${guide.business_mail}`} />}
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <a 
+                    href={guide.whatsapp_number ? `https://wa.me/${guide.whatsapp_number}` : '#'}
+                    className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-emerald-600/20"
+                  >
+                    <FaWhatsapp className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                    Chat on WhatsApp
+                  </a>
+                  <a 
+                    href={`mailto:${guide.business_mail}`}
+                    className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all flex items-center justify-center gap-2 group shadow-xl shadow-gray-900/10"
+                  >
+                    <Mail className="w-5 h-5" />
+                    Inquiry via Email
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </aside>
+        </div>
+
+        {/* Landscape Sections (Full Width) */}
+        <div className="mt-16 space-y-16">
+          {/* Reviews Section */}
+          <motion.section 
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-2xl border border-white/50"
+          >
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Guest Feedback</h2>
+                <p className="text-gray-500">Experiences shared by recent travelers</p>
+              </div>
+              <div className="text-right">
+                <div className="text-4xl font-bold text-gray-900">{averageRating.toFixed(1)}</div>
+                <div className="flex gap-0.5 text-yellow-400">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-5 h-5 ${i < Math.round(averageRating) ? 'fill-current' : ''}`} />
+                  ))}
+                </div>
+              </div>
+            </div>
+            <ReviewSection entityType="guide" entityId={guide?.id} />
+          </motion.section>
+
+          {/* Specialized Locations */}
+          <motion.section 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-8"
+          >
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Specialized Destinations</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {loading ? (
+                [...Array(4)].map((_, i) => (
+                  <div key={i} className="h-[400px] bg-gray-100 animate-pulse rounded-[2.5rem]" />
+                ))
+              ) : locations.length > 0 ? (
+                locations.map(loc => (
+                  <div key={loc.id} className="transform hover:scale-[1.02] transition-all duration-300">
+                    <LocationCard location={loc} rating={loc.reviews_avg_rating || 0} reviewCount={loc.reviews_count || 0} isClickable={false} />
+                  </div>
+                ))
               ) : (
-                <div className="bg-gray-50 rounded-lg p-6 mb-6 text-center">
-                  <p className="text-gray-500">No reviews yet. Be the first to review this guide!</p>
+                <div className="md:col-span-2 text-center py-20 bg-gray-50/50 rounded-[2.5rem] border border-dashed border-gray-200">
+                  <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 font-medium">No specialized locations listed yet.</p>
                 </div>
               )}
-
-              {/* ReviewSection Component */}
-              <ReviewSection entityType="guide" entityId={guide?.id} />
             </div>
-          </div>
+          </motion.section>
         </div>
       </main>
     </div>
   );
 };
+
+const ContactItem = ({ icon, label, value, isLink, href }) => (
+  <div className="flex items-center gap-4 p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50 hover:bg-white transition-colors">
+    <div className="w-10 h-10 flex items-center justify-center">
+      {icon}
+    </div>
+    <div className="min-w-0">
+      <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider leading-none mb-1">{label}</p>
+      {isLink ? (
+        <a href={href} className="text-gray-900 font-bold leading-none hover:text-emerald-600 transition-colors truncate block">
+          {value}
+        </a>
+      ) : (
+        <p className="text-gray-900 font-bold leading-none truncate">{value || 'N/A'}</p>
+      )}
+    </div>
+  </div>
+);
 
 export default GuideDetail;

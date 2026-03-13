@@ -80,17 +80,25 @@ const Navbar = ({ onScrollToSection }) => {
             {/* Desktop Navigation */}
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline gap-8">
-                {navItems.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => handleNavClick(item.path)}
-                    className={`px-3 py-2 rounded-md text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-110 ${
-                      effectiveScrolled ? 'text-gray-700 hover:text-orange-600' : 'text-white/90 hover:text-white'
-                    }`}
-                  >
-                    {item.name}
-                  </button>
-                ))}
+                {navItems.map((item) => {
+                  const isActive = item.path === '/' 
+                    ? location.pathname === '/' 
+                    : location.pathname.startsWith(item.path);
+                  
+                  return (
+                    <button
+                      key={item.name}
+                      onClick={() => handleNavClick(item.path)}
+                      className={`px-3 py-2 rounded-md text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-110 ${
+                        isActive 
+                          ? 'text-orange-500' 
+                          : effectiveScrolled ? 'text-gray-700 hover:text-orange-600' : 'text-white/90 hover:text-white'
+                      }`}
+                    >
+                      {item.name}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
