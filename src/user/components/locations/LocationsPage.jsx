@@ -86,7 +86,7 @@ export const LocationsPage = () => {
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-50/50 rounded-full blur-3xl -z-10 translate-y-1/2 -translate-x-1/2" />
 
       {/* Immersive Hero Header */}
-      <div className="relative h-[45vh] min-h-[400px] flex items-center justify-center overflow-hidden">
+      <div className="relative h-[55vh] min-h-[480px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img 
             src="https://images.pexels.com/photos/1591373/pexels-photo-1591373.jpeg?auto=compress&cs=tinysrgb&w=1600"
@@ -96,7 +96,7 @@ export const LocationsPage = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-white" />
         </div>
 
-        <div className="relative z-10 text-center px-4 max-w-4xl">
+        <div className="relative z-10 text-center px-4 max-w-4xl pt-32 pb-16">
           <motion.span 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -123,7 +123,7 @@ export const LocationsPage = () => {
         </div>
       </div>
 
-      <main className="max-w-full px-6 lg:px-12 mx-auto relative -mt-16 z-20">
+      <main className="max-w-full px-6 lg:px-12 mx-auto relative -mt-12 z-20">
         {/* Search and Filters */}
         <div className="bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-2xl border border-white/50 mb-12">
           <SearchAndFilter
@@ -140,25 +140,7 @@ export const LocationsPage = () => {
         {/* Status Messages */}
         <AnimatePresence mode="wait">
           {isLoading ? (
-            <motion.div 
-              key="loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-center py-24"
-            >
-              <div className="flex justify-center space-x-2 mb-8">
-                {[0, 1, 2].map((i) => (
-                  <motion.div
-                    key={i}
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
-                    transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
-                    className="w-4 h-4 bg-orange-500 rounded-full"
-                  />
-                ))}
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900">Finding the best spots...</h3>
-            </motion.div>
+            null
           ) : (
             <motion.div 
               key="content"

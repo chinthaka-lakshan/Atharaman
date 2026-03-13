@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Search, MapPin, Calendar, Users } from 'lucide-react';
+import { ChevronDown, Search, MapPin, Calendar, Users, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const HERO_IMAGES = [
@@ -61,38 +61,18 @@ const Hero = ({ onScrollToSection }) => {
             </p>
           </motion.div>
 
-          {/* New Integrated Search Component */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="w-full bg-white/5 backdrop-blur-2xl border border-white/10 p-2 rounded-[2rem] shadow-3xl"
           >
-            <div className="flex flex-col md:flex-row gap-2 p-1">
-              <div className="flex-1 flex items-center space-x-4 px-6 py-4 bg-white/5 rounded-2xl border border-white/5">
-                <MapPin className="text-orange-500 size-6" />
-                <div className="flex-1">
-                  <p className="text-[10px] uppercase font-black text-orange-500 tracking-widest mb-1">Destination</p>
-                  <input 
-                    type="text" 
-                    placeholder="Where are you headed?" 
-                    className="bg-transparent text-white border-none focus:ring-0 text-sm placeholder:text-white/40 w-full font-bold" 
-                  />
-                </div>
-              </div>
-              
-              <div className="flex-1 flex items-center space-x-4 px-6 py-4 bg-white/5 rounded-2xl border border-white/5">
-                <Calendar className="text-emerald-500 size-6" />
-                <div className="flex-1">
-                  <p className="text-[10px] uppercase font-black text-emerald-500 tracking-widest mb-1">Duration</p>
-                  <p className="text-white text-sm font-bold cursor-pointer">Select Dates</p>
-                </div>
-              </div>
-
-              <button className="bg-orange-500 text-white rounded-2xl px-12 py-5 font-black text-sm uppercase tracking-widest hover:bg-orange-600 transition-all active:scale-95 shadow-xl shadow-orange-500/20">
-                Search
-              </button>
-            </div>
+            <button 
+              onClick={() => onScrollToSection('locations')}
+              className="group bg-orange-500 text-white px-12 py-5 rounded-2xl font-bold text-sm uppercase hover:bg-orange-600 transition-all active:scale-95 shadow-2xl shadow-orange-500/20 flex items-center"
+            >
+              Explore More
+              <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform duration-300" size={20} />
+            </button>
           </motion.div>
         </div>
       </div>
