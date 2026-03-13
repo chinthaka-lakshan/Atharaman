@@ -10,6 +10,7 @@ const Navbar = ({ onScrollToSection }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   
   const { user, isAuthenticated, logout } = useAuth();
@@ -186,16 +187,45 @@ const Navbar = ({ onScrollToSection }) => {
               ))}
               {isAuthenticated && user ? (
                 <div className="border-t pt-3">
-                  <div className="flex items-center px-3 py-2">
-                    <User className="size-5 mr-2" />
-                    <span className="font-medium">{user.name}</span>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="text-red-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors"
+                  <button 
+                    onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)}
+                    className="flex items-center justify-between w-full px-3 py-2 mb-1 hover:bg-gray-50 transition-colors rounded-md focus:outline-none focus:ring-0"
                   >
-                    Logout
+                    <div className="flex items-center">
+                      <User className="size-5 mr-3 text-gray-500" />
+                      <div className="text-left">
+                        <p className="font-bold text-gray-900 leading-tight">{user.name}</p>
+                        <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
+                    </div>
+                    <ChevronDown className={`size-4 text-gray-400 transition-transform duration-200 ${isMobileProfileOpen ? 'rotate-180' : ''}`} />
                   </button>
+
+                  <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isMobileProfileOpen ? 'max-h-64 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
+                    <a href="/profile" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-0">
+                      <User className="size-5 mr-3" />
+                      Your Profile
+                    </a>
+                    <a href="/settings" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-0">
+                      <Settings className="size-5 mr-3" />
+                      Settings
+                    </a>
+                    <a href="/privacy-policy" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-0">
+                      <Shield className="size-5 mr-3" />
+                      Privacy Policy
+                    </a>
+                    <a href="/terms-and-conditions" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-0">
+                      <FileText className="size-5 mr-3" />
+                      Terms & Conditions
+                    </a>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors mt-2 focus:outline-none focus:ring-0"
+                    >
+                      <LogOut className="size-5 mr-3" />
+                      Logout
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <button
