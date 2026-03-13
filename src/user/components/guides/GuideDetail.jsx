@@ -8,6 +8,7 @@ import ReviewSection from '../ReviewSection';
 import { getLocations } from '../../../services/api';
 import { LocationCard } from '../locations/LocationCard';
 import LocationDetail from '../locations/LocationDetail';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 const GuideDetail = ({ guide, onBack }) => {
   const reviews = guide.reviews || guide.reviews?.data || [];
@@ -20,29 +21,19 @@ const GuideDetail = ({ guide, onBack }) => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const navigate = useNavigate();
 
-  // Normalize image data
-  const getImages = () => {
-    if (guide.images && guide.images.length > 0) {
-      // Images array with image_path
-      return guide.images.map(img => img.image_path);
-    } else {
-      return [];
-    }
-  };
-
-  const images = getImages();
+  // Get images directly from backend structure
+  const images = guide.images || [];
 
   useEffect(() => {
     const fetchGuideLocations = async () => {
       if (guide?.locations && guide.locations.length > 0) {
         try {
           setLoading(true);
-          // Use existing index endpoint and filter client-side
           const response = await getLocations();
           const allLocations = response.data;
           // Filter locations based on guide's locations array
           const guideLocations = allLocations.filter(location => 
-            guide.locations.includes(location.locationName)
+            guide.locations.includes(location.locationName || location.name)
           );
           setLocations(guideLocations);
         } catch (error) {
@@ -92,17 +83,17 @@ const GuideDetail = ({ guide, onBack }) => {
   };
 
   const nextImage = () => {
-    if (guide?.guideImage?.length) {
+    if (images.length > 0) {
       setCurrentImageIndex((prev) => 
-        prev === guide.guideImage.length - 1 ? 0 : prev + 1
+        prev === images.length - 1 ? 0 : prev + 1
       );
     }
   };
 
   const prevImage = () => {
-    if (guide?.guideImage?.length) {
+    if (images.length > 0) {
       setCurrentImageIndex((prev) => 
-        prev === 0 ? guide.guideImage.length - 1 : prev - 1
+        prev === 0 ? images.length - 1 : prev - 1
       );
     }
   };
@@ -140,8 +131,8 @@ const GuideDetail = ({ guide, onBack }) => {
             <div className="relative w-full h-full">
               {images.length > 0 ? (
                 <img
-                  src={`http://localhost:8000/storage/${images[currentImageIndex]}`}
-                  alt={guide.guideName}
+                  src={`${STORAGE_BASE_URL}/${images[currentImageIndex].image_path}`}
+                  alt={guide.guide_name}
                   className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
                 />
               ) : (
@@ -194,7 +185,7 @@ const GuideDetail = ({ guide, onBack }) => {
 
             {/* Guide Title Overlay */}
             <div className={`absolute bottom-8 left-8 text-white ${styles.animateSlideInUp}`}>
-              <h1 className="text-4xl font-bold mb-2">{guide.guideName}</h1>
+              <h1 className="text-4xl font-bold mb-2">{guide.guide_name}</h1>
             </div>
           </div>
           
@@ -206,14 +197,24 @@ const GuideDetail = ({ guide, onBack }) => {
                 {/* Description */}
                 <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Guide</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6">
-                    {guide.description}
+                  <p className="text-gray-600 leading-relaxed mb-6 break-words">
+                    {guide.short_description}
                   </p>
+                  
+                  {/* Long Description */}
+                  {guide.long_description && (
+                    <div className="mt-6">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-3">Detailed Information</h3>
+                      <p className="text-gray-600 leading-relaxed whitespace-pre-line break-words">
+                        {guide.long_description}
+                      </p>
+                    </div>
+                  )}
                   
                   {/* Languages */}
                   {guide.languages && guide.languages.length > 0 && (
-                    <div className="mb-8">
-                      <h2 className="text-xl font-semibold text-gray-900 mb-3">Languages</h2>
+                    <div className="mb-8 mt-6">
+                      <h2 className="text-xl font-semibold text-gray-900 mb-3">Languages Spoken</h2>
                       <div className="flex flex-wrap gap-2">
                         {guide.languages.map((language, index) => (
                           <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
@@ -227,7 +228,7 @@ const GuideDetail = ({ guide, onBack }) => {
                   {/* Locations */}
                   {guide.locations && guide.locations.length > 0 && (
                     <div className="mb-8">
-                      <h2 className="text-xl font-semibold text-gray-900 mb-3">Specialized Locations</h2>
+                      <h2 className="text-xl font-semibold text-gray-900 mb-3">Service Locations</h2>
                       <div className="flex flex-wrap gap-2">
                         {guide.locations.map((location, index) => (
                           <span key={index} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
@@ -246,33 +247,33 @@ const GuideDetail = ({ guide, onBack }) => {
                 <div className={`bg-white rounded-2xl shadow-lg p-6 ${styles.animateSlideInRight} ${styles.animateStagger1}`}>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Info</h3>
                   <div className="space-y-3">
-                    {guide.guideNic && (
+                    {guide.guide_nic && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <IdCardIcon className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{guide.guideNic}</span>
+                        <span>{guide.guide_nic}</span>
                       </div>
                     )}
-                    {guide.personalNumber && (
+                    {guide.contact_number && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <Phone className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{guide.personalNumber}</span>
+                        <span>{guide.contact_number}</span>
                       </div>
                     )}
-                    {guide.businessMail && (
+                    {guide.business_mail && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <Mail className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                         <a 
-                          href={`mailto:${guide.businessMail}`} 
+                          href={`mailto:${guide.business_mail}`} 
                           className="hover:text-emerald-600 transition-colors break-all"
                         >
-                          {guide.businessMail}
+                          {guide.business_mail}
                         </a>
                       </div>
                     )}
-                    {guide.whatsappNumber && (
+                    {guide.whatsapp_number && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <FaWhatsapp className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{guide.whatsappNumber}</span>
+                        <span>{guide.whatsapp_number}</span>
                       </div>
                     )}
                     {reviews.length > 0 && (
@@ -298,21 +299,21 @@ const GuideDetail = ({ guide, onBack }) => {
             </div>
 
             {/* Contact Button */}
-            {(guide.businessMail || guide.personalNumber) && (
+            {(guide.business_mail || guide.contact_number) && (
               <div className="mt-8 pt-5 border-t mb-5">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Contact This Guide</h2>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  {guide.businessMail && (
+                  {guide.business_mail && (
                     <a 
-                      href={`mailto:${guide.businessMail}`} 
+                      href={`mailto:${guide.business_mail}`} 
                       className="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                     >
                       Send Email
                     </a>
                   )}
-                  {guide.personalNumber && (
+                  {guide.contact_number && (
                     <a 
-                      href={`tel:${guide.personalNumber}`} 
+                      href={`tel:${guide.contact_number}`} 
                       className="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                     >
                       Call Now

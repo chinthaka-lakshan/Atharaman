@@ -7,6 +7,7 @@ import ReviewSection from "../ReviewSection";
 import { getLocations } from '../../../services/api';
 import { LocationCard } from '../locations/LocationCard';
 import LocationDetail from '../locations/LocationDetail';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 export const VehicleDetail = ({ vehicle, onBack }) => {
   const reviews = vehicle.reviews || vehicle.reviews?.data || [];
@@ -79,17 +80,17 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
   };
 
   const nextImage = () => {
-    if (vehicle?.vehicleImage?.length) {
+    if (vehicle?.images?.length) {
       setCurrentImageIndex((prev) => 
-        prev === vehicle.vehicleImage.length - 1 ? 0 : prev + 1
+        prev === vehicle.images.length - 1 ? 0 : prev + 1
       );
     }
   };
 
   const prevImage = () => {
-    if (vehicle?.vehicleImage?.length) {
+    if (vehicle?.images?.length) {
       setCurrentImageIndex((prev) => 
-        prev === 0 ? vehicle.vehicleImage.length - 1 : prev - 1
+        prev === 0 ? vehicle.images.length - 1 : prev - 1
       );
     }
   };
@@ -125,10 +126,10 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
           {/* Hero Section */}
           <div className="relative h-128 overflow-hidden">
             <div className="relative w-full h-full">
-              {vehicle.vehicleImage && vehicle.vehicleImage.length > 0 ? (
+              {vehicle.images && vehicle.images.length > 0 ? (
                 <img
-                  src={`http://localhost:8000/storage/${vehicle.vehicleImage[currentImageIndex]}`}
-                  alt={vehicle.vehicleName}
+                  src={`${STORAGE_BASE_URL}/${vehicle.images[currentImageIndex]?.image_path}`}
+                  alt={vehicle.vehicle_name || vehicle.vehicleName}
                   className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
                 />
               ) : (
@@ -144,20 +145,20 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
               </button>
 
               {/* Vehicle Type Badge */}
-              {vehicle?.vehicleType && (
+              {(vehicle?.vehicle_type || vehicle?.vehicleType) && (
                 <div className="absolute top-5 right-5 bg-neutral-100 text-black rounded-lg px-2 py-1">
                   <div className="flex items-center gap-1">
                     <CarFront className="size-6" />
-                    <span className="text-xl font-medium">{vehicle.vehicleType}</span>
+                    <span className="text-xl font-medium">{vehicle.vehicle_type || vehicle.vehicleType}</span>
                   </div>
                 </div>
               )}
               {/* Price Badge */}
-              {vehicle?.pricePerDay && (
+              {(vehicle?.price_per_day || vehicle?.pricePerDay) && (
                 <div className="absolute bottom-5 right-5 bg-neutral-50 text-black rounded-lg px-2 py-1">
                   <div className="flex items-center gap-1">
                     <CircleDollarSign className="size-6" />
-                    <span className="text-xl font-medium">LKR. {vehicle.pricePerDay}/day</span>
+                    <span className="text-xl font-medium">LKR. {vehicle.price_per_day || vehicle.pricePerDay}/day</span>
                   </div>
                 </div>
               )}
@@ -165,7 +166,7 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 
               {/* Image Navigation */}
-              {vehicle.vehicleImage && vehicle.vehicleImage.length > 1 && (
+              {vehicle.images && vehicle.images.length > 1 && (
                 <>
                   <button
                     onClick={prevImage}
@@ -183,9 +184,9 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
               )}
 
               {/* Image Indicators */}
-              {vehicle.vehicleImage && vehicle.vehicleImage.length > 1 && (
+              {vehicle.images && vehicle.images.length > 1 && (
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {vehicle.vehicleImage.map((_, index) => (
+                  {vehicle.images.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
@@ -200,7 +201,7 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
 
             {/* Vehicle Title Overlay */}
             <div className={`absolute bottom-8 left-8 text-white ${styles.animateSlideInUp}`}>
-              <h1 className="text-4xl font-bold mb-2">{vehicle.vehicleName}</h1>
+              <h1 className="text-4xl font-bold mb-2">{vehicle.vehicle_name || vehicle.vehicleName}</h1>
             </div>
           </div>
 
@@ -212,8 +213,8 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
                 {/* Description */}
                 <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Vehicle</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6">
-                    {vehicle.description}
+                  <p className="text-gray-600 leading-relaxed mb-6 whitespace-pre-wrap break-words">
+                    {vehicle.long_description || vehicle.short_description || vehicle.description}
                   </p>
                   {/* Locations - Added this section similar to languages in GuideDetail */}
                   {vehicle.locations && vehicle.locations.length > 0 && (
@@ -237,28 +238,34 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
                 <div className={`bg-white rounded-2xl shadow-lg p-6 ${styles.animateSlideInRight} ${styles.animateStagger1}`}>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Info</h3>
                   <div className="space-y-3">
-                    {vehicle.vehicleNumber && (
+                    {(vehicle.reg_number || vehicle.vehicleNumber) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <IdCard className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span><strong>Registration No:</strong> {vehicle.vehicleNumber}</span>
+                        <span><strong>Registration No:</strong> {vehicle.reg_number || vehicle.vehicleNumber}</span>
                       </div>
                     )}
-                    {vehicle.withDriver && (
+                    {vehicle.no_of_passengers && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <UserCheck className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span><strong>Driver Status:</strong> {vehicle.withDriver}</span>
+                        <span><strong>Passengers:</strong> {vehicle.no_of_passengers}</span>
                       </div>
                     )}
-                    {vehicle.fuelType && (
+                    {(vehicle.driver_status || vehicle.withDriver) && (
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <UserCheck className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                        <span><strong>Driver Status:</strong> {vehicle.driver_status || vehicle.withDriver}</span>
+                      </div>
+                    )}
+                    {(vehicle.fuel_type || vehicle.fuelType) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <Fuel className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span><strong>Fuel Type:</strong> {vehicle.fuelType}</span>
+                        <span><strong>Fuel Type:</strong> {vehicle.fuel_type || vehicle.fuelType}</span>
                       </div>
                     )}
-                    {vehicle.mileagePerDay && (
+                    {(vehicle.mileage_per_day || vehicle.mileagePerDay) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <Gauge className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span><strong>Mileage Per Day:</strong> {vehicle.mileagePerDay}</span>
+                        <span><strong>Mileage Per Day:</strong> {vehicle.mileage_per_day || vehicle.mileagePerDay} km</span>
                       </div>
                     )}
                     {reviews.length > 0 && (

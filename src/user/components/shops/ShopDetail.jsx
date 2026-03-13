@@ -169,7 +169,7 @@ const ShopDetail = ({ shop, onBack }) => {
               {shopImages.length > 0 ? (
                 <img
                   src={getImageUrl(shopImages[currentImageIndex]?.image_path)}
-                  alt={shopImages[currentImageIndex]?.alt_text || shop.shopName}
+                  alt={shopImages[currentImageIndex]?.alt_text || shop.shop_name || shop.shopName}
                   className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
                 />
               ) : (
@@ -222,7 +222,7 @@ const ShopDetail = ({ shop, onBack }) => {
 
             {/* Shop Title Overlay */}
             <div className={`absolute bottom-8 left-8 text-white ${styles.animateSlideInUp}`}>
-              <h1 className="text-4xl font-bold mb-2">{shop.shopName}</h1>
+              <h1 className="text-4xl font-bold mb-2">{shop.shop_name || shop.shopName}</h1>
               {shopImages.length > 0 && (
                 <div className="text-white/80 text-sm">
                   Image {currentImageIndex + 1} of {shopImages.length}
@@ -239,7 +239,7 @@ const ShopDetail = ({ shop, onBack }) => {
                 {/* Description */}
                 <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Shop</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6">
+                  <p className="text-gray-600 leading-relaxed mb-6 break-words">
                     {shop.description}
                   </p>
 
@@ -265,10 +265,10 @@ const ShopDetail = ({ shop, onBack }) => {
                 <div className={`bg-white rounded-2xl shadow-lg p-6 ${styles.animateSlideInRight} ${styles.animateStagger1}`}>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Info</h3>
                   <div className="space-y-3">
-                    {shop.shopAddress && (
+                    {(shop.shop_address || shop.shopAddress) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <MapPinned className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span>{shop.shopAddress}</span>
+                        <span>{shop.shop_address || shop.shopAddress}</span>
                       </div>
                     )}
                     {reviews.length > 0 && (
@@ -305,15 +305,19 @@ const ShopDetail = ({ shop, onBack }) => {
                     >
                       <div className="h-32 overflow-hidden">
                         <img
-                          src={getImageUrl(item.image)}
-                          alt={item.name}
+                          src={getImageUrl(
+                            (item.itemImage && typeof item.itemImage === 'string' && item.itemImage.startsWith('['))
+                              ? JSON.parse(item.itemImage)[0]
+                              : (Array.isArray(item.itemImage) ? item.itemImage[0] : item.image)
+                          )}
+                          alt={item.itemName || item.name}
                           className="w-full h-full object-cover hover:scale-105 transition-transform"
                           loading="lazy"
                         />
                       </div>
                       <div className="p-3">
-                        <h4 className="font-semibold text-gray-900 mb-1">{item.name}</h4>
-                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">{item.description}</p>
+                        <h4 className="font-semibold text-gray-900 mb-1">{item.itemName || item.name}</h4>
+                        <p className="text-sm text-gray-600 mb-2 line-clamp-2 break-words">{item.description}</p>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center text-emerald-600 font-semibold">
                             <DollarSign className="size-4" />

@@ -15,6 +15,7 @@ import { HotelCard } from '../hotels/HotelCard';
 import HotelDetail from '../hotels/HotelDetail';
 import { VehicleCard } from '../vehicles/VehicleCard';
 import VehicleDetail from '../vehicles/VehicleDetail';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 const LocationDetail = ({ location, onBack }) => {
   const reviews = location.reviews || location.reviews?.data || [];
@@ -186,7 +187,7 @@ const LocationDetail = ({ location, onBack }) => {
             <div className="relative w-full h-full">
               {images.length > 0 ? (
                 <img
-                  src={`http://localhost:8000/storage/${images[currentImageIndex]}`}
+                  src={`${STORAGE_BASE_URL}/${images[currentImageIndex]}`}
                   alt={location.locationName}
                   className={`w-full h-full object-cover transition-all duration-500 ${styles.heroImage}`}
                 />
@@ -252,17 +253,16 @@ const LocationDetail = ({ location, onBack }) => {
                 {/* Description */}
                 <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Location</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6">
+                  <p className="text-gray-600 leading-relaxed mb-6 break-words">
                     {location.shortDescription}
                   </p>
                   <div className="prose prose-lg text-gray-700">
-                    <p>{location.longDescription}</p>
+                    <p className="break-words">{location.longDescription}</p>
                   </div>
                 </div>
 
                 {/* Map Section */}
-                <div
-                  className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft} ${styles.animateStagger1}`}>
+                <div className={`bg-white rounded-2xl shadow-lg p-8 ${styles.animateSlideInLeft} ${styles.animateStagger1}`}>
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">Location Map</h2>
                   <LocationMap
                     latitude={location.latitude}

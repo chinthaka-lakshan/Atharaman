@@ -2,6 +2,7 @@ import React from 'react';
 import { Star, Phone } from 'lucide-react';
 import styles from '../../styles/InitialPages.module.css';
 import { useNavigate } from 'react-router-dom';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 export const GuideCard = ({ guide, rating = 0, reviewCount = 0, animationDelay = 0, isClickable = true }) => {
   const navigate = useNavigate();
@@ -14,7 +15,8 @@ export const GuideCard = ({ guide, rating = 0, reviewCount = 0, animationDelay =
 
   const getFirstImage = () => {
     if (guide.images && guide.images.length > 0) {
-      return `http://localhost:8000/storage/${guide.images[0].image_path}`;
+      const path = guide.images[0].image_path;
+      return path.startsWith('http') ? path : `${STORAGE_BASE_URL}/${path}`;
     } else {
       return '/default-guide.jpg';
     }
@@ -37,7 +39,7 @@ export const GuideCard = ({ guide, rating = 0, reviewCount = 0, animationDelay =
       <div className="relative overflow-hidden h-56">
         <img
           src={imageUrl}
-          alt={guide.guideName || "Guide"}
+          alt={guide.guide_name || "Guide"}
           className={`w-full h-full object-cover transition-transform duration-500 hover:scale-110 ${styles.cardImage}`}
           onError={(e) => {
             e.target.src = '/default-guide.jpg';
@@ -57,16 +59,16 @@ export const GuideCard = ({ guide, rating = 0, reviewCount = 0, animationDelay =
       {/* Content */}
       <div className="p-6 space-y-3">
         <h3 className={`text-xl font-bold text-gray-900 line-clamp-1 ${styles.cardTitle}`}>
-          {guide.guideName}
+          {guide.guide_name}
         </h3>
 
         <div className={`flex items-center text-gray-600 ${styles.entityInfo}`}>
           <Phone size={16} className="mr-2 flex-shrink-0" />
-          <span className="text-sm line-clamp-1">{guide.personalNumber}</span>
+          <span className="text-sm line-clamp-1">{guide.contact_number}</span>
         </div>
         
         <p className={`text-gray-600 text-sm line-clamp-3 leading-relaxed ${styles.description} mt-2 mb-3`}>
-          {guide.description}
+          {guide.short_description}
         </p>
 
         {/* Show review count if available */}

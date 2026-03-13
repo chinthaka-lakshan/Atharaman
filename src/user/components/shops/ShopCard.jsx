@@ -1,101 +1,94 @@
 import React from 'react';
-import { Star, MapPinned } from 'lucide-react';
-import styles from '../../styles/InitialPages.module.css';
+import { Star, MapPinned, ShoppingBag, ArrowRight, Tag } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
-export const ShopCard = ({ shop, rating = 0, reviewCount = 0, animationDelay = 0, isClickable = true }) => {
+export const ShopCard = ({ shop, rating = 0, onClick }) => {
   const navigate = useNavigate();
 
-  // Image URL helper
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return '/default-shop.jpg';
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-    return `${baseUrl}/storage/${imagePath}`;
-  };
+  const imageUrl = shop.images && shop.images.length > 0
+    ? `${STORAGE_BASE_URL}/${shop.images[0].image_path}`
+    : 'https://images.pexels.com/photos/1036857/pexels-photo-1036857.jpeg?auto=compress&cs=tinysrgb&w=800';
 
-  // Get main shop image
-  const getMainShopImage = () => {
-    if (shop.images && shop.images.length > 0) {
-      return getImageUrl(shop.images[0].image_path);
-    }
-    return '/default-shop.jpg';
-  };
-
-  // Get all shop image URLs
-  const getShopImageUrls = () => {
-    if (shop.images && shop.images.length > 0) {
-      return shop.images.map(img => getImageUrl(img.image_path));
-    }
-    return [];
-  };
-    
-  const handleClick = () => {
-    if (isClickable) {
-      navigate(`/shops/${shop.id}`);
-    }
-  };
-
-  const mainImage = getMainShopImage();
-
-  // Handle both string and number ratings
-  const safeRating = typeof rating === 'number' ? rating : 
-                    typeof rating === 'string' ? parseFloat(rating) : 0;
-  const hasRating = safeRating > 0;
-  const displayRating = safeRating.toFixed(1);
+  const safeRating = typeof rating === 'number' ? rating : parseFloat(rating) || 0;
 
   return (
-    <div
-      className={`bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl ${styles.entityCard} ${styles.animateSlideInCard}`}
-      style={{ animationDelay: `${animationDelay}s` }}
-      onClick={handleClick}
+    <motion.div
+      whileHover={{ y: -12 }}
+      className="group bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100 h-full flex flex-col transition-all duration-500 hover:shadow-2xl hover:shadow-orange-500/10"
+      onClick={onClick}
     >
-      <div className="relative overflow-hidden h-56">
-        <img
-          src={mainImage}
-          alt={shop.shopName || "Shop"}
-          className={`w-full h-full object-cover transition-transform duration-500 hover:scale-110 ${styles.cardImage}`}
+      {/* Image Container */}
+      <div className="relative h-64 overflow-hidden">
+        <motion.img
+          whileHover={{ scale: 1.1 }}
+          transition={{ duration: 0.8 }}
+          src={imageUrl}
+          alt={shop.shop_name || shop.shopName}
+          className="w-full h-full object-cover transition-transform duration-700"
           onError={(e) => {
-            e.target.src = "/default-shop.jpg";
+            e.target.src = 'https://images.pexels.com/photos/1036857/pexels-photo-1036857.jpeg?auto=compress&cs=tinysrgb&w=800';
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+        
+        {/* Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+        
+        {/* Top Badges */}
+        <div className="absolute top-5 left-5">
+          <div className="flex items-center space-x-1.5 px-4 py-2 bg-orange-500/90 backdrop-blur-md rounded-2xl text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
+            <ShoppingBag size={12} />
+            <span>Premium Store</span>
+          </div>
+        </div>
 
-        {/* Rating Badge - Only show if rating exists */}
-        {hasRating && (
-          <div className="absolute top-4 right-4 px-2 py-1 bg-black/70 backdrop-blur-sm rounded-full flex items-center">
-            <Star size={14} className="text-yellow-400 fill-current mr-1" />
-            <span className="text-xs text-white font-semibold">{displayRating}</span>
+        {/* Rating Badge */}
+        {safeRating > 0 && (
+          <div className="absolute top-5 right-5 px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-2xl flex items-center shadow-lg">
+            <Star size={12} className="text-orange-500 fill-current mr-1" />
+            <span className="text-xs text-gray-900 font-bold">{safeRating.toFixed(1)}</span>
           </div>
         )}
+
+        {/* Address Overlay */}
+        <div className="absolute bottom-5 left-5 right-5">
+          <div className="flex items-center text-white/90 text-[10px] font-bold uppercase tracking-widest">
+            <MapPinned size={10} className="text-orange-400 mr-1.5" />
+            {shop.shop_address || shop.shopAddress || "Location Available"}
+          </div>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="p-6 space-y-3">
-        <h3 className={`text-xl font-bold text-gray-900 line-clamp-1 ${styles.cardTitle}`}>
-          {shop.shopName}
-        </h3>
-
-        <div className={`flex items-center text-gray-600 ${styles.entityInfo}`}>
-          <MapPinned size={16} className="mr-2 flex-shrink-0" />
-          <span className="text-sm line-clamp-1">{shop.shopAddress}</span>
+      <div className="p-8 flex flex-col flex-1">
+        <div className="flex items-center space-x-2 text-gray-400 mb-2">
+           <Tag size={12} className="text-orange-500" />
+           <span className="text-[10px] font-black uppercase tracking-wider">Camping & Nature Gear</span>
         </div>
         
-        <p className={`text-gray-600 text-sm line-clamp-3 leading-relaxed ${styles.description} mt-2 mb-3`}>
-          {shop.description}
+        <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-orange-500 transition-colors line-clamp-1">
+          {shop.shop_name || shop.shopName}
+        </h3>
+        
+        <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-6 flex-1">
+          {shop.description || "Discover high-quality camping essentials and artisanal treasures curated for your next great outdoor adventure."}
         </p>
 
-        {/* Show review count if available */}
-        {reviewCount > 0 && (
-          <div className="flex items-center text-sm text-gray-500 pt-2 border-t border-gray-100">
-            <Star size={14} className="text-yellow-400 fill-current mr-1" />
-            <span>{reviewCount} review{reviewCount !== 1 ? 's' : ''}</span>
+        <div className="flex items-center justify-between pt-6 border-t border-gray-50">
+          <div className="flex items-center text-gray-400 text-xs font-medium">
+             <span className="text-orange-500 font-bold">4.8</span>&nbsp;Customer Satisfaction
           </div>
-        )}
-      </div>
 
-      {/* Hover Effect Overlay */}
-      <div className={`absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 hover:opacity-100 transition-opacity duration-300 ${styles.hoverOverlay}`}></div>
-    </div>
+          <motion.div 
+            whileHover={{ x: 5 }}
+            className="flex items-center text-orange-500 font-bold text-sm"
+          >
+            Visit Shop <ArrowRight size={16} className="ml-1.5" />
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 

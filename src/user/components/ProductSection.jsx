@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Globe, CircleDollarSign, UserCheck, Star, Phone, MapPinned, Fuel, Gauge } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Globe, CircleDollarSign, UserCheck, Star, Phone, MapPinned, Fuel, Gauge, TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { 
+  getMainLocationImage, 
+  getMainGuideImage, 
+  getMainShopImage, 
+  getMainHotelImage, 
+  getMainVehicleImage
+} from '../../helpers/ImageHelpers';
 
 const ProductSection = ({ id, title, data, type, onSeeMore }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -23,8 +31,8 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
         return ratingB - ratingA;
       });
       
-      // Take only top 6 items
-      sortedData = sortedData.slice(0, 6);
+      // Take only top 8 items
+      sortedData = sortedData.slice(0, 8);
     }
     
     return sortedData;
@@ -36,7 +44,7 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
 
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => 
-        prevIndex + 3 >= processedData.length ? 0 : prevIndex + 3
+        prevIndex + 4 >= processedData.length ? 0 : prevIndex + 4
       );
     }, 5000);
 
@@ -45,13 +53,13 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => 
-      prevIndex + 3 >= processedData.length ? 0 : prevIndex + 3
+      prevIndex + 4 >= processedData.length ? 0 : prevIndex + 4
     );
   };
 
   const prevSlide = () => {
     setCurrentIndex((prevIndex) => 
-      prevIndex - 3 < 0 ? Math.max(0, Math.floor((processedData.length - 1) / 3) * 3) : prevIndex - 3
+      prevIndex - 4 < 0 ? Math.max(0, Math.floor((processedData.length - 1) / 4) * 4) : prevIndex - 4
     );
   };
 
@@ -121,8 +129,8 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
 
   // Function to determine category for locations
   const getCategory = (location) => {
-    const type = location.locationType?.toLowerCase() || '';
-    const name = location.locationName?.toLowerCase() || '';
+    const type = (location.location_type || location.locationType || '').toLowerCase();
+    const name = (location.location_name || location.locationName || '').toLowerCase();
     
     if (type.includes('mountain') || name.includes('mountain')) return 'Mountain';
     if (type.includes('rock') || name.includes('rock')) return 'Rock';
@@ -145,37 +153,27 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
 
   // Get image URL for locations
   const getLocationImage = (location) => {
-    return location.images && location.images.length > 0 
-      ? `http://localhost:8000/storage/${location.images[0].image_path}`
-      : '/default-location.jpg';
+    return getMainLocationImage(location);
   };
 
   // Get image URL for guides
   const getGuideImage = (guide) => {
-    return guide.guideImage && guide.guideImage.length > 0 
-      ? `http://localhost:8000/storage/${guide.guideImage[0]}`
-      : '/default-guide.jpg';
+    return getMainGuideImage(guide);
   };
 
   // Get image URL for shops
   const getShopImage = (shop) => {
-    return shop.shopImage && shop.shopImage.length > 0 
-      ? `http://localhost:8000/storage/${shop.shopImage[0]}`
-      : '/default-shop.jpg';
+    return getMainShopImage(shop);
   };
 
   // Get image URL for hotels
   const getHotelImage = (hotel) => {
-    return hotel.hotelImage && hotel.hotelImage.length > 0 
-      ? `http://localhost:8000/storage/${hotel.hotelImage[0]}`
-      : '/default-hotel.jpg';
+    return getMainHotelImage(hotel);
   };
 
   // Get image URL for vehicles
   const getVehicleImage = (vehicle) => {
-    return vehicle.vehicleImage && vehicle.vehicleImage.length > 0 
-      ? `http://localhost:8000/storage/${vehicle.vehicleImage[0]}`
-      : '/default-vehicle.jpg';
+    return getMainVehicleImage(vehicle);
   };
 
   // Safely parse rating value to number
@@ -189,7 +187,7 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
   };
 
   const renderCard = (item, index) => {
-    const cardClass = "bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-300 cursor-pointer animate-fade-in";
+    const cardClass = "group relative bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100";
     
     switch (type) {
       case 'location':
@@ -198,51 +196,66 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
         const category = getCategory(item);
         
         return (
-          <div key={item.id} className={cardClass} onClick={() => handleCardClick(item)} style={{ animationDelay: `${index * 100}ms` }}>
-            <div className="relative h-48 overflow-hidden">
+          <motion.div 
+            key={item.id} 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -12 }}
+            transition={{ delay: index * 0.1, duration: 0.5 }}
+            className={cardClass} 
+            onClick={() => handleCardClick(item)} 
+          >
+            <div className="relative h-72 overflow-hidden">
               <img 
                 src={getLocationImage(item)} 
-                alt={item.locationName} 
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
+                alt={item.location_name || item.locationName} 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                 loading="lazy"
-                onError={(e) => {
-                  e.target.src = '/default-location.jpg';
-                }}
+                onError={(e) => { e.target.src = '/default-location.jpg'; }}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
               
-              {/* Category Badge */}
-              <div className="absolute top-3 left-3 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-gray-700">
-                {category}
+              {/* Top Badges */}
+              <div className="absolute top-4 left-4 flex gap-2">
+                <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest text-white border border-white/20">
+                  {category}
+                </span>
               </div>
 
-              {/* Rating Badge */}
               {locationAvgRating > 0 && (
-                <div className="absolute top-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-sm rounded-full flex items-center">
-                  <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                  <span className="text-xs text-white font-semibold">{locationAvgRating.toFixed(1)}</span>
+                <div className="absolute top-4 right-4 flex items-center space-x-1 px-3 py-1 bg-orange-500 rounded-full shadow-lg">
+                  <Star size={10} className="text-white fill-current" />
+                  <span className="text-[10px] text-white font-black">{locationAvgRating.toFixed(1)}</span>
                 </div>
               )}
+
+              {/* Bottom Details Overlay */}
+              <div className="absolute bottom-6 left-6 right-6">
+                <div className="flex items-center text-white/90 text-[10px] font-black uppercase tracking-widest mb-2">
+                  <Globe className="size-3 mr-2 text-orange-400" />
+                  {item.province}
+                </div>
+                <h3 className="text-xl font-bold text-white leading-tight group-hover:text-orange-400 transition-colors">
+                  {item.location_name || item.locationName}
+                </h3>
+              </div>
             </div>
             
-            <div className="p-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.locationName}</h3>
-              <div className="flex items-center text-gray-600 text-sm mb-2">
-                <Globe className="size-4 mr-2" />
-                <span>{item.province} Province</span>
-              </div>
-              
-              <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                {item.shortDescription || item.description}
+            <div className="p-6">
+              <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed italic">
+                "{item.short_description || item.shortDescription || item.description}"
               </p>
               
-              {locationReviewCount > 0 && (
-                <div className="flex items-center text-sm text-gray-500 pt-2 border-t border-gray-100">
-                  <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                  <span>{locationReviewCount} review{locationReviewCount !== 1 ? 's' : ''}</span>
+              <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                  {locationReviewCount} Experiences
+                </span>
+                <div className="size-8 rounded-full bg-gray-900 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                  <ChevronRight size={16} />
                 </div>
-              )}
+              </div>
             </div>
-          </div>
+          </motion.div>
         );
 
       case 'guide':
@@ -250,46 +263,68 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
         const guideReviewCount = item.reviews_count || item.reviewCount || 0;
         
         return (
-          <div key={item.id} className={cardClass} onClick={() => handleCardClick(item)} style={{ animationDelay: `${index * 100}ms` }}>
-            <div className="relative h-48 overflow-hidden">
+          <motion.div 
+            key={item.id} 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -12 }}
+            transition={{ delay: index * 0.1, duration: 0.5 }}
+            className={cardClass} 
+            onClick={() => handleCardClick(item)} 
+          >
+            <div className="relative h-72 overflow-hidden">
               <img 
                 src={getGuideImage(item)} 
-                alt={item.guideName} 
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
+                alt={item.guide_name || item.guideName} 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                 loading="lazy"
-                onError={(e) => {
-                  e.target.src = '/default-guide.jpg';
-                }}
+                onError={(e) => { e.target.src = '/default-guide.jpg'; }}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-transparent to-transparent opacity-60"></div>
               
-              {/* Rating Badge */}
+              {/* Specialist Badge */}
+              <div className="absolute top-4 left-4">
+                <span className="px-3 py-1 bg-emerald-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
+                  Local Expert
+                </span>
+              </div>
+
               {guideAvgRating > 0 && (
-                <div className="absolute top-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-sm rounded-full flex items-center">
-                  <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                  <span className="text-xs text-white font-semibold">{guideAvgRating.toFixed(1)}</span>
+                <div className="absolute top-4 right-4 flex items-center space-x-1 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full border border-white/20">
+                  <Star size={10} className="text-yellow-400 fill-current" />
+                  <span className="text-[10px] text-white font-black">{guideAvgRating.toFixed(1)}</span>
                 </div>
               )}
+
+              <div className="absolute bottom-6 left-6 right-6">
+                <h3 className="text-xl font-bold text-white mb-1">{item.guide_name || item.guideName}</h3>
+                <div className="flex items-center text-emerald-400 text-[10px] font-black uppercase tracking-widest">
+                  <UserCheck className="size-3 mr-2" />
+                  Verified Guide
+                </div>
+              </div>
             </div>
             
-            <div className="p-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.guideName}</h3>
-              <div className="flex items-center text-gray-600 text-sm mb-2">
-                <Phone className="size-4 mr-2" />
-                <span>{item.personalNumber}</span>
+            <div className="p-6">
+              <div className="flex items-center text-gray-700 text-xs font-bold mb-4 bg-gray-50 w-fit px-4 py-2 rounded-xl border border-gray-100">
+                <Phone className="size-3 mr-2 text-emerald-600" />
+                {item.contact_number || item.contactNumber || item.personal_number || item.personalNumber}
               </div>
               
-              <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                {item.description}
+              <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed italic">
+                "{item.short_description || item.description}"
               </p>
               
-              {guideReviewCount > 0 && (
-                <div className="flex items-center text-sm text-gray-500 pt-2 border-t border-gray-100">
-                  <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                  <span>{guideReviewCount} review{guideReviewCount !== 1 ? 's' : ''}</span>
+              <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                  {guideReviewCount} Reviews
+                </span>
+                <div className="size-8 rounded-full bg-emerald-600 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                  <ChevronRight size={16} />
                 </div>
-              )}
+              </div>
             </div>
-          </div>
+          </motion.div>
         );
 
       case 'shop':
@@ -297,46 +332,52 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
         const shopReviewCount = item.reviews_count || item.reviewCount || 0;
 
         return (
-          <div key={item.id} className={cardClass} onClick={() => handleCardClick(item)} style={{ animationDelay: `${index * 100}ms` }}>
-            <div className="relative h-48 overflow-hidden">
+          <motion.div 
+            key={item.id} 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            whileHover={{ y: -12 }}
+            transition={{ delay: index * 0.1 }}
+            className={cardClass} 
+            onClick={() => handleCardClick(item)} 
+          >
+            <div className="relative h-64 overflow-hidden">
               <img 
                 src={getShopImage(item)} 
-                alt={item.shopName} 
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
+                alt={item.shop_name || item.shopName} 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                 loading="lazy"
-                onError={(e) => {
-                  e.target.src = '/default-shop.jpg';
-                }}
+                onError={(e) => { e.target.src = '/default-shop.jpg'; }}
               />
-
-              {/* Rating Badge */}
-              {shopAvgRating > 0 && (
-                <div className="absolute top-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-sm rounded-full flex items-center">
-                  <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                  <span className="text-xs text-white font-semibold">{shopAvgRating.toFixed(1)}</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-transparent to-transparent opacity-60"></div>
+              
+              <div className="absolute bottom-6 left-6 right-6">
+                <div className="flex items-center text-orange-400 text-[10px] font-black uppercase tracking-widest mb-1">
+                  <MapPinned className="size-3 mr-2" />
+                  Premium Shop
                 </div>
-              )}
+                <h3 className="text-xl font-bold text-white line-clamp-1">{item.shop_name || item.shopName}</h3>
+              </div>
             </div>
 
-            <div className="p-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.shopName}</h3>
-              <div className="flex items-center text-gray-600 text-sm mb-2">
-                <MapPinned className="size-4 mr-2" />
-                <span>{item.shopAddress}</span>
-              </div>
-
-              <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                {item.description}
+            <div className="p-6">
+              <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed italic">
+                "{item.short_description || item.description}"
               </p>
 
-              {shopReviewCount > 0 && (
-                <div className="flex items-center text-sm text-gray-500 pt-2 border-t border-gray-100">
-                  <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                  <span>{shopReviewCount} review{shopReviewCount !== 1 ? 's' : ''}</span>
+              <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+                <div className="flex items-center">
+                  {renderStars(shopAvgRating)}
+                  <span className="ml-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    {shopReviewCount} REVIEWS
+                  </span>
                 </div>
-              )}
+                <div className="size-8 rounded-full bg-orange-500 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                  <ChevronRight size={16} />
+                </div>
+              </div>
             </div>
-          </div>
+          </motion.div>
         );
 
       case 'hotel':
@@ -344,51 +385,56 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
         const hotelReviewCount = item.reviews_count || item.reviewCount || 0;
 
         return (
-          <div key={item.id} className={cardClass} onClick={() => handleCardClick(item)} style={{ animationDelay: `${index * 100}ms` }}>
-            <div className="relative h-48 overflow-hidden group">
+          <motion.div 
+            key={item.id} 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            whileHover={{ y: -12 }}
+            transition={{ delay: index * 0.1 }}
+            className={cardClass} 
+            onClick={() => handleCardClick(item)} 
+          >
+            <div className="relative h-64 overflow-hidden">
               <img 
                 src={getHotelImage(item)} 
-                alt={item.hotelName} 
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
+                alt={item.hotel_name || item.hotelName} 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                 loading="lazy"
-                onError={(e) => {
-                  e.target.src = '/default-hotel.jpg';
-                }}
+                onError={(e) => { e.target.src = '/default-hotel.jpg'; }}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
 
-              {/* Rating Badge */}
               {hotelAvgRating > 0 && (
-                <div className="absolute top-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-sm rounded-full flex items-center">
-                  <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                  <span className="text-xs text-white font-semibold">{hotelAvgRating.toFixed(1)}</span>
+                <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/20">
+                  <Star size={10} className="text-yellow-400 fill-current" />
+                  <span className="text-[10px] text-white font-black">{hotelAvgRating.toFixed(1)}</span>
                 </div>
               )}
+
+              <div className="absolute bottom-6 left-6 right-6">
+                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
+                  {item.hotel_name || item.hotelName}
+                </h3>
+                <div className="flex items-center text-white/70 text-[10px] uppercase font-bold tracking-widest">
+                  <MapPinned className="size-3 mr-2 text-emerald-400" />
+                  {item.hotel_address || item.hotelAddress}
+                </div>
+              </div>
             </div>
 
-            <div className="p-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.hotelName}</h3>
-              <div className="flex items-center text-gray-600 text-sm mb-2">
-                <MapPinned className="size-4 mr-2" />
-                <span>{item.hotelAddress}</span>
-              </div>
-
-              <div className="flex items-center text-gray-600 text-sm mb-2">
-                <Phone className="size-4 mr-2" />
-                <span>{item.contactNumber}</span>
-              </div>
-
-              <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                {item.description}
+            <div className="p-6">
+              <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed italic">
+                "{item.short_description || item.description}"
               </p>
 
-              {hotelReviewCount > 0 && (
-                <div className="flex items-center text-sm text-gray-500 pt-2 border-t border-gray-100">
-                  <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                  <span>{hotelReviewCount} review{hotelReviewCount !== 1 ? 's' : ''}</span>
+              <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+                <span className="text-emerald-600 font-bold text-sm">Luxury Stay</span>
+                <div className="size-8 rounded-full bg-emerald-600 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                  <ChevronRight size={16} />
                 </div>
-              )}
+              </div>
             </div>
-          </div>
+          </motion.div>
         );
 
       case 'vehicle':
@@ -396,80 +442,65 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
         const vehicleReviewCount = item.reviews_count || item.reviewCount || 0;
   
         return (
-          <div key={item.id} className={cardClass} onClick={() => handleCardClick(item)} style={{ animationDelay: `${index * 100}ms` }}>
-            <div className="relative h-48 overflow-hidden group">
+          <motion.div 
+            key={item.id} 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            whileHover={{ y: -12 }}
+            transition={{ delay: index * 0.1 }}
+            className={cardClass} 
+            onClick={() => handleCardClick(item)} 
+          >
+            <div className="relative h-64 overflow-hidden shadow-inner">
               <img 
                 src={getVehicleImage(item)} 
-                alt={item.vehicleName} 
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
+                alt={item.vehicle_name || item.vehicleName} 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                 loading="lazy"
-                onError={(e) => {
-                  e.target.src = '/default-vehicle.jpg';
-                }}
+                onError={(e) => { e.target.src = '/default-vehicle.jpg'; }}
               />
-
-              {item?.pricePerDay && (
-                <div className="absolute bottom-2 right-2 bg-emerald-900 text-white rounded-lg px-2 py-1">
-                  <div className="flex items-center gap-1">
-                    <CircleDollarSign className="size-4" />
-                    <span className="text-xs">LKR. {item.pricePerDay}/day</span>
-                  </div>
-                </div>
-              )}
-              {item?.withDriver && (
-                <div className="absolute bottom-2 left-2 bg-cyan-900 text-white rounded-lg px-2 py-1">
-                  <div className="flex items-center gap-1">
-                    <UserCheck className="size-4" />
-                    <span className="text-xs">{item.withDriver}</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Category Badge */}
-              <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-gray-700">
-                {item.vehicleType}
-              </div>
-
-              {/* Rating Badge */}
-              {vehicleAvgRating > 0 && (
-                <div className="absolute top-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-sm rounded-full flex items-center">
-                  <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                  <span className="text-xs text-white font-semibold">{vehicleAvgRating.toFixed(1)}</span>
-                </div>
-              )}
-            </div>
-
-            <div className="p-5">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">{item.vehicleName}</h3>
-                <span className="font-normal text-sm bg-gray-200 text-gray-700 px-2 py-1 rounded whitespace-nowrap">
-                  {item.vehicleNumber}
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-transparent to-transparent opacity-60"></div>
+              
+              <div className="absolute top-4 left-4">
+                <span className="px-3 py-1 bg-white/90 text-gray-900 rounded-full text-[10px] font-black uppercase tracking-widest">
+                  {item.vehicle_type || item.vehicleType}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center text-gray-600 text-sm mb-3">
-                <div className="flex items-center">
-                  <Fuel className="size-4 mr-2" />
-                  <span>{item.fuelType}</span>
+              <div className="absolute bottom-6 left-6 right-6">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="px-2 py-1 bg-orange-500 text-white rounded text-[10px] font-black uppercase tracking-widest">
+                    {item.fuel_type || item.fuelType}
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <Gauge className="size-4 mr-2" />
-                  <span>{item.mileagePerDay}</span>
+                <h3 className="text-xl font-bold text-white">{item.vehicle_name || item.vehicleName}</h3>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center text-gray-800">
+                  <CircleDollarSign className="size-4 mr-2 text-emerald-600" />
+                  <span className="font-bold text-base">LKR {item.price_per_day || item.pricePerDay}</span>
+                  <span className="text-[10px] text-gray-400 font-bold ml-1 uppercase">/ Day</span>
+                </div>
+                <div className="flex items-center text-gray-400 text-[10px] font-black border border-gray-100 px-2 py-1 rounded-lg">
+                  <Gauge className="size-3 mr-1" />
+                  {item.mileage_per_day || item.mileagePerDay} KM
                 </div>
               </div>
 
-              <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                {item.description}
-              </p>
-
-              {vehicleReviewCount > 0 && (
-                <div className="flex items-center text-sm text-gray-500 pt-2 border-t border-gray-100">
-                  <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                  <span>{vehicleReviewCount} review{vehicleReviewCount !== 1 ? 's' : ''}</span>
+              <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+                <div className="flex items-center text-emerald-600">
+                  <UserCheck className="size-3 mr-2" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">With Driver</span>
                 </div>
-              )}
+                <div className="size-8 rounded-full bg-gray-900 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                  <ChevronRight size={16} />
+                </div>
+              </div>
             </div>
-          </div>
+          </motion.div>
         );
 
       default:
@@ -480,11 +511,27 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
   if (processedData.length === 0) return null;
 
   return (
-    <section id={id} className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">{title}</h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-orange-500 to-red-500 mx-auto"></div>
+    <section id={id} className="py-20 relative overflow-hidden">
+      {/* Natural Ambient Accents */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className={`absolute top-0 right-0 w-[500px] h-[500px] opacity-[0.05] rounded-full blur-[120px] ${
+          type === 'location' ? 'bg-orange-400' : 
+          type === 'guide' ? 'bg-emerald-400' : 
+          type === 'shop' ? 'bg-sky-400' : 
+          type === 'hotel' ? 'bg-indigo-400' : 'bg-rose-400'
+        }`}></div>
+      </div>
+
+      <div className="max-w-full px-6 lg:px-12 mx-auto relative z-10">
+        <div className="mb-16 text-left border-l-8 border-orange-500 pl-8">
+          <motion.span 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            className="text-[10px] uppercase font-black tracking-[0.4em] text-orange-500 mb-2 block"
+          >
+            Handpicked
+          </motion.span>
+          <h2 className="text-4xl md:text-6xl font-bold text-gray-900 tracking-tight">{title}</h2>
         </div>
 
         <div 
@@ -509,30 +556,45 @@ const ProductSection = ({ id, title, data, type, onSeeMore }) => {
             <ChevronRight className="size-6 text-gray-600" />
           </button>
 
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {processedData.slice(currentIndex, currentIndex + 3).map((item, index) => renderCard(item, index))}
-          </div>
+          {/* Cards Grid with Staggered Animations */}
+          <motion.div 
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          >
+            {processedData.slice(currentIndex, currentIndex + 4).map((item, index) => renderCard(item, index))}
+          </motion.div>
         </div>
 
         {/* See More Button */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-20">
           <button 
             onClick={handleSeeMore}
-            className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-8 py-3 rounded-full font-semibold hover:from-green-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-green-500/30"
+            className="inline-flex items-center space-x-3 bg-gray-900 text-white px-10 py-4 rounded-2xl font-bold hover:bg-orange-600 transition-all duration-300 shadow-xl group"
           >
-            See More {title}
+            <span>Explore All {title}</span>
+            <TrendingUp size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </button>
         </div>
 
         {/* Pagination Dots */}
         <div className="flex justify-center mt-8 gap-2">
-          {Array.from({ length: Math.ceil(processedData.length / 3) }).map((_, index) => (
+          {Array.from({ length: Math.ceil(processedData.length / 4) }).map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentIndex(index * 3)}
+              onClick={() => setCurrentIndex(index * 4)}
               className={`size-3 rounded-full transition-all duration-300 ${
-                Math.floor(currentIndex / 3) === index
+                Math.floor(currentIndex / 4) === index
                   ? 'bg-orange-500 scale-125'
                   : 'bg-gray-300 hover:bg-gray-400'
               }`}

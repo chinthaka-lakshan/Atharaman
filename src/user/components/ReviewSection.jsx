@@ -6,6 +6,7 @@ import {
   updateReview, 
   deleteReview 
 } from '../../services/api';
+import { STORAGE_BASE_URL } from '../../config/runtimeConfig';
 
 const ReviewSection = ({ entityType, entityId }) => {
   const { user, isAuthenticated } = useAuth();
@@ -333,7 +334,7 @@ const ReviewSection = ({ entityType, entityId }) => {
                       {removedImages.map((img) => (
                         <div key={img.id} className="relative h-32 border-2 border-dashed border-yellow-300 rounded-lg flex items-center justify-center opacity-60">
                           <img 
-                            src={`http://localhost:8000/storage/${img.image_path}`}
+                            src={`${STORAGE_BASE_URL}/${img.image_path}`}
                             alt={img.alt_text || 'Review image'}
                             className="h-full w-full object-cover rounded-lg"
                           />
@@ -364,7 +365,7 @@ const ReviewSection = ({ entityType, entityId }) => {
                       {existingImages.map((img) => (
                         <div key={img.id} className="relative h-32 border border-gray-300 rounded-lg flex items-center justify-center group">
                           <img 
-                            src={`http://localhost:8000/storage/${img.image_path}`}
+                            src={`${STORAGE_BASE_URL}/${img.image_path}`}
                             alt={img.alt_text || 'Review image'}
                             className="h-full w-full object-cover rounded-lg"
                           />
@@ -497,7 +498,7 @@ const ReviewSection = ({ entityType, entityId }) => {
                         {review.images.map((image, index) => (
                           <img
                             key={index}
-                            src={`http://localhost:8000/storage/${image.image_path}`}
+                            src={`${STORAGE_BASE_URL}/${image.image_path}`}
                             alt={image.alt_text || `Review image ${index + 1}`}
                             className="w-20 h-20 object-cover rounded"
                           />
