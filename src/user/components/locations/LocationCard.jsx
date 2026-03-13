@@ -2,12 +2,13 @@ import React from 'react';
 import { GlobeIcon, Star, MapPin, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 export const LocationCard = ({ location, rating = 0, onClick }) => {
   const navigate = useNavigate();
 
   const imageUrl = location.images && location.images.length > 0
-    ? `http://localhost:8000/storage/${location.images[0].image_path}`
+    ? `${STORAGE_BASE_URL}/${location.images[0].image_path}`
     : 'https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&cs=tinysrgb&w=800';
 
   const safeRating = typeof rating === 'number' ? rating : parseFloat(rating) || 0;
@@ -68,18 +69,7 @@ export const LocationCard = ({ location, rating = 0, onClick }) => {
           {location.shortDescription || "Discover the hidden beauty and authentic experiences of this breathtaking location."}
         </p>
 
-        <div className="flex items-center justify-between pt-6 border-t border-gray-50">
-          <div className="flex -space-x-2">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-gray-100">
-                <img src={`https://i.pravatar.cc/100?u=${location.id + i}`} alt="User" />
-              </div>
-            ))}
-            <div className="w-8 h-8 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center text-[10px] font-bold text-orange-600">
-              +12
-            </div>
-          </div>
-
+        <div className="flex items-center justify-end pt-6 border-t border-gray-50">
           <motion.div 
             whileHover={{ x: 5 }}
             className="flex items-center text-orange-500 font-bold text-sm"

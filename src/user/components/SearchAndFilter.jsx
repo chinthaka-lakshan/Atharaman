@@ -68,18 +68,6 @@ const SearchAndFilter = ({
         )}
       </div>
 
-      {/* Quick Filters / Tags (Optional but adds to "Natural" feel) */}
-      <div className="flex flex-wrap gap-2 mt-6">
-         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mr-2 flex items-center">Popular:</span>
-         {["Adventure", "Nature", "Luxury", "Local Heritage"].map((tag) => (
-           <button 
-             key={tag}
-             className="px-4 py-1.5 rounded-full text-[10px] font-bold border border-gray-100 text-gray-500 hover:border-emerald-500 hover:text-emerald-500 hover:bg-emerald-50 transition-all"
-           >
-             {tag}
-           </button>
-         ))}
-      </div>
     </div>
   );
 };
