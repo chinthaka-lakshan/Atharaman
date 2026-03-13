@@ -39,6 +39,7 @@ import GuideDetailPage from './user/pages/GuideDetailPage';
 import ShopDetailPage from './user/pages/ShopDetailPage';
 import HotelDetailPage from './user/pages/HotelDetailPage';
 import VehicleDetailPage from './user/pages/VehicleDetailPage';
+import AtharamanChat from './user/components/AtharamanChat';
 
 
 function AppContent() {
@@ -135,6 +136,7 @@ function AppContent() {
           // User Layout - Global Navbar for all user routes
           <div className="flex flex-col min-h-screen">
             <UserNavbar />
+            <AtharamanChat/>
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={
@@ -158,6 +160,7 @@ function AppContent() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="/chat" element={<AtharamanChat />} />
             </Routes>
             <Footer onScrollToSection={scrollToSection} />
           </div>
