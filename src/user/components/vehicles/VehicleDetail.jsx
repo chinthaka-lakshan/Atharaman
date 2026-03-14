@@ -69,6 +69,16 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
     }
   };
 
+  const handleDirections = () => {
+    // Vehicles might not have a fixed address, but they are often associated with locations.
+    // For now, if there's no specific address, we can't do much, but we can look at operating areas.
+    // However, for consistency, if vehicle has a registration number or base, we might use that.
+    // Given the current schema, let's see if we can use the first location's name as a destination.
+    if (locations && locations.length > 0) {
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(locations[0].locationName)}`, "_blank");
+    }
+  };
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
@@ -236,6 +246,15 @@ export const VehicleDetail = ({ vehicle, onBack }) => {
                   <button className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all flex items-center justify-center gap-2 group shadow-xl shadow-gray-900/10 uppercase tracking-widest">
                     Inquire Spec
                   </button>
+                  {locations && locations.length > 0 && (
+                    <button 
+                      onClick={handleDirections}
+                      className="w-full py-4 bg-white border-2 border-gray-900 text-gray-900 rounded-2xl font-bold hover:bg-gray-50 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-gray-900/5 uppercase tracking-widest"
+                    >
+                      <Navigation className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                      View Base Camp
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>

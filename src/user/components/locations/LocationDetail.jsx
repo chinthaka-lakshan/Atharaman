@@ -82,6 +82,12 @@ const LocationDetail = ({ location, onBack }) => {
     }
   };
 
+  const handleDirections = () => {
+    if (location?.latitude && location?.longitude) {
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${location.latitude},${location.longitude}`, "_blank");
+    }
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -253,7 +259,10 @@ const LocationDetail = ({ location, onBack }) => {
                   <InfoItem icon={<Mountain className="text-emerald-500" />} label="Terrain" value={location.locationType} />
                   <InfoItem icon={<Compass className="text-blue-500" />} label="Lat / Long" value={`${location.latitude}, ${location.longitude}`} />
                 </div>
-                <button className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all flex items-center justify-center gap-2 group shadow-xl shadow-gray-900/10">
+                <button 
+                  onClick={handleDirections}
+                  className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all flex items-center justify-center gap-2 group shadow-xl shadow-gray-900/10"
+                >
                   <MapIcon className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                   Get Directions
                 </button>
