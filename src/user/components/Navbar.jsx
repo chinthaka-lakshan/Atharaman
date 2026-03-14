@@ -74,7 +74,7 @@ const Navbar = ({ onScrollToSection }) => {
                   effectiveScrolled ? 'text-gray-900' : 'text-white'
                 }`}
               >
-                Athar<span className="text-orange-500">aman</span>
+               <span className="text-white-500">Atharaman</span>
               </h1>
             </div>
 

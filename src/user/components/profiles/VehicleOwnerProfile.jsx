@@ -752,7 +752,7 @@ const VehicleOwnerProfile = ({ isExpanded, onToggleExpand, userId }) => {
                         alt={vehicle.vehicle_name || vehicle.vehicleName}
                         className="w-full h-48 object-cover"
                         onError={(e) => {
-                          e.target.src = "/default-vehicle.jpg";
+                          e.target.src = "/default-user.png";
                         }}
                       />
                       <div className="p-4">

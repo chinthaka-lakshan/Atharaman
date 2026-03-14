@@ -37,7 +37,7 @@ export const getGuideImageUrls = (guide) => {
       } else if (path) {
         return `${STORAGE_BASE_URL}/guides/${path}`;
       }
-      return "/default-guide.jpg";
+      return "/default-user.png";
     });
   }
 
@@ -60,13 +60,13 @@ export const getGuideImageUrls = (guide) => {
     } else if (image) {
       return `${STORAGE_BASE_URL}/guides/${image}`;
     }
-    return "/default-guide.jpg";
+    return "/default-user.png";
   });
 };
 
 export const getMainGuideImage = (guide) => {
   const urls = getGuideImageUrls(guide);
-  return urls[0] || "/default-guide.jpg";
+  return urls[0] || "/default-user.png";
 };
 
 export const getShopImageUrls = (shop) => {

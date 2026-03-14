@@ -57,7 +57,7 @@ const UserProfile = () => {
           name: userData.name,
           email: userData.email,
           joinDate: new Date(userData.created_at).getFullYear().toString(),
-          avatar: userData.avatar || "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop"
+          avatar: userData.avatar || "/default-user.png"
         },
         approvedRoles,
         pendingRequests
