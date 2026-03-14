@@ -90,6 +90,13 @@ const ShopDetail = ({ shop, onBack }) => {
     }
   };
 
+  const handleDirections = () => {
+    const address = shop.shop_address || shop.shopAddress;
+    if (address) {
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`, "_blank");
+    }
+  };
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
@@ -285,7 +292,10 @@ const ShopDetail = ({ shop, onBack }) => {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <button className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all flex items-center justify-center gap-2 group shadow-xl shadow-gray-900/10">
+                  <button 
+                    onClick={handleDirections}
+                    className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all flex items-center justify-center gap-2 group shadow-xl shadow-gray-900/10"
+                  >
                     <MapPinned className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                     Get Directions
                   </button>
