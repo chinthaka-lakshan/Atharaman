@@ -337,7 +337,7 @@ const GuideProfile = ({ isExpanded, onToggleExpand, userId }) => {
 
   // Image URL helper
   const getImageUrl = (imagePath) => {
-    if (!imagePath) return '/default-guide.jpg';
+    if (!imagePath) return '/default-user.png';
     const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
     return `${baseUrl}/storage/${imagePath}`;
   };

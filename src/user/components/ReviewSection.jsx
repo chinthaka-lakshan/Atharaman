@@ -528,7 +528,7 @@ const ReviewSection = ({ entityType, entityId }) => {
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4 flex-1">
                   <img
-                    src={review.user?.avatar || "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100"}
+                    src={review.user?.avatar || "/default-user.png"}
                     alt={review.user?.name || 'User'}
                     className="w-12 h-12 rounded-full object-cover"
                   />

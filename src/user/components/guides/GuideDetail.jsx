@@ -240,7 +240,7 @@ const GuideDetail = ({ guide, onBack }) => {
                 <div className="text-center group">
                   <div className="w-24 h-24 mx-auto mb-4 rounded-3xl overflow-hidden shadow-xl transform group-hover:scale-105 transition-transform">
                     <img 
-                      src={images.length > 0 ? `${STORAGE_BASE_URL}/${images[0].image_path}` : '/placeholder-avatar.jpg'} 
+                      src={images.length > 0 ? `${STORAGE_BASE_URL}/${images[0].image_path}` : '/default-user.png'} 
                       className="w-full h-full object-cover"
                       alt={guide.guide_name}
                     />
