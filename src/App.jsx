@@ -23,6 +23,8 @@ import {GuidesSection} from './user/components/guides/GuidesSection';
 import {HotelsSection} from './user/components/hotels/HotelsSection';
 import {ShopsSection} from './user/components/shops/ShopsSection';
 import {VehiclesSection} from './user/components/vehicles/VehiclesSection';
+import Footer from './user/components/Footer';
+
 // User Pages
 import Home from './user/pages/Home';
 import UserProfilePage from './user/pages/UserProfilePage';
@@ -37,16 +39,36 @@ import GuideDetailPage from './user/pages/GuideDetailPage';
 import ShopDetailPage from './user/pages/ShopDetailPage';
 import HotelDetailPage from './user/pages/HotelDetailPage';
 import VehicleDetailPage from './user/pages/VehicleDetailPage';
+import AtharamanChat from './user/components/AtharamanChat';
 
 
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const { isLoading } = useAuth();
+  
+  // Scroll to top on every route change
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   if (isLoading) {
     return null; // or a minimal blank state
   }
+
+  const scrollToSection = (sectionId) => {
+    if (location.pathname !== '/') {
+      window.location.href = `/#${sectionId}`;
+      return;
+    }
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const navbarHeight = 64;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.scrollY - navbarHeight;
+      window.scrollTo({ top: elementPosition, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="App relative">
@@ -114,6 +136,7 @@ function AppContent() {
           // User Layout - Global Navbar for all user routes
           <div className="flex flex-col min-h-screen">
             <UserNavbar />
+            <AtharamanChat/>
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={
@@ -137,7 +160,9 @@ function AppContent() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="/chat" element={<AtharamanChat />} />
             </Routes>
+            <Footer onScrollToSection={scrollToSection} />
           </div>
         )}
       </AnimatePresence>

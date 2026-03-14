@@ -425,7 +425,6 @@ function Home() {
           onLogin={() => setIsLoginModalOpen(false)}
         />
       </main>
-      <Footer onScrollToSection={scrollToSection} />
     </div>
   );
 }
