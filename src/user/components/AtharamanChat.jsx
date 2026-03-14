@@ -179,9 +179,9 @@ const AtharamanChat = () => {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end font-sans antialiased">
+        <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[9999] flex flex-col items-end font-sans antialiased">
             {isOpen && (
-                <div className="mb-4 w-[450px] md:w-[1000px] h-[550px] bg-white rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95 duration-300">
+                <div className="mb-4 w-[calc(100vw-2rem)] sm:w-[500px] md:w-[700px] lg:w-[900px] h-[75vh] sm:h-[600px] max-h-[calc(100vh-8rem)] bg-white rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95 duration-300">
                     {/* Header */}
                     <div className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-600 p-5 text-white flex justify-between items-center flex-shrink-0">
                         <div className="flex items-center gap-3">
@@ -223,7 +223,7 @@ const AtharamanChat = () => {
                                         </div>
                                     )}
                                     {msg.cards && msg.cards.length > 0 && (
-                                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mt-1">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mt-1">
                                             {msg.cards.map((card, ci) => (
                                                 <ResultCard key={ci} card={card} onClick={handleCardClick} />
                                             ))}
