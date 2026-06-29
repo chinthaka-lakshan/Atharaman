@@ -1,5 +1,6 @@
 import React from 'react';
 import { Globe, Image as ImageIcon, Mountain } from 'lucide-react';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 const LocationView = ({ location }) => {
   if (!location) return <div>No location data available</div>;;
@@ -14,7 +15,7 @@ const LocationView = ({ location }) => {
         <div className="w-full md:w-48 flex-shrink-0">
           {allImages.length > 0 ? (
             <img
-              src={`http://localhost:8000/storage/${allImages[0].image_path}`}
+              src={`${STORAGE_BASE_URL}/${allImages[0].image_path}`}
               alt={allImages[0].alt_text}
               className="w-full h-48 object-cover rounded-lg"
             />
@@ -49,7 +50,7 @@ const LocationView = ({ location }) => {
             {allImages.map((img) => (
               <div key={img.id} className="aspect-square overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src={`http://localhost:8000/storage/${img.image_path}`}
+                  src={`${STORAGE_BASE_URL}/${img.image_path}`}
                   alt={img.alt_text}
                   className="w-full h-full object-cover hover:scale-105 transition-transform"
                 />

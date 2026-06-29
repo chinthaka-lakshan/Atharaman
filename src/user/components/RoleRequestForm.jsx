@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { 
   X, User, Mail, Phone, FileText, MapPin, Languages, 
   Image, MessageCircle, Check, Calendar, Map, AlertCircle, CheckCircle
@@ -295,27 +296,43 @@ const RoleRequestForm = ({ role, userData, onSubmit, onCancel, isSubmitting }) =
   // Update the NIC input field in each form renderer
   const renderNicField = () => {
     const nicField = getNicFieldName();
-    const placeholder = role === 'guide' ? '199012345678V' : '199012345678V';
+    const placeholder = '199012345678V';
     
     return (
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">NIC Number *</label>
-        <input
-          type="text"
-          name={nicField}
-          value={formData[nicField]}
-          onChange={handleInputChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-            nicValidation.available === false 
-              ? 'border-red-300 focus:ring-red-500' 
-              : nicValidation.available === true
-              ? 'border-green-300 focus:ring-green-500'
-              : 'border-gray-300 focus:ring-blue-500'
-          }`}
-          required
-          placeholder={placeholder}
-        />
-        <NicValidationIndicator />
+      <div className="space-y-2">
+        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4">National ID Number *</label>
+        <div className="relative group">
+          <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+          <input
+            type="text"
+            name={nicField}
+            value={formData[nicField]}
+            onChange={handleInputChange}
+            className={`relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border rounded-2xl outline-none transition-all ${
+              nicValidation.available === false 
+                ? 'border-red-300 focus:border-red-500' 
+                : nicValidation.available === true
+                ? 'border-emerald-300 focus:border-emerald-500'
+                : 'border-white focus:border-emerald-500 shadow-sm focus:shadow-emerald-500/10'
+            }`}
+            required
+            placeholder={placeholder}
+          />
+          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+            {nicValidation.loading ? (
+              <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            ) : nicValidation.available === true ? (
+              <CheckCircle className="w-5 h-5 text-emerald-500" />
+            ) : nicValidation.available === false ? (
+              <AlertCircle className="w-5 h-5 text-red-500" />
+            ) : null}
+          </div>
+        </div>
+        {nicValidation.message && (
+          <p className={`text-[10px] font-bold uppercase tracking-wider ml-4 ${nicValidation.available === false ? 'text-red-500' : 'text-emerald-600'}`}>
+            {nicValidation.message}
+          </p>
+        )}
       </div>
     );
   };
@@ -435,69 +452,81 @@ const RoleRequestForm = ({ role, userData, onSubmit, onCancel, isSubmitting }) =
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <User className="inline w-4 h-4 mr-1" />
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <User className="inline w-3 h-3 mr-1" />
             Guide Name *
           </label>
-          <input
-            type="text"
-            name="guide_name"
-            value={formData.guide_name}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-            placeholder="Enter your full name"
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="text"
+              name="guide_name"
+              value={formData.guide_name}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10 placeholder:text-gray-300"
+              required
+              placeholder="Enter your full name"
+            />
+          </div>
         </div>
         {renderNicField()}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Calendar className="inline w-4 h-4 mr-1" />
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <Calendar className="inline w-3 h-3 mr-1" />
             Date of Birth *
           </label>
-          <input
-            type="date"
-            name="guide_dob"
-            value={formData.guide_dob}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="date"
+              name="guide_dob"
+              value={formData.guide_dob}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10"
+              required
+            />
+          </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
-          <select
-            name="guide_gender"
-            value={formData.guide_gender}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          >
-            <option value="">Select Gender</option>
-            {genderOptions.map(gender => (
-              <option key={gender} value={gender}>{gender}</option>
-            ))}
-          </select>
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">Gender *</label>
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <select
+              name="guide_gender"
+              value={formData.guide_gender}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10 appearance-none"
+              required
+            >
+              <option value="">Select Gender</option>
+              {genderOptions.map(gender => (
+                <option key={gender} value={gender}>{gender}</option>
+              ))}
+            </select>
+          </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Phone className="inline w-4 h-4 mr-1" />
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <Phone className="inline w-3 h-3 mr-1" />
             Contact Number *
           </label>
-          <input
-            type="tel"
-            name="contact_number"
-            value={formData.contact_number}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-            placeholder="+94771234567"
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="tel"
+              name="contact_number"
+              value={formData.contact_number}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10 placeholder:text-gray-300"
+              required
+              placeholder="+94771234567"
+            />
+          </div>
         </div>
       </div>
 
@@ -584,98 +613,114 @@ const RoleRequestForm = ({ role, userData, onSubmit, onCancel, isSubmitting }) =
 
   const renderBusinessOwnerForm = () => (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <User className="inline w-4 h-4 mr-1" />
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <User className="inline w-3 h-3 mr-1" />
             {role === 'shop_owner' ? 'Shop Owner Name *' : 'Hotel Owner Name *'}
           </label>
-          <input
-            type="text"
-            name={role === 'shop_owner' ? 'shop_owner_name' : 'hotel_owner_name'}
-            value={role === 'shop_owner' ? formData.shop_owner_name : formData.hotel_owner_name}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="text"
+              name={role === 'shop_owner' ? 'shop_owner_name' : 'hotel_owner_name'}
+              value={role === 'shop_owner' ? formData.shop_owner_name : formData.hotel_owner_name}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10"
+              required
+            />
+          </div>
         </div>
         {renderNicField()}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Calendar className="inline w-4 h-4 mr-1" />
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <Calendar className="inline w-3 h-3 mr-1" />
             Date of Birth *
           </label>
-          <input
-            type="date"
-            name={role === 'shop_owner' ? 'shop_owner_dob' : 'hotel_owner_dob'}
-            value={role === 'shop_owner' ? formData.shop_owner_dob : formData.hotel_owner_dob}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="date"
+              name={role === 'shop_owner' ? 'shop_owner_dob' : 'hotel_owner_dob'}
+              value={role === 'shop_owner' ? formData.shop_owner_dob : formData.hotel_owner_dob}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10"
+              required
+            />
+          </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Phone className="inline w-4 h-4 mr-1" />
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <Phone className="inline w-3 h-3 mr-1" />
             Contact Number *
           </label>
-          <input
-            type="tel"
-            name="contact_number"
-            value={formData.contact_number}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="tel"
+              name="contact_number"
+              value={formData.contact_number}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10 placeholder:text-gray-300"
+              required
+              placeholder="+94771234567"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <Mail className="inline w-3 h-3 mr-1" />
+            Business Email *
+          </label>
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="email"
+              name="business_mail"
+              value={formData.business_mail}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+          <Map className="inline w-3 h-3 mr-1" />
+          Address *
+        </label>
+        <div className="relative group">
+          <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+          <textarea
+            name={role === 'shop_owner' ? 'shop_owner_address' : 'hotel_owner_address'}
+            value={role === 'shop_owner' ? formData.shop_owner_address : formData.hotel_owner_address}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={2}
+            className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10 placeholder:text-gray-300"
             required
-            placeholder="+94771234567"
+            placeholder="Enter your complete address"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          <Map className="inline w-4 h-4 mr-1" />
-          Address *
+        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+          <MessageCircle className="inline w-3 h-3 mr-1" />
+          WhatsApp Number
         </label>
-        <textarea
-          name={role === 'shop_owner' ? 'shop_owner_address' : 'hotel_owner_address'}
-          value={role === 'shop_owner' ? formData.shop_owner_address : formData.hotel_owner_address}
-          onChange={handleInputChange}
-          rows={2}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-          placeholder="Enter your complete address"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Mail className="inline w-4 h-4 mr-1" />
-            Business Email *
-          </label>
-          <input
-            type="email"
-            name="business_mail"
-            value={formData.business_mail}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <MessageCircle className="inline w-4 h-4 mr-1" />
-            WhatsApp Number
-          </label>
+        <div className="relative group">
+          <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
           <input
             type="tel"
             name="whatsapp_number"
             value={formData.whatsapp_number}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10 placeholder:text-gray-300"
             placeholder="+94771234567"
           />
         </div>
@@ -685,98 +730,114 @@ const RoleRequestForm = ({ role, userData, onSubmit, onCancel, isSubmitting }) =
 
   const renderVehicleOwnerForm = () => (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <User className="inline w-4 h-4 mr-1" />
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <User className="inline w-3 h-3 mr-1" />
             Vehicle Owner Name *
           </label>
-          <input
-            type="text"
-            name="vehicle_owner_name"
-            value={formData.vehicle_owner_name}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="text"
+              name="vehicle_owner_name"
+              value={formData.vehicle_owner_name}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10"
+              required
+            />
+          </div>
         </div>
         {renderNicField()}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Calendar className="inline w-4 h-4 mr-1" />
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <Calendar className="inline w-3 h-3 mr-1" />
             Date of Birth *
           </label>
-          <input
-            type="date"
-            name="vehicle_owner_dob"
-            value={formData.vehicle_owner_dob}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="date"
+              name="vehicle_owner_dob"
+              value={formData.vehicle_owner_dob}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10"
+              required
+            />
+          </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Phone className="inline w-4 h-4 mr-1" />
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <Phone className="inline w-3 h-3 mr-1" />
             Contact Number *
           </label>
-          <input
-            type="tel"
-            name="contact_number"
-            value={formData.contact_number}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="tel"
+              name="contact_number"
+              value={formData.contact_number}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10 placeholder:text-gray-300"
+              required
+              placeholder="+94771234567"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+            <Mail className="inline w-3 h-3 mr-1" />
+            Business Email *
+          </label>
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+            <input
+              type="email"
+              name="business_mail"
+              value={formData.business_mail}
+              onChange={handleInputChange}
+              className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+          <Map className="inline w-3 h-3 mr-1" />
+          Address *
+        </label>
+        <div className="relative group">
+          <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
+          <textarea
+            name="vehicle_owner_address"
+            value={formData.vehicle_owner_address}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={2}
+            className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10 placeholder:text-gray-300"
             required
-            placeholder="+94771234567"
+            placeholder="Enter your complete address"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          <Map className="inline w-4 h-4 mr-1" />
-          Address *
+        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-2 block">
+          <MessageCircle className="inline w-3 h-3 mr-1" />
+          WhatsApp Number
         </label>
-        <textarea
-          name="vehicle_owner_address"
-          value={formData.vehicle_owner_address}
-          onChange={handleInputChange}
-          rows={2}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-          placeholder="Enter your complete address"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Mail className="inline w-4 h-4 mr-1" />
-            Business Email *
-          </label>
-          <input
-            type="email"
-            name="business_mail"
-            value={formData.business_mail}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <MessageCircle className="inline w-4 h-4 mr-1" />
-            WhatsApp Number
-          </label>
+        <div className="relative group">
+          <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl blur-sm group-focus-within:bg-emerald-500/10 transition-colors" />
           <input
             type="tel"
             name="whatsapp_number"
             value={formData.whatsapp_number}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="relative w-full px-6 py-4 bg-white/50 backdrop-blur-md border border-white focus:border-emerald-500 rounded-2xl outline-none transition-all shadow-sm focus:shadow-emerald-500/10 placeholder:text-gray-300"
             placeholder="+94771234567"
           />
         </div>
@@ -797,53 +858,62 @@ const RoleRequestForm = ({ role, userData, onSubmit, onCancel, isSubmitting }) =
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">{getRoleTitle()}</h2>
+    <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-md flex items-start justify-center z-[100] p-4 pt-32 pb-12 overflow-y-auto custom-scrollbar">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="bg-white/90 backdrop-blur-3xl rounded-[3rem] max-w-5xl w-full h-auto overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border border-white relative flex flex-col"
+      >
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/natural-paper.png")' }} />
+
+        <div className="flex items-center justify-between p-10 pb-6 relative">
+          <div>
+            <span className="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-[0.2em] rounded-full mb-3 inline-block">Verification Required</span>
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight">{getRoleTitle()}</h2>
+          </div>
           <button
             onClick={onCancel}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-3 bg-gray-50 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-2xl transition-all"
             disabled={isSubmitting}
           >
-            <X size={20} />
+            <X size={24} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-10 pt-4 space-y-10 overflow-y-auto flex-1 custom-scrollbar">
           {role === 'guide' && renderGuideForm()}
           {(role === 'hotel_owner' || role === 'shop_owner') && renderBusinessOwnerForm()}
           {role === 'vehicle_owner' && renderVehicleOwnerForm()}
 
-          <div className="flex justify-end space-x-3 pt-6 border-t">
+          <div className="flex flex-col sm:flex-row gap-4 pt-10 mt-10 border-t border-gray-100">
             <button
               type="button"
               onClick={onCancel}
-              className="px-6 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 transition-colors"
+              className="px-8 py-5 text-gray-500 font-bold uppercase tracking-widest text-[10px] hover:text-gray-900 transition-colors"
               disabled={isSubmitting}
             >
-              Cancel
+              Withdraw Request
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+              className="flex-1 px-8 py-5 bg-emerald-600 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl shadow-emerald-600/20 active:scale-95 flex items-center justify-center gap-3"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Submitting...</span>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Transmitting...</span>
                 </>
               ) : (
                 <>
-                  <Check size={16} />
-                  <span>Submit Request</span>
+                  <CheckCircle size={18} />
+                  <span>Finalize Application</span>
                 </>
               )}
             </button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };

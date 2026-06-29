@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Menu, X, User, ChevronDown, LogOut, Settings, Shield, FileText } from 'lucide-react';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar = ({ onScrollToSection }) => {
@@ -10,9 +10,25 @@ const Navbar = ({ onScrollToSection }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isHomePage = location.pathname === '/';
+  const forceSolidBg = !isHomePage;
+  
+  const effectiveScrolled = isScrolled || forceSolidBg;
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navItems = [
     { name: 'Home', path: '/' },
@@ -43,31 +59,47 @@ const Navbar = ({ onScrollToSection }) => {
 
   return (
     <>
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-lg z-40 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className={`fixed top-0 w-full z-[1001] transition-all duration-500 ${
+        effectiveScrolled 
+          ? 'bg-white/80 backdrop-blur-xl shadow-xl py-2' 
+          : 'bg-transparent py-6'
+      }`}>
+        <div className="max-w-full px-6 lg:px-12 mx-auto">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex-shrink-0">
               <h1 
                 onClick={() => navigate('/')}
-                className="text-2xl font-bold text-green-800 cursor-pointer hover:text-green-600 transition-colors"
+                className={`text-3xl font-black cursor-pointer transition-all duration-300 ${
+                  effectiveScrolled ? 'text-gray-900' : 'text-white'
+                }`}
               >
-                Atharaman
+               <span className="text-white-500">Atharaman</span>
               </h1>
             </div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline gap-4">
-                {navItems.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => handleNavClick(item.path)}
-                    className="text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
-                  >
-                    {item.name}
-                  </button>
-                ))}
+              <div className="ml-10 flex items-baseline gap-8">
+                {navItems.map((item) => {
+                  const isActive = item.path === '/' 
+                    ? location.pathname === '/' 
+                    : location.pathname.startsWith(item.path);
+                  
+                  return (
+                    <button
+                      key={item.name}
+                      onClick={() => handleNavClick(item.path)}
+                      className={`px-3 py-2 rounded-md text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-110 ${
+                        isActive 
+                          ? 'text-orange-500' 
+                          : effectiveScrolled ? 'text-gray-700 hover:text-orange-600' : 'text-white/90 hover:text-white'
+                      }`}
+                    >
+                      {item.name}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -86,7 +118,7 @@ const Navbar = ({ onScrollToSection }) => {
                   
                   {isProfileDropdownOpen && (
                     <div 
-                      className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 transition-all duration-200 origin-top-right"
+                      className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-[1002] transition-all duration-200 origin-top-right"
                       onMouseLeave={() => setIsProfileDropdownOpen(false)}
                     >
                       <a href="/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
@@ -129,7 +161,9 @@ const Navbar = ({ onScrollToSection }) => {
             <div className="md:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-orange-600 hover:bg-gray-100 focus:outline-none transition-colors"
+                className={`inline-flex items-center justify-center p-2 rounded-md transition-colors ${
+                  effectiveScrolled ? 'text-gray-700' : 'text-white'
+                } hover:text-orange-600 hover:bg-gray-100 focus:outline-none`}
                 aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
               >
                 {isMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
@@ -153,16 +187,45 @@ const Navbar = ({ onScrollToSection }) => {
               ))}
               {isAuthenticated && user ? (
                 <div className="border-t pt-3">
-                  <div className="flex items-center px-3 py-2">
-                    <User className="size-5 mr-2" />
-                    <span className="font-medium">{user.name}</span>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="text-red-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors"
+                  <button 
+                    onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)}
+                    className="flex items-center justify-between w-full px-3 py-2 mb-1 hover:bg-gray-50 transition-colors rounded-md focus:outline-none focus:ring-0"
                   >
-                    Logout
+                    <div className="flex items-center">
+                      <User className="size-5 mr-3 text-gray-500" />
+                      <div className="text-left">
+                        <p className="font-bold text-gray-900 leading-tight">{user.name}</p>
+                        <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
+                    </div>
+                    <ChevronDown className={`size-4 text-gray-400 transition-transform duration-200 ${isMobileProfileOpen ? 'rotate-180' : ''}`} />
                   </button>
+
+                  <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isMobileProfileOpen ? 'max-h-64 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
+                    <a href="/profile" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-0">
+                      <User className="size-5 mr-3" />
+                      Your Profile
+                    </a>
+                    <a href="/settings" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-0">
+                      <Settings className="size-5 mr-3" />
+                      Settings
+                    </a>
+                    <a href="/privacy-policy" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-0">
+                      <Shield className="size-5 mr-3" />
+                      Privacy Policy
+                    </a>
+                    <a href="/terms-and-conditions" className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-0">
+                      <FileText className="size-5 mr-3" />
+                      Terms & Conditions
+                    </a>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors mt-2 focus:outline-none focus:ring-0"
+                    >
+                      <LogOut className="size-5 mr-3" />
+                      Logout
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <button

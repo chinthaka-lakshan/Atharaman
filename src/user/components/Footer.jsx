@@ -34,7 +34,7 @@ const Footer = ({ onScrollToSection }) => {
               <h3 className="text-2xl font-bold">Atharaman</h3>
             </div>
             <p className="text-gray-300 leading-relaxed">
-              Your gateway to extraordinary adventures. Discover breathtaking destinations, 
+              Your gateway to extraordinary adventures. Discover breathtaking destinations,
               connect with expert guides, and create memories that last a lifetime.
             </p>
             <div className="flex gap-4">
@@ -94,14 +94,14 @@ const Footer = ({ onScrollToSection }) => {
               <div className="flex items-start gap-3">
                 <MapPin className="size-5 text-orange-500 mt-1 flex-shrink-0" />
                 <p className="text-gray-300">
-                  123 Adventure Street<br />
-                  Mountain View, CA 94041<br />
-                  United States
+                  Battaramulla<br />
+                  Colombo<br />
+                  Sri Lanka
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="size-5 text-orange-500 flex-shrink-0" />
-                <p className="text-gray-300">+1 (555) 123-4567</p>
+                <p className="text-gray-300">+94 (77) 123-4567</p>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="size-5 text-orange-500 flex-shrink-0" />
@@ -123,7 +123,7 @@ const Footer = ({ onScrollToSection }) => {
                 className="flex-1 px-4 py-3 rounded-lg bg-gray-800 border border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                 required
               />
-              <button 
+              <button
                 type="submit"
                 className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-orange-500/20"
               >
@@ -136,8 +136,8 @@ const Footer = ({ onScrollToSection }) => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-700 mt-12 pt-8 text-center">
           <p className="text-gray-400">
-            © {new Date().getFullYear()} Atharaman. All rights reserved. | 
-            <a href="/privacy" className="hover:text-orange-400 transition-colors mx-1">Privacy Policy</a> | 
+            © {new Date().getFullYear()} Atharaman. All rights reserved. |
+            <a href="/privacy" className="hover:text-orange-400 transition-colors mx-1">Privacy Policy</a> |
             <a href="/terms" className="hover:text-orange-400 transition-colors mx-1">Terms of Service</a>
           </p>
         </div>

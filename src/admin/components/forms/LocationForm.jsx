@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Upload, Loader } from 'lucide-react';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 const LocationForm = ({ location, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -198,6 +199,81 @@ const LocationForm = ({ location, onSave, onCancel }) => {
         </div>
       </div>
 
+      {/* -- [START] Location Search Autocomplete -- */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Auto-Search Location (Optional)
+        </label>
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Type a place (e.g. Colombo) to auto-fill..."
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={(e) => {
+              const query = e.target.value;
+              const dropdown = document.getElementById('location-search-dropdown');
+              const loader   = document.getElementById('location-search-loader');
+              
+              // Clear existing timeout to debounce
+              if (window.locationSearchTimeout) clearTimeout(window.locationSearchTimeout);
+              
+              if (!query.trim()) {
+                dropdown.classList.add('hidden');
+                loader.classList.add('hidden');
+                return;
+              }
+
+              // Show loading spinner while they stop typing
+              loader.classList.remove('hidden');
+
+              window.locationSearchTimeout = setTimeout(async () => {
+                try {
+                  const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                  const data = await res.json();
+                  
+                  loader.classList.add('hidden');
+
+                  if (data.length === 0) {
+                    dropdown.innerHTML = '<div class="p-3 text-sm text-gray-500">No matching places found.</div>';
+                  } else {
+                    dropdown.innerHTML = '';
+                    data.slice(0, 5).forEach(item => {
+                      const div = document.createElement('div');
+                      div.className = 'p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-0 text-sm';
+                      div.innerHTML = `<div class="font-medium text-gray-800">${item.display_name.split(',')[0]}</div><div class="text-xs text-gray-500 truncate mt-0.5">${item.display_name}</div>`;
+                      div.onclick = () => {
+                        setFormData(prev => ({ ...prev, latitude: item.lat, longitude: item.lon }));
+                        dropdown.classList.add('hidden');
+                        e.target.value = item.display_name.split(',')[0]; // Set input to the selected short name
+                      };
+                      dropdown.appendChild(div);
+                    });
+                  }
+                  dropdown.classList.remove('hidden');
+                } catch (err) {
+                  console.error("Autocomplete search failed", err);
+                  loader.classList.add('hidden');
+                }
+              }, 500); // Wait 500ms after user stops typing before fetching
+            }}
+          />
+          
+          {/* Spinner Icon */}
+          <div id="location-search-loader" className="hidden absolute right-3 top-2.5">
+            <Loader size={18} className="text-gray-400 animate-spin" />
+          </div>
+          
+          {/* Dropdown Results */}
+          <div 
+            id="location-search-dropdown" 
+            className="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto"
+          >
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-1">Powered by OpenStreetMap. Suggestions appear automatically as you type.</p>
+      </div>
+      {/* -- [END] Location Search Autocomplete -- */}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -248,7 +324,7 @@ const LocationForm = ({ location, onSave, onCancel }) => {
               {removedImages.map((img) => (
                 <div key={img.id} className="relative h-40 border-2 border-dashed border-yellow-300 rounded-lg flex items-center justify-center opacity-60">
                   <img 
-                    src={`http://localhost:8000/storage/${img.image_path}`}
+                    src={`${STORAGE_BASE_URL}/${img.image_path}`}
                     alt={img.alt_text}
                     className="h-full w-full object-cover rounded-lg"
                   />
@@ -279,7 +355,7 @@ const LocationForm = ({ location, onSave, onCancel }) => {
               {existingImages.map((img) => (
                 <div key={img.id} className="relative h-40 border border-gray-300 rounded-lg flex items-center justify-center group">
                   <img 
-                    src={`http://localhost:8000/storage/${img.image_path}`}
+                    src={`${STORAGE_BASE_URL}/${img.image_path}`}
                     alt={img.alt_text}
                     className="h-full w-full object-cover rounded-lg"
                   />

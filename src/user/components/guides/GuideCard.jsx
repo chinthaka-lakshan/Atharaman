@@ -2,6 +2,7 @@ import React from 'react';
 import { Star, Phone } from 'lucide-react';
 import styles from '../../styles/InitialPages.module.css';
 import { useNavigate } from 'react-router-dom';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 export const GuideCard = ({ guide, rating = 0, reviewCount = 0, animationDelay = 0, isClickable = true }) => {
   const navigate = useNavigate();
@@ -14,9 +15,10 @@ export const GuideCard = ({ guide, rating = 0, reviewCount = 0, animationDelay =
 
   const getFirstImage = () => {
     if (guide.images && guide.images.length > 0) {
-      return `http://localhost:8000/storage/${guide.images[0].image_path}`;
+      const path = guide.images[0].image_path;
+      return path.startsWith('http') ? path : `${STORAGE_BASE_URL}/${path}`;
     } else {
-      return '/default-guide.jpg';
+      return '/default-user.png';
     }
   };
 
@@ -40,7 +42,7 @@ export const GuideCard = ({ guide, rating = 0, reviewCount = 0, animationDelay =
           alt={guide.guide_name || "Guide"}
           className={`w-full h-full object-cover transition-transform duration-500 hover:scale-110 ${styles.cardImage}`}
           onError={(e) => {
-            e.target.src = '/default-guide.jpg';
+            e.target.src = '/default-user.png';
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>

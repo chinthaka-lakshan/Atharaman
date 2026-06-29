@@ -4,7 +4,8 @@ import { AnimatePresence } from 'framer-motion';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './services/ProtectedRoute';
 // Admin Components
-import Navbar from './admin/components/Navbar';
+import AdminNavbar from './admin/components/Navbar';
+import UserNavbar from './user/components/Navbar';
 import Sidebar from './admin/components/Sidebar';
 // Admin Pages
 import Dashboard from './admin/pages/Dashboard';
@@ -22,6 +23,8 @@ import {GuidesSection} from './user/components/guides/GuidesSection';
 import {HotelsSection} from './user/components/hotels/HotelsSection';
 import {ShopsSection} from './user/components/shops/ShopsSection';
 import {VehiclesSection} from './user/components/vehicles/VehiclesSection';
+import Footer from './user/components/Footer';
+
 // User Pages
 import Home from './user/pages/Home';
 import UserProfilePage from './user/pages/UserProfilePage';
@@ -36,23 +39,46 @@ import GuideDetailPage from './user/pages/GuideDetailPage';
 import ShopDetailPage from './user/pages/ShopDetailPage';
 import HotelDetailPage from './user/pages/HotelDetailPage';
 import VehicleDetailPage from './user/pages/VehicleDetailPage';
+import AtharamanChat from './user/components/AtharamanChat';
+
 
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const { isLoading } = useAuth();
+  
+  // Scroll to top on every route change
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return null; // or a minimal blank state
   }
 
+  const scrollToSection = (sectionId) => {
+    if (location.pathname !== '/') {
+      window.location.href = `/#${sectionId}`;
+      return;
+    }
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const navbarHeight = 64;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.scrollY - navbarHeight;
+      window.scrollTo({ top: elementPosition, behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="App">
+    <div className="App relative">
+      {/* No travel animation on user route transitions */}
+      
       <AnimatePresence mode="wait">
         {isAdminRoute ? (
           // Admin Layout - All admin routes are protected
           <div className="min-h-screen bg-gray-50">
-            <Navbar />
+            <AdminNavbar />
             <div className="flex">
               <Sidebar />
               <main className="flex-1 ml-64 p-6">
@@ -107,31 +133,37 @@ function AppContent() {
             </div>
           </div>
         ) : (
-          // User Layout
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Home />} />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <UserProfilePage />
-              </ProtectedRoute>
-            } />
-            <Route path="/locations" element={<LocationsPage />} />
-            <Route path="/locations/:id" element={<LocationDetailPage />} />
-            <Route path="/guides" element={<GuidesSection />} />
-            <Route path="/guides/:id" element={<GuideDetailPage />} />
-            <Route path="/shops" element={<ShopsSection />} />
-            <Route path="/shops/:id" element={<ShopDetailPage />} />
-            <Route path="/hotels" element={<HotelsSection />} />
-            <Route path="/hotels/:id" element={<HotelDetailPage />} />
-            <Route path="/vehicles" element={<VehiclesSection />} />
-            <Route path="/vehicles/:id" element={<VehicleDetailPage />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
-          </Routes>
+          // User Layout - Global Navbar for all user routes
+          <div className="flex flex-col min-h-screen">
+            <UserNavbar />
+            <AtharamanChat/>
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element={<Home />} />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <UserProfilePage />
+                </ProtectedRoute>
+              } />
+              <Route path="/locations" element={<LocationsPage />} />
+              <Route path="/locations/:id" element={<LocationDetailPage />} />
+              <Route path="/guides" element={<GuidesSection />} />
+              <Route path="/guides/:id" element={<GuideDetailPage />} />
+              <Route path="/shops" element={<ShopsSection />} />
+              <Route path="/shops/:id" element={<ShopDetailPage />} />
+              <Route path="/hotels" element={<HotelsSection />} />
+              <Route path="/hotels/:id" element={<HotelDetailPage />} />
+              <Route path="/vehicles" element={<VehiclesSection />} />
+              <Route path="/vehicles/:id" element={<VehicleDetailPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="/chat" element={<AtharamanChat />} />
+            </Routes>
+            <Footer onScrollToSection={scrollToSection} />
+          </div>
         )}
       </AnimatePresence>
     </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { STORAGE_BASE_URL } from '../../../config/runtimeConfig';
 
 const ReviewView = ({ review, onClose }) => {
   if (!review) return null;
@@ -47,7 +48,7 @@ const ReviewView = ({ review, onClose }) => {
             {review.images.map((image, index) => (
               <div key={index} className="relative group">
                 <img
-                  src={`http://localhost:8000/storage/${image}`}
+                  src={`${STORAGE_BASE_URL}/${image}`}
                   alt={`Review image ${index + 1}`}
                   className="w-full h-32 object-cover rounded-lg border border-gray-200"
                 />
